@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebijakan Privasi - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2563EB; /* Blue-600 */
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link:hover {
+            color: #2563EB; /* Blue-600 */
+        }
+        .mobile-menu-button:focus {
+            outline: none;
+        }
+        .logo-image {
+            height: 70px; /* Consistent logo height */
+            width: auto;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .prose h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* semibold */
+            color: #1E3A8A; /* blue-800 */
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #D1D5DB; /* gray-300 */
+            padding-bottom: 0.5rem;
+        }
+        .prose h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* semibold */
+            color: #1E40AD; /* blue-700 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .prose p, .prose ul li {
+            line-height: 1.75;
+            color: #374151; /* gray-700 */
+        }
+        .prose ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .prose a {
+            color: #2563EB; /* blue-600 */
+            text-decoration: none;
+        }
+        .prose a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error'; this.alt='Logo not found. Check path: Extra Course logo.png';">
+            </a>
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
+                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
+                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
+                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+            <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+            <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+            <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+            <a href="index.html#tentang" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Tentang Kami</a>
+            <a href="index.html#kontak" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kontak</a>
+        </div>
+    </header>
+
+    <!-- Main Content: Kebijakan Privasi -->
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        <div class="mb-8">
+            <nav class="text-sm breadcrumb" aria-label="Breadcrumb">
+              <ol class="list-none p-0 inline-flex">
+                <li class="flex items-center">
+                  <a href="index.html#home" class="text-blue-600 hover:text-blue-800">Home</a>
+                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+                </li>
+                <li>
+                  <span class="text-slate-500" aria-current="page">Kebijakan Privasi</span>
+                </li>
+              </ol>
+            </nav>
+        </div>
+
+        <article class="prose max-w-none bg-white p-6 md:p-10 rounded-lg shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-700 !mb-8">Kebijakan Privasi ExtraCourse</h1>
+            <p class="text-center text-slate-500 !mb-10">Terakhir diperbarui: <span id="lastUpdatedDate">5 Juni 2025</span></p>
+
+            <p>Selamat datang di Kebijakan Privasi ExtraCourse ("kami", "milik kami", atau "kita"). Kami berkomitmen untuk melindungi privasi informasi pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, mengungkapkan, dan melindungi informasi Anda saat Anda mengunjungi situs web kami [NamaDomainAnda.com] (selanjutnya disebut "Situs") dan menggunakan layanan kami.</p>
+            <p>Harap baca kebijakan privasi ini dengan saksama. Jika Anda tidak setuju dengan ketentuan kebijakan privasi ini, mohon untuk tidak mengakses situs ini.</p>
+
+            <h2>Informasi yang Kami Kumpulkan</h2>
+            <p>Kami dapat mengumpulkan informasi tentang Anda dalam berbagai cara. Informasi yang dapat kami kumpulkan di Situs meliputi:</p>
+            
+            <h3>Data Pribadi</h3>
+            <p>Informasi identifikasi pribadi, seperti nama, alamat email, nomor telepon, dan informasi demografis (seperti usia, jenis kelamin, kota asal, dan minat), yang Anda berikan secara sukarela kepada kami saat Anda mendaftar di Situs atau saat Anda memilih untuk berpartisipasi dalam berbagai aktivitas yang berkaitan dengan Situs, seperti mengisi formulir kontak, berpartisipasi dalam kuis, atau berlangganan buletin kami.</p>
+
+            <h3>Data Turunan</h3>
+            <p>Informasi yang dikumpulkan server kami secara otomatis saat Anda mengakses Situs, seperti alamat IP Anda, jenis browser Anda, sistem operasi Anda, waktu akses Anda, dan halaman yang telah Anda lihat secara langsung sebelum dan sesudah mengakses Situs. Jika Anda menggunakan aplikasi seluler kami, informasi ini juga dapat mencakup nama dan jenis perangkat Anda, sistem operasi Anda, nomor telepon Anda, negara Anda, kesukaan dan balasan Anda terhadap suatu posting, dan interaksi lain dengan aplikasi dan pengguna lain melalui file log server, serta informasi lain yang Anda pilih untuk dibagikan.</p>
+            
+            <h3>Data Keuangan</h3>
+            <p>Informasi keuangan, seperti data yang berkaitan dengan metode pembayaran Anda (misalnya nomor kartu kredit yang valid, merek kartu, tanggal kedaluwarsa) yang mungkin kami kumpulkan saat Anda membeli, memesan, mengembalikan, menukar, atau meminta informasi tentang layanan kami dari Situs. [Catatan: Hapus bagian ini jika Anda tidak memproses pembayaran secara langsung. Jika Anda menggunakan prosesor pembayaran pihak ketiga, sebutkan itu.] Kami menyimpan sangat sedikit, jika ada, informasi keuangan yang kami kumpulkan. Sebaliknya, semua informasi keuangan disimpan oleh prosesor pembayaran kami, [Nama Prosesor Pembayaran Anda].</p>
+
+            <h3>Data dari Jejaring Sosial</h3>
+            <p>Informasi pengguna dari situs jejaring sosial, seperti Facebook, Google, Instagram, Twitter, termasuk nama Anda, nama pengguna jejaring sosial Anda, lokasi, jenis kelamin, tanggal lahir, alamat email, foto profil, dan data publik untuk kontak, jika Anda menghubungkan akun Anda ke jejaring sosial tersebut. Informasi ini juga dapat mencakup informasi kontak siapa pun yang Anda undang untuk menggunakan dan/atau bergabung dengan Situs.</p>
+            
+            <h2>Penggunaan Informasi Anda</h2>
+            <p>Memiliki informasi yang akurat tentang Anda memungkinkan kami untuk memberi Anda pengalaman yang lancar, efisien, dan disesuaikan. Secara khusus, kami dapat menggunakan informasi yang dikumpulkan tentang Anda melalui Situs untuk:</p>
+            <ul>
+                <li>Membuat dan mengelola akun Anda.</li>
+                <li>Mengirimkan email kepada Anda mengenai akun atau pesanan Anda.</li>
+                <li>Memenuhi dan mengelola pembelian, pesanan, pembayaran, dan transaksi lain yang berkaitan dengan Situs.</li>
+                <li>Meningkatkan efisiensi dan operasi Situs.</li>
+                <li>Memantau dan menganalisis penggunaan dan tren untuk meningkatkan pengalaman Anda dengan Situs.</li>
+                <li>Memberi tahu Anda tentang pembaruan pada Situs.</li>
+                <li>Menawarkan produk, layanan, aplikasi seluler, dan/atau rekomendasi baru kepada Anda.</li>
+                <li>Melakukan aktivitas lain yang diperlukan untuk menjalankan bisnis kami.</li>
+                <li>Mencegah transaksi penipuan, memantau terhadap pencurian, dan melindungi dari aktivitas kriminal.</li>
+                <li>Memproses pembayaran dan pengembalian dana.</li>
+                <li>Meminta umpan balik dan menghubungi Anda tentang penggunaan Situs oleh Anda.</li>
+                <li>Menyelesaikan perselisihan dan memecahkan masalah.</li>
+                <li>Menanggapi permintaan produk dan layanan pelanggan.</li>
+                <li>Mengirimi Anda buletin.</li>
+                <li>Meminta dukungan untuk Situs.</li>
+            </ul>
+
+            <h2>Pengungkapan Informasi Anda</h2>
+            <p>Kami dapat membagikan informasi yang telah kami kumpulkan tentang Anda dalam situasi tertentu. Informasi Anda dapat diungkapkan sebagai berikut:</p>
+            
+            <h3>Oleh Hukum atau untuk Melindungi Hak</h3>
+            <p>Jika kami meyakini bahwa pelepasan informasi tentang Anda diperlukan untuk menanggapi proses hukum, untuk menyelidiki atau memperbaiki potensi pelanggaran kebijakan kami, atau untuk melindungi hak, properti, dan keselamatan orang lain, kami dapat membagikan informasi Anda sebagaimana diizinkan atau diharuskan oleh hukum, aturan, atau peraturan yang berlaku. Ini termasuk bertukar informasi dengan perusahaan lain untuk perlindungan penipuan dan pengurangan risiko kredit.</p>
+
+            <h3>Penyedia Layanan Pihak Ketiga</h3>
+            <p>Kami dapat membagikan informasi Anda dengan pihak ketiga yang melakukan layanan untuk kami atau atas nama kami, termasuk pemrosesan pembayaran, analisis data, pengiriman email, layanan hosting, layanan pelanggan, dan bantuan pemasaran.</p>
+            
+            <h3>Afiliasi</h3>
+            <p>Kami dapat membagikan informasi Anda dengan afiliasi kami, dalam hal ini kami akan meminta afiliasi tersebut untuk menghormati Kebijakan Privasi ini. Afiliasi termasuk perusahaan induk kami dan setiap anak perusahaan, mitra usaha patungan atau perusahaan lain yang kami kendalikan atau yang berada di bawah kendali bersama kami.</p>
+
+            <h3>Mitra Bisnis</h3>
+            <p>Kami dapat membagikan informasi Anda dengan mitra bisnis kami untuk menawarkan produk, layanan, atau promosi tertentu kepada Anda.</p>
+            
+            <p>[Tambahkan bagian lain yang relevan seperti "Penjualan atau Kebangkrutan", "Cookie dan Teknologi Pelacakan Lainnya", "Situs Web Pihak Ketiga", "Keamanan Informasi Anda", "Kebijakan untuk Anak-Anak", "Kontrol untuk Fitur Jangan-Lacak", "Hak Privasi Anda (misalnya, GDPR, CCPA)", dll.]</p>
+
+            <h2>Pilihan Mengenai Informasi Anda</h2>
+            <h3>Informasi Akun</h3>
+            <p>Anda dapat kapan saja meninjau atau mengubah informasi dalam akun Anda atau menghentikan akun Anda dengan:</p>
+            <ul>
+                <li>Masuk ke pengaturan akun Anda dan memperbarui akun Anda</li>
+                <li>Menghubungi kami menggunakan informasi kontak yang disediakan di bawah ini</li>
+            </ul>
+            <p>Atas permintaan Anda untuk menghentikan akun Anda, kami akan menonaktifkan atau menghapus akun dan informasi Anda dari basis data aktif kami. Namun, beberapa informasi dapat disimpan dalam file kami untuk mencegah penipuan, memecahkan masalah, membantu penyelidikan apa pun, menegakkan Ketentuan Penggunaan kami dan/atau mematuhi persyaratan hukum.</p>
+
+            <h3>Email dan Komunikasi</h3>
+            <p>Jika Anda tidak lagi ingin menerima korespondensi, email, atau komunikasi lain dari kami, Anda dapat memilih keluar dengan:</p>
+            <ul>
+                <li>Mencatat preferensi Anda pada saat Anda mendaftarkan akun Anda di Situs</li>
+                <li>Masuk ke pengaturan akun Anda dan memperbarui preferensi Anda.</li>
+                <li>Menghubungi kami menggunakan informasi kontak yang disediakan di bawah ini.</li>
+            </ul>
+            <p>Jika Anda tidak lagi ingin menerima korespondensi, email, atau komunikasi lain dari pihak ketiga, Anda bertanggung jawab untuk menghubungi pihak ketiga tersebut secara langsung.</p>
+            
+            <h2>Perubahan pada Kebijakan Privasi Ini</h2>
+            <p>Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu untuk mencerminkan, misalnya, perubahan pada praktik kami atau karena alasan operasional, hukum, atau peraturan lainnya. Kami akan memberi tahu Anda tentang setiap perubahan dengan memposting Kebijakan Privasi baru di halaman ini. Anda disarankan untuk meninjau Kebijakan Privasi ini secara berkala untuk setiap perubahan. Perubahan pada Kebijakan Privasi ini efektif ketika diposting di halaman ini.</p>
+            <p>Tanggal "Terakhir diperbarui" di bagian atas Kebijakan Privasi ini akan menunjukkan kapan revisi terakhir dilakukan.</p>
+
+            <h2>Hubungi Kami</h2>
+            <p>Jika Anda memiliki pertanyaan atau komentar tentang Kebijakan Privasi ini, silakan hubungi kami di:</p>
+            <p>
+                ExtraCourse<br>
+                Jl. Pangeran Puger V, Yogyakarta<br>
+                Email: Jiksau04@gmail.com<br>
+                Telepon: 081334629983
+            </p>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3>
+                    <p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p>
+                    <p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li>
+                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
+                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
+                        <li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
+                        <li><a href="kebijakan-privasi.html" class="text-blue-400 font-semibold">Kebijakan Privasi</a></li> <!-- Active Page in Footer -->
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li> <!-- TODO: Buat syarat-ketentuan.html -->
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3>
+                    <p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p>
+                    <p class="text-sm mb-2">Email: Jiksau04@gmail.com</p>
+                    <p class="text-sm mb-4">Telepon: 081334629983</p>
+                    <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08.648-2.034 1.62-2.428.66-.266 1.37-.32 2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const currentYearSpan = document.getElementById('currentYear');
+        const lastUpdatedDateSpan = document.getElementById('lastUpdatedDate');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const mobileNavLinks = mobileMenu.querySelectorAll('a');
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId.length > 1 && document.querySelector(targetId)) {
+                    e.preventDefault();
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                } else if (targetId === "#") {
+                     e.preventDefault();
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        if (currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
+        // Set last updated date dynamically or keep it static as in the HTML
+        // if (lastUpdatedDateSpan) {
+        //    lastUpdatedDateSpan.textContent = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        // }
+
+    </script>
+
+</body>
+</html>
