@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .logo-image-login {
+            height: 80px; /* Slightly larger logo for login page */
+            width: auto;
+            margin-bottom: 1.5rem; /* Add some space below the logo */
+        }
+        .google-btn svg {
+             width: 1.25rem; /* w-5 */
+             height: 1.25rem; /* h-5 */
+             margin-right: 0.75rem; /* mr-3 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+    <div class="mb-8 text-center">
+        <a href="index.html#home">
+            <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image-login mx-auto" onerror="this.onerror=null; this.src='https://placehold.co/240x80/CCCCCC/000000?text=Logo+Error'; this.alt='Logo not found.';">
+        </a>
+    </div>
+
+    <div class="bg-white p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">Selamat Datang!</h1>
+        <p class="text-center text-slate-600 mb-8">Login untuk mengakses semua materi dan kuis.</p>
+        
+        <button id="googleLoginBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-150 ease-in-out mb-6 shadow-md hover:shadow-lg google-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21.992 12.293C21.992 11.472 21.923 10.672 21.784 9.892H12.204V14.263H17.74C17.484 15.713 16.674 16.951 15.471 17.753V20.319H18.915C20.838 18.505 21.992 15.663 21.992 12.293Z" fill="#fff"/><path d="M12.204 22.0002C15.123 22.0002 17.578 21.0472 18.915 19.3192L15.471 16.7532C14.534 17.3902 13.463 17.7562 12.204 17.7562C9.775 17.7562 7.723 16.1282 6.902 13.8432H3.342V16.4912C4.78 19.6332 8.204 22.0002 12.204 22.0002Z" fill="#fff"/><path d="M6.902 13.8433C6.646 13.1063 6.513 12.3263 6.513 11.5263C6.513 10.7273 6.646 9.94729 6.902 9.21029V6.56229H3.342C2.444 8.05029 1.992 9.73729 1.992 11.5263C1.992 13.3153 2.444 14.9993 3.342 16.4913L6.902 13.8433Z" fill="#fff"/><path d="M12.204 5.29691C13.642 5.29691 14.956 5.79191 15.928 6.70191L18.983 3.73491C17.573 2.41391 15.12 1.50091 12.204 1.50091C8.204 1.50091 4.78 3.86791 3.342 6.96291L6.902 9.21091C7.723 6.92591 9.775 5.29691 12.204 5.29691Z" fill="#fff"/></svg>
+            Login dengan Google
+        </button>
+
+        <!-- Placeholder untuk metode login lain jika diperlukan -->
+        <!-- 
+        <div class="relative flex py-5 items-center">
+            <div class="flex-grow border-t border-slate-300"></div>
+            <span class="flex-shrink mx-4 text-slate-400 text-sm">Atau login dengan email</span>
+            <div class="flex-grow border-t border-slate-300"></div>
+        </div>
+
+        <form id="emailLoginForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-slate-700">Alamat Email</label>
+                <input type="email" name="email" id="loginEmail" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-slate-700">Kata Sandi</label>
+                <input type="password" name="password" id="loginPassword" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 ease-in-out shadow-md hover:shadow-lg">
+                Login
+            </button>
+        </form>
+        -->
+
+        <p id="loginMessage" class="mt-4 text-center text-sm text-red-500"></p> <!-- Untuk menampilkan pesan error -->
+
+        <p class="mt-8 text-center text-sm text-slate-600">
+            Belum punya akun? <a href="registrasi.html" class="font-medium text-blue-600 hover:text-blue-700 hover:underline">Daftar di sini</a>
+        </p>
+        <p class="mt-2 text-center text-sm text-slate-600">
+            <a href="#" class="font-medium text-slate-500 hover:text-slate-700 hover:underline">Lupa kata sandi?</a>
+        </p>
+    </div>
+
+    <footer class="mt-12 text-center text-sm text-slate-500">
+        <p>&copy; <span id="currentYear"></span> ExtraCourse. All rights reserved.</p>
+        <p class="mt-1">
+            <a href="kebijakan-privasi.html" class="hover:underline">Kebijakan Privasi</a> &bull; 
+            <a href="syarat-ketentuan.html" class="hover:underline">Syarat & Ketentuan</a>
+        </p>
+    </footer>
+
+    <script type="module">
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+        authDomain: "ec-materi.firebaseapp.com",
+        projectId: "ec-materi",
+        storageBucket: "ec-materi.firebasestorage.app", // Perbaikan: nama bucket biasanya .appspot.com, tapi gunakan yang dari console Anda. Saya asumsikan ini dari console Anda
+        messagingSenderId: "166687187100",
+        appId: "1:166687187100:web:e073df281931524f660d59",
+        measurementId: "G-MT58HLBRDY" // Opsional, tapi baik jika ada
+      };
+
+      // Initialize Firebase
+      // Import the functions you need from the SDKs you need
+      // Gunakan path yang lengkap dari CDN untuk konsistensi dengan halaman lain jika Anda belum setting up build tools / bundler
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"; // Sesuaikan versi jika perlu
+      import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+      // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js"; // Aktifkan jika Anda ingin menggunakan Analytics di halaman ini juga
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      // const analytics = getAnalytics(app); // Aktifkan jika perlu
+      const provider = new GoogleAuthProvider();
+
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
+      const loginMessage = document.getElementById('loginMessage');
+      const currentYearSpan = document.getElementById('currentYear');
+
+      if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+      }
+
+      if (googleLoginBtn) {
+          googleLoginBtn.addEventListener('click', () => {
+              loginMessage.textContent = ''; // Bersihkan pesan error sebelumnya
+              signInWithPopup(auth, provider)
+                  .then((result) => {
+                      const user = result.user;
+                      console.log("Login Berhasil dengan Google:", user);
+                      // Arahkan ke halaman utama atau dashboard setelah login berhasil
+                      // Cek apakah ada parameter redirect dari halaman sebelumnya
+                      const urlParams = new URLSearchParams(window.location.search);
+                      const redirectUrl = urlParams.get('redirect') || 'index.html'; // Default ke index.html
+                      window.location.href = redirectUrl; 
+                  }).catch((error) => {
+                      console.error("Error Login Google:", error.code, error.message);
+                      if (error.code === 'auth/popup-closed-by-user') {
+                          loginMessage.textContent = "Anda menutup jendela login. Silakan coba lagi.";
+                      } else if (error.code === 'auth/cancelled-popup-request') {
+                          loginMessage.textContent = "Proses login dibatalkan. Silakan coba lagi.";
+                      } else {
+                          loginMessage.textContent = "Gagal login dengan Google: " + error.message;
+                      }
+                  });
+          });
+      }
+
+      // Monitor auth state
+      // Ini berguna jika pengguna sudah login dan tidak sengaja kembali ke halaman login
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("Pengguna sudah login:", user.displayName || user.email);
+          // Jika pengguna sudah login dan berada di halaman login, arahkan mereka
+          if (window.location.pathname.endsWith('login-page.html') || window.location.pathname.endsWith('registrasi.html')) {
+            // Cek apakah ada parameter redirect dari halaman sebelumnya
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || 'index.html'; // Default ke index.html
+            // window.location.href = redirectUrl; // Komentari untuk sekarang agar tidak langsung redirect saat testing
+            console.log("Pengguna sudah login, idealnya diarahkan ke:", redirectUrl);
+          }
+        } else {
+          console.log("Pengguna belum login atau sudah logout.");
+        }
+      });
+
+    </script>
+</body>
+</html>
