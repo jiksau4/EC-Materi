@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syarat & Ketentuan - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2563EB; /* Blue-600 */
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link:hover {
+            color: #2563EB; /* Blue-600 */
+        }
+        .mobile-menu-button:focus {
+            outline: none;
+        }
+        .logo-image {
+            height: 70px; /* Consistent logo height */
+            width: auto;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .prose h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* semibold */
+            color: #1E3A8A; /* blue-800 */
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #D1D5DB; /* gray-300 */
+            padding-bottom: 0.5rem;
+        }
+        .prose h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* semibold */
+            color: #1E40AD; /* blue-700 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .prose p, .prose ul li, .prose ol li {
+            line-height: 1.75;
+            color: #374151; /* gray-700 */
+        }
+        .prose ul, .prose ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .prose ul {
+            list-style-type: disc;
+        }
+        .prose ol {
+            list-style-type: decimal;
+        }
+        .prose a {
+            color: #2563EB; /* blue-600 */
+            text-decoration: none;
+        }
+        .prose a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error'; this.alt='Logo not found. Check path: Extra Course logo.png';">
+            </a>
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
+                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
+                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
+                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+            <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+            <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+            <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+            <a href="index.html#tentang" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Tentang Kami</a>
+            <a href="index.html#kontak" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kontak</a>
+        </div>
+    </header>
+
+    <!-- Main Content: Syarat & Ketentuan -->
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        <div class="mb-8">
+            <nav class="text-sm breadcrumb" aria-label="Breadcrumb">
+              <ol class="list-none p-0 inline-flex">
+                <li class="flex items-center">
+                  <a href="index.html#home" class="text-blue-600 hover:text-blue-800">Home</a>
+                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+                </li>
+                <li>
+                  <span class="text-slate-500" aria-current="page">Syarat & Ketentuan</span>
+                </li>
+              </ol>
+            </nav>
+        </div>
+
+        <article class="prose max-w-none bg-white p-6 md:p-10 rounded-lg shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-700 !mb-8">Syarat & Ketentuan Penggunaan ExtraCourse</h1>
+            <p class="text-center text-slate-500 !mb-10">Terakhir diperbarui: <span id="lastUpdatedDateTerms">5 Juni 2025</span></p>
+
+            <p>Selamat datang di ExtraCourse! Syarat dan Ketentuan Penggunaan ("Ketentuan") ini mengatur akses Anda ke dan penggunaan situs web kami [NamaDomainAnda.com] (selanjutnya disebut "Situs") dan layanan yang kami tawarkan (secara kolektif disebut "Layanan"). Harap baca Ketentuan ini dengan saksama sebelum menggunakan Layanan kami.</p>
+            <p>Dengan mengakses atau menggunakan Layanan kami, Anda setuju untuk terikat oleh Ketentuan ini dan <a href="kebijakan-privasi.html">Kebijakan Privasi</a> kami. Jika Anda tidak setuju dengan bagian mana pun dari Ketentuan ini, Anda tidak diizinkan untuk mengakses Layanan.</p>
+
+            <h2>1. Penerimaan Ketentuan</h2>
+            <p>Dengan membuat akun atau menggunakan Layanan kami, Anda menyatakan bahwa Anda telah membaca, memahami, dan setuju untuk terikat oleh Ketentuan ini. Jika Anda menggunakan Layanan atas nama organisasi, Anda menyatakan dan menjamin bahwa Anda memiliki wewenang untuk mengikat organisasi tersebut pada Ketentuan ini, dan dalam hal ini "Anda" dan "milik Anda" akan merujuk pada organisasi tersebut.</p>
+
+            <h2>2. Akun Pengguna</h2>
+            <p>Untuk mengakses beberapa fitur Layanan, Anda mungkin diminta untuk membuat akun. Anda bertanggung jawab untuk menjaga kerahasiaan informasi akun Anda, termasuk kata sandi Anda, dan untuk semua aktivitas yang terjadi di bawah akun Anda. Anda setuju untuk segera memberi tahu kami tentang penggunaan akun Anda yang tidak sah atau pelanggaran keamanan lainnya. Kami tidak akan bertanggung jawab atas kerugian apa pun yang mungkin Anda alami sebagai akibat dari orang lain menggunakan kata sandi atau akun Anda, baik dengan atau tanpa sepengetahuan Anda.</p>
+            
+            <h2>3. Penggunaan Layanan</h2>
+            <p>Anda setuju untuk menggunakan Layanan kami hanya untuk tujuan yang sah dan sesuai dengan Ketentuan ini. Anda tidak boleh menggunakan Layanan kami:</p>
+            <ul>
+                <li>Dengan cara apa pun yang melanggar hukum atau peraturan federal, negara bagian, lokal, atau internasional yang berlaku.</li>
+                <li>Untuk tujuan mengeksploitasi, merugikan, atau mencoba mengeksploitasi atau merugikan anak di bawah umur dengan cara apa pun dengan memaparkan mereka pada konten yang tidak pantas atau sebaliknya.</li>
+                <li>Untuk mengirim, secara sadar menerima, mengunggah, mengunduh, menggunakan, atau menggunakan kembali materi apa pun yang tidak sesuai dengan standar konten yang ditetapkan dalam Ketentuan ini.</li>
+                <li>Untuk terlibat dalam perilaku lain apa pun yang membatasi atau menghambat penggunaan atau kenikmatan Layanan oleh siapa pun, atau yang, sebagaimana ditentukan oleh kami, dapat merugikan ExtraCourse atau pengguna Layanan atau membuat mereka bertanggung jawab.</li>
+            </ul>
+
+            <h2>4. Konten Pengguna</h2>
+            <p>Layanan kami mungkin mengizinkan Anda untuk memposting, menautkan, menyimpan, membagikan, dan menyediakan informasi, teks, grafik, video, atau materi lain tertentu ("Konten Pengguna"). Anda bertanggung jawab atas Konten Pengguna yang Anda posting ke Layanan, termasuk legalitas, keandalan, dan kesesuaiannya.</p>
+            <p>Dengan memposting Konten Pengguna ke Layanan, Anda memberi kami hak dan lisensi non-eksklusif, bebas royalti, di seluruh dunia, dapat dialihkan, dapat disublisensikan untuk menggunakan, mereproduksi, memodifikasi, melakukan, menampilkan, mendistribusikan, dan mengungkapkan kepada pihak ketiga materi tersebut untuk tujuan apa pun.</p>
+
+            <h2>5. Hak Kekayaan Intelektual</h2>
+            <p>Layanan dan konten aslinya (tidak termasuk Konten Pengguna), fitur, dan fungsionalitas adalah dan akan tetap menjadi milik eksklusif ExtraCourse dan pemberi lisensinya. Layanan dilindungi oleh hak cipta, merek dagang, dan undang-undang lain baik di Indonesia maupun di luar negeri. Merek dagang dan tampilan dagang kami tidak boleh digunakan sehubungan dengan produk atau layanan apa pun tanpa persetujuan tertulis sebelumnya dari ExtraCourse.</p>
+            
+            <h2>6. Pembatasan Tanggung Jawab</h2>
+            <p>Dalam keadaan apa pun ExtraCourse, maupun direktur, karyawan, mitra, agen, pemasok, atau afiliasinya, tidak akan bertanggung jawab atas kerugian tidak langsung, insidental, khusus, konsekuensial, atau punitif, termasuk namun tidak terbatas pada, hilangnya keuntungan, data, penggunaan, niat baik, atau kerugian tidak berwujud lainnya, yang diakibatkan oleh (i) akses Anda ke atau penggunaan atau ketidakmampuan untuk mengakses atau menggunakan Layanan; (ii) setiap perilaku atau konten pihak ketiga mana pun di Layanan; (iii) setiap konten yang diperoleh dari Layanan; dan (iv) akses, penggunaan, atau perubahan yang tidak sah atas transmisi atau konten Anda, baik berdasarkan jaminan, kontrak, perbuatan melawan hukum (termasuk kelalaian) atau teori hukum lainnya, baik kami telah diberitahu tentang kemungkinan kerusakan tersebut atau tidak, dan bahkan jika upaya hukum yang ditetapkan di sini ternyata telah gagal dari tujuan esensialnya.</p>
+
+            <h2>7. Perubahan pada Ketentuan</h2>
+            <p>Kami berhak, atas kebijakan kami sendiri, untuk memodifikasi atau mengganti Ketentuan ini kapan saja. Jika revisi bersifat material, kami akan berusaha memberikan pemberitahuan setidaknya 30 hari sebelum ketentuan baru berlaku. Apa yang merupakan perubahan material akan ditentukan atas kebijakan kami sendiri.</p>
+            <p>Dengan terus mengakses atau menggunakan Layanan kami setelah revisi tersebut berlaku, Anda setuju untuk terikat oleh ketentuan yang direvisi. Jika Anda tidak menyetujui ketentuan baru, Anda tidak lagi diizinkan untuk menggunakan Layanan.</p>
+
+            <h2>8. Hukum yang Mengatur</h2>
+            <p>Ketentuan ini akan diatur dan ditafsirkan sesuai dengan hukum Negara Republik Indonesia, tanpa memperhatikan pertentangan ketentuan hukumnya.</p>
+            <p>Kegagalan kami untuk menegakkan hak atau ketentuan apa pun dari Ketentuan ini tidak akan dianggap sebagai pengabaian hak-hak tersebut. Jika ada ketentuan dari Ketentuan ini yang dianggap tidak sah atau tidak dapat dilaksanakan oleh pengadilan, ketentuan lainnya dari Ketentuan ini akan tetap berlaku. Ketentuan ini merupakan keseluruhan perjanjian antara kami mengenai Layanan kami, dan menggantikan serta menggantikan perjanjian sebelumnya yang mungkin kami miliki antara kami mengenai Layanan.</p>
+
+            <h2>9. Hubungi Kami</h2>
+            <p>Jika Anda memiliki pertanyaan tentang Ketentuan ini, silakan hubungi kami:</p>
+            <p>
+                ExtraCourse<br>
+                Jl. Pangeran Puger V, Yogyakarta<br>
+                Email: Jiksau04@gmail.com<br>
+                Telepon: 081334629983
+            </p>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3>
+                    <p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p>
+                    <p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li>
+                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
+                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
+                        <li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
+                        <li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li>
+                        <li><a href="syarat-ketentuan.html" class="text-blue-400 font-semibold">Syarat & Ketentuan</a></li> <!-- Active Page in Footer -->
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3>
+                    <p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p>
+                    <p class="text-sm mb-2">Email: Jiksau04@gmail.com</p>
+                    <p class="text-sm mb-4">Telepon: 081334629983</p>
+                    <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08.648-2.034 1.62-2.428.66-.266 1.37-.32 2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const currentYearSpan = document.getElementById('currentYear');
+        const lastUpdatedDateTermsSpan = document.getElementById('lastUpdatedDateTerms');
+
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const mobileNavLinks = mobileMenu.querySelectorAll('a');
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId.length > 1 && document.querySelector(targetId)) {
+                    e.preventDefault();
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                } else if (targetId === "#") {
+                     e.preventDefault();
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        if (currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
+        // Set last updated date for terms dynamically or keep it static
+        // if (lastUpdatedDateTermsSpan) {
+        //    lastUpdatedDateTermsSpan.textContent = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        // }
+    </script>
+
+</body>
+</html>
