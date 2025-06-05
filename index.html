@@ -24,7 +24,10 @@
         .feature-card, .preview-card, .testimonial-card {
             transition: all 0.3s ease;
         }
-        .feature-card:hover, .preview-card:hover, .testimonial-card:hover {
+        .preview-card { /* Tambahkan position relative untuk overlay */
+            position: relative;
+        }
+        .feature-card:hover, .preview-card:not(.content-locked):hover, .testimonial-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
@@ -80,12 +83,12 @@
             background-color: #DBEAFE; /* hover:bg-blue-100 */
             color: #1D4ED8; /* hover:text-blue-700 */
         }
-        #userInfo, #mobileUserInfo .flex.items-center { /* Styles for user info block */
+        #userInfoDesktop, #mobileUserInfo .flex.items-center { /* Styles for user info block */
             display: flex;
             align-items: center;
             gap: 0.75rem; /* space-x-3 */
         }
-        #userInfo img, #mobileUserInfo img { /* Styles for user photo */
+        #userInfoDesktop img, #mobileUserInfo img { /* Styles for user photo */
             width: 32px; /* w-8 */
             height: 32px; /* h-8 */
             border-radius: 9999px; /* rounded-full */
@@ -97,7 +100,36 @@
             white-space: nowrap; /* Prevent name from wrapping */
             overflow: hidden;
             text-overflow: ellipsis; /* Add ellipsis if name is too long */
-            max-width: 150px; /* Adjust as needed */
+            max-width: 120px; /* Adjust as needed for header layout */
+        }
+        /* Gaya untuk konten terkunci */
+        .content-locked {
+            filter: blur(4px); /* Tingkat blur */
+            /* opacity: 0.7; */ /* Opasitas bisa diatur jika mau */
+            pointer-events: none; /* Mencegah interaksi dengan konten yang di-blur */
+        }
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(230, 230, 230, 0.25); /* Overlay tipis agar ikon terlihat jelas */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 0.75rem; /* Sesuai dengan radius kartu */
+            pointer-events: auto; /* Biarkan overlay bisa di-klik jika mau (untuk masa depan, misal redirect ke login) */
+        }
+        .lock-overlay.hidden { /* Kelas untuk menyembunyikan overlay */
+            display: none;
+        }
+        .lock-overlay svg {
+            width: 3rem; /* Ukuran ikon gembok */
+            height: 3rem;
+            color: #4B5563; /* Warna ikon gembok (slate-600) */
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -123,7 +155,7 @@
                     <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
                     <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a> 
                 </div>
-                <div id="userInfoDesktop" class="hidden"> <!-- Initially hidden -->
+                <div id="userInfoDesktop" class="hidden"> <!-- Initially hidden, flex added by JS -->
                     <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna" class="">
                     <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
                     <button id="logoutButtonDesktop" class="auth-button auth-button-secondary text-sm ml-2">Logout</button>
@@ -150,7 +182,7 @@
                  <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
                  <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
             </div>
-            <div class="px-6 mt-2 hidden items-center justify-between" id="userInfoMobile">
+            <div class="px-6 mt-2 hidden items-center justify-between" id="userInfoMobile"> <!-- Initially hidden, flex added by JS -->
                 <div class="flex items-center"> <!-- Wrapper for photo and name -->
                     <img id="userPhotoMobile" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna" class="">
                     <span id="userDisplayNameMobile" class="user-display-name ml-2"></span>
@@ -181,7 +213,6 @@
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Kenapa Memilih ExtraCourse?</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Kami menyediakan platform pembelajaran Bahasa Inggris yang lengkap untuk mendukung kesuksesan Anda.</p>
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Fitur 1 -->
                 <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
                     <div class="flex justify-center mb-4">
                         <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v11.494m0 0A8.966 8.966 0 013.75 15a8.966 8.966 0 018.25 2.747m0-11.494V6.253c0-1.536.736-2.961 1.907-3.9C15.036 1.36 16.502 1 18 1c1.498 0 2.964.36 4.143 1.353A4.001 4.001 0 0120.25 6.253v11.494m0 0a8.966 8.966 0 00-8.25 2.747M12 17.747v-2.494"></path></svg>
@@ -189,7 +220,6 @@
                     <h3 class="text-xl font-semibold text-blue-700 mb-3">Materi Terstruktur</h3>
                     <p class="text-slate-600">Akses materi Bahasa Inggris yang disusun sistematis, dari level dasar hingga mahir.</p>
                 </div>
-                <!-- Fitur 2 -->
                 <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
                      <div class="flex justify-center mb-4">
                         <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 12.5M9.75 3.104c-.251.038-.502.082-.752.132C7.396 3.716 6.07 4.5 4.998 5.625M9.75 3.104c.251.038.502.082.752.132a9.017 9.017 0 012.276.627c1.438.686 2.559 1.728 3.375 2.926M12 21.75c-4.243 0-7.617-3.06-7.617-6.825 0-1.76.654-3.375 1.729-4.626"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12.75V15m0 0A2.25 2.25 0 0014.25 12.75V12A2.25 2.25 0 0012 9.75V7.5M12 15c-2.25 0-4.5.433-6.526 1.25M12 15c2.25 0 4.5.433 6.526 1.25M12 15v2.25A2.25 2.25 0 0014.25 19.5h4.5A2.25 2.25 0 0021 17.25V15"></path></svg>
@@ -197,7 +227,6 @@
                     <h3 class="text-xl font-semibold text-blue-700 mb-3">Kuis Interaktif</h3>
                     <p class="text-slate-600">Uji pemahaman Grammar, Vocabulary, dan Listening dengan kuis menarik.</p>
                 </div>
-                <!-- Fitur 3 -->
                 <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
                     <div class="flex justify-center mb-4">
                         <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"></path></svg>
@@ -215,8 +244,7 @@
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Materi Bahasa Inggris Unggulan</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Jelajahi berbagai topik Bahasa Inggris menarik yang kami sediakan untuk semua tingkatan.</p>
             <div id="materiList" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Card Materi akan dirender oleh JavaScript atau di-hardcode di sini -->
-                <!-- Contoh Materi Card 1 (Akses Terbuka) -->
+                <!-- Materi Card 1 -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
                     <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=English+Grammar" alt="Materi English Grammar" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">English Grammar Essentials</h4>
@@ -224,8 +252,11 @@
                     <div class="mt-auto">
                          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">PEMULA</span>
                     </div>
+                    <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
-                <!-- Contoh Materi Card 2 (Akses Terbuka) -->
+                <!-- Materi Card 2 -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
                     <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Daily+Vocabulary" alt="Materi Daily Vocabulary" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">Daily Conversation Vocabulary</h4>
@@ -233,8 +264,11 @@
                      <div class="mt-auto">
                         <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">MENENGAH</span>
                     </div>
+                    <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
-                <!-- Contoh Materi Card 3 (Harusnya Terkunci jika belum login) -->
+                <!-- Materi Card 3 -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
                     <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Listening+Practice" alt="Materi Listening Practice" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">Listening Comprehension</h4>
@@ -242,8 +276,11 @@
                     <div class="mt-auto">
                         <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">SEMUA LEVEL</span>
                     </div>
+                     <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
-                <!-- Contoh Materi Card 4 (Harusnya Terkunci jika belum login) -->
+                <!-- Materi Card 4 -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
                     <img src="https://placehold.co/600x400/6366F1/FFFFFF?text=TOEFL+Preparation" alt="Materi TOEFL Preparation" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">TOEFL/IELTS Preparation</h4>
@@ -251,13 +288,16 @@
                     <div class="mt-auto">
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">MAHIR</span>
                     </div>
+                     <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
             </div>
             <div id="loginPromptMateri" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
                 <p class="text-yellow-700 font-medium">
                     Untuk mengakses lebih banyak materi, silakan 
                     <a href="login-page.html?redirect=semua-materi.html" class="font-bold underline hover:text-yellow-800">Login</a> atau 
-                    <a href="login-page.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
+                    <a href="registrasi.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
                 </p>
             </div>
             <div class="text-center mt-12">
@@ -274,7 +314,7 @@
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Asah Kemampuan Bahasa Inggrismu</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Pilih kuis Bahasa Inggris sesuai tingkat kemampuanmu, lalu lihat seberapa jauh pemahamanmu!</p>
             <div id="kuisList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 <!-- Contoh Kuis Card 1 (Akses Terbuka) -->
+                <!-- Kuis Card 1 -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -287,8 +327,11 @@
                     </div>
                     <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahamanmu tentang Simple Present, Past, Future.</p>
                     <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                    <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
-                 <!-- Contoh Kuis Card 2 (Harusnya Terkunci jika belum login) -->
+                <!-- Kuis Card 2 -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -301,8 +344,11 @@
                     </div>
                     <p class="text-sm text-slate-600 mb-4 flex-grow">Seberapa banyak idiom Bahasa Inggris yang kamu ketahui?</p>
                     <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                    <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
-                <!-- Contoh Kuis Card 3 (Harusnya Terkunci jika belum login) -->
+                <!-- Kuis Card 3 -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -315,13 +361,16 @@
                     </div>
                     <p class="text-sm text-slate-600 mb-4 flex-grow">Dengarkan dialog singkat dan jawab pertanyaannya.</p>
                     <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                    <div class="lock-overlay hidden">
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                    </div>
                 </div>
             </div>
             <div id="loginPromptKuis" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
                 <p class="text-yellow-700 font-medium">
                     Untuk mengakses lebih banyak kuis, silakan 
                     <a href="login-page.html?redirect=semua-kuis.html" class="font-bold underline hover:text-yellow-800">Login</a> atau 
-                    <a href="login-page.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
+                    <a href="registrasi.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
                 </p>
             </div>
             <div class="text-center mt-12">
@@ -335,7 +384,7 @@
     <!-- Testimoni Section -->
     <section id="tentang" class="py-16 md:py-24 bg-blue-50">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Apa Kata Mereka?</h2>
+             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Apa Kata Mereka?</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Dengarkan pengalaman para siswa yang telah merasakan manfaat belajar Bahasa Inggris di ExtraCourse.</p>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="testimonial-card bg-white p-8 rounded-xl shadow-lg border border-gray-200">
@@ -398,7 +447,7 @@
     </footer>
 
     <script type="module">
-        // Firebase Config (Gunakan yang telah Anda dapatkan)
+        // Firebase Config
         const firebaseConfig = {
           apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
           authDomain: "ec-materi.firebaseapp.com",
@@ -437,52 +486,69 @@
         const loginPromptMateri = document.getElementById('loginPromptMateri');
         const loginPromptKuis = document.getElementById('loginPromptKuis');
 
-        const freeMateriCount = 2; // Jumlah materi gratis yang ditampilkan jika belum login
-        const freeKuisCount = 1;   // Jumlah kuis gratis yang ditampilkan jika belum login
+        const freeMateriCount = 2; 
+        const freeKuisCount = 1;   
 
         function updateAuthUI(user) {
             const allMateriCards = materiListDiv ? Array.from(materiListDiv.children) : [];
             const allKuisCards = kuisListDiv ? Array.from(kuisListDiv.children) : [];
 
+            allMateriCards.forEach(card => card.style.display = 'flex'); 
+            allKuisCards.forEach(card => card.style.display = 'flex');
+
             if (user) {
-                // Pengguna login
                 if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
                 if (authLinksMobile) authLinksMobile.classList.add('hidden');
+                if (userInfoDesktop) { userInfoDesktop.classList.remove('hidden'); userInfoDesktop.classList.add('flex');}
+                if (userInfoMobile) { userInfoMobile.classList.remove('hidden'); userInfoMobile.classList.add('flex');}
 
-                if (userInfoDesktop) userInfoDesktop.classList.remove('hidden');
-                if (userInfoDesktop) userInfoDesktop.classList.add('flex'); // Ensure it's flex for alignment
-                if (userInfoMobile) userInfoMobile.classList.remove('hidden');
-                if (userInfoMobile) userInfoMobile.classList.add('flex'); // Ensure it's flex for alignment
-
-                const displayName = user.displayName || user.email.split('@')[0]; // Use part of email if no display name
-                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32`;
+                const displayName = user.displayName || user.email.split('@')[0];
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
                 
                 if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
                 if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
                 if (userDisplayNameMobile) userDisplayNameMobile.textContent = displayName;
                 if (userPhotoMobile) userPhotoMobile.src = photoURL;
 
-                allMateriCards.forEach(card => card.style.display = 'flex'); // Assuming cards are flex containers
-                allKuisCards.forEach(card => card.style.display = 'flex');
+                allMateriCards.forEach(card => {
+                    card.classList.remove('content-locked');
+                    const overlay = card.querySelector('.lock-overlay');
+                    if (overlay) overlay.classList.add('hidden');
+                });
+                allKuisCards.forEach(card => {
+                    card.classList.remove('content-locked');
+                    const overlay = card.querySelector('.lock-overlay');
+                    if (overlay) overlay.classList.add('hidden');
+                });
 
                 if(loginPromptMateri) loginPromptMateri.classList.add('hidden');
                 if(loginPromptKuis) loginPromptKuis.classList.add('hidden');
 
             } else {
-                // Pengguna logout
                 if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
                 if (authLinksMobile) authLinksMobile.classList.remove('hidden');
-                
-                if (userInfoDesktop) userInfoDesktop.classList.add('hidden');
-                if (userInfoDesktop) userInfoDesktop.classList.remove('flex');
-                if (userInfoMobile) userInfoMobile.classList.add('hidden');
-                if (userInfoMobile) userInfoMobile.classList.remove('flex');
+                if (userInfoDesktop) { userInfoDesktop.classList.add('hidden'); userInfoDesktop.classList.remove('flex');}
+                if (userInfoMobile) { userInfoMobile.classList.add('hidden'); userInfoMobile.classList.remove('flex');}
 
                 allMateriCards.forEach((card, index) => {
-                    card.style.display = index < freeMateriCount ? 'flex' : 'none';
+                    const overlay = card.querySelector('.lock-overlay');
+                    if (index >= freeMateriCount) { 
+                        card.classList.add('content-locked');
+                        if (overlay) overlay.classList.remove('hidden');
+                    } else { 
+                        card.classList.remove('content-locked');
+                        if (overlay) overlay.classList.add('hidden');
+                    }
                 });
                 allKuisCards.forEach((card, index) => {
-                    card.style.display = index < freeKuisCount ? 'flex' : 'none';
+                    const overlay = card.querySelector('.lock-overlay');
+                    if (index >= freeKuisCount) { 
+                        card.classList.add('content-locked');
+                        if (overlay) overlay.classList.remove('hidden');
+                    } else { 
+                        card.classList.remove('content-locked');
+                        if (overlay) overlay.classList.add('hidden');
+                    }
                 });
 
                 if(loginPromptMateri) loginPromptMateri.classList.remove('hidden');
@@ -533,6 +599,8 @@
         if (currentYearSpan) {
             currentYearSpan.textContent = new Date().getFullYear();
         }
+        
+        updateAuthUI(auth.currentUser); // Initial UI update
     </script>
 
 </body>
