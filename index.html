@@ -55,8 +55,44 @@
         }
         /* Logo Styling */
         .logo-image {
-            height: 70px; /* Adjusted height - was 50px */
+            height: 70px; 
             width: auto;
+        }
+        /* Styling untuk tombol auth */
+        .auth-button {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border-radius: 0.375rem; /* rounded-md */
+            font-weight: 500; /* font-medium */
+            transition: background-color 0.3s ease;
+        }
+        .auth-button-primary {
+            background-color: #2563EB; /* bg-blue-600 */
+            color: white;
+        }
+        .auth-button-primary:hover {
+            background-color: #1D4ED8; /* hover:bg-blue-700 */
+        }
+        .auth-button-secondary {
+            background-color: transparent;
+            color: #2563EB; /* text-blue-600 */
+            border: 1px solid #2563EB; /* border border-blue-600 */
+        }
+        .auth-button-secondary:hover {
+            background-color: #DBEAFE; /* hover:bg-blue-100 */
+        }
+         #userInfo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* space-x-3 */
+        }
+        #userInfo img {
+            width: 32px; /* w-8 */
+            height: 32px; /* h-8 */
+            border-radius: 9999px; /* rounded-full */
+        }
+        .user-display-name {
+            font-weight: 500;
+            color: #374151; /* text-gray-700 */
         }
     </style>
 </head>
@@ -66,8 +102,7 @@
     <header class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#home" class="flex items-center">
-                <!-- Updated path to the logo image, assuming it's in an 'img' folder -->
-                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x50/CCCCCC/000000?text=Logo+Error'; this.alt='Logo not found. Check path: img/Extra Course logo.png';">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error'; this.alt='Logo not found. Check path: Extra Course logo.png';">
             </a>
             <nav class="hidden md:flex space-x-6 items-center">
                 <a href="#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
@@ -76,6 +111,21 @@
                 <a href="#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
                 <a href="#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
             </nav>
+            
+            <!-- Bagian Autentikasi Pengguna -->
+            <div class="hidden md:flex items-center space-x-3">
+                <div id="authLinks">
+                    <a href="login-page.html" id="loginButton" class="auth-button auth-button-secondary">Login</a>
+                    <a href="registrasi.html" id="registerButton" class="auth-button auth-button-primary ml-2">Daftar</a>
+                    <!-- TODO: Buat halaman registrasi.html -->
+                </div>
+                <div id="userInfo" class="hidden items-center">
+                    <img id="userPhoto" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="User Photo" class="w-8 h-8 rounded-full">
+                    <span id="userDisplayName" class="text-slate-700 font-medium ml-2"></span>
+                    <button id="logoutButton" class="auth-button auth-button-secondary ml-3">Logout</button>
+                </div>
+            </div>
+
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -85,12 +135,24 @@
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
             <a href="#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
             <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
             <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
             <a href="#tentang" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Tentang Kami</a>
             <a href="#kontak" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kontak</a>
+            <!-- Tombol Auth untuk Mobile -->
+            <div class="px-6 mt-2 space-y-2" id="mobileAuthLinks">
+                 <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                 <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+            </div>
+            <div class="px-6 mt-2 hidden items-center justify-between" id="mobileUserInfo">
+                <div class="flex items-center">
+                    <img id="mobileUserPhoto" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="User Photo" class="w-8 h-8 rounded-full">
+                    <span id="mobileUserDisplayName" class="text-slate-700 font-medium ml-2"></span>
+                </div>
+                <button id="mobileLogoutButton" class="auth-button auth-button-secondary text-sm">Logout</button>
+            </div>
         </div>
     </header>
 
@@ -148,35 +210,42 @@
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Materi Bahasa Inggris Unggulan</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Jelajahi berbagai topik Bahasa Inggris menarik yang kami sediakan untuk semua tingkatan.</p>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Contoh Materi Card 1 -->
+            <div id="materiList" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Contoh Materi Card 1 (Akses Terbuka) -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=English+Grammar" alt="Materi English Grammar" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">English Grammar Essentials</h4>
                     <p class="text-sm text-slate-600 mb-3">Pahami tenses, parts of speech, dan struktur kalimat dengan mudah.</p>
                     <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">PEMULA</span>
                 </div>
-                <!-- Contoh Materi Card 2 -->
+                <!-- Contoh Materi Card 2 (Akses Terbuka) -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Daily+Vocabulary" alt="Materi Daily Vocabulary" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">Daily Conversation Vocabulary</h4>
                     <p class="text-sm text-slate-600 mb-3">Perkaya kosakata untuk percakapan sehari-hari dan formal.</p>
                     <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">MENENGAH</span>
                 </div>
-                <!-- Contoh Materi Card 3 -->
+                <!-- Contoh Materi Card 3 (Akses Terbuka) -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Listening+Practice" alt="Materi Listening Practice" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">Listening Comprehension</h4>
                     <p class="text-sm text-slate-600 mb-3">Latih kemampuan mendengar melalui berbagai audio dan dialog.</p>
                     <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">SEMUA LEVEL</span>
                 </div>
-                <!-- Contoh Materi Card 4 -->
+                <!-- Contoh Materi Card 4 (Akses Terbuka) -->
                 <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                     <img src="https://placehold.co/600x400/6366F1/FFFFFF?text=TOEFL+Preparation" alt="Materi TOEFL Preparation" class="rounded-md mb-4 h-40 w-full object-cover">
                     <h4 class="text-lg font-semibold text-blue-700 mb-2">TOEFL/IELTS Preparation</h4>
                     <p class="text-sm text-slate-600 mb-3">Strategi dan latihan soal untuk persiapan tes Bahasa Inggris.</p>
                     <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">MAHIR</span>
                 </div>
+            </div>
+            <div id="loginPromptMateri" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
+                <p class="text-yellow-700 font-medium">
+                    Untuk mengakses lebih banyak materi, silakan 
+                    <a href="login-page.html?redirect=semua-materi.html" class="font-bold underline hover:text-yellow-800">Login</a> atau 
+                    <a href="registrasi.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
+                </p>
             </div>
             <div class="text-center mt-12">
                 <a href="semua-materi.html" class="cta-button bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg">
@@ -191,8 +260,8 @@
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Asah Kemampuan Bahasa Inggrismu</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Pilih kuis Bahasa Inggris sesuai tingkat kemampuanmu, lalu lihat seberapa jauh pemahamanmu!</p>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 <!-- Contoh Kuis Card 1 -->
+            <div id="kuisList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 <!-- Contoh Kuis Card 1 (Akses Terbuka) -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -206,7 +275,7 @@
                     <p class="text-sm text-slate-600 mb-4">Uji pemahamanmu tentang Simple Present, Past, Future.</p>
                     <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">Mulai Kuis &rarr;</a>
                 </div>
-                 <!-- Contoh Kuis Card 2 -->
+                 <!-- Contoh Kuis Card 2 (Akses Terbuka) -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -220,7 +289,7 @@
                     <p class="text-sm text-slate-600 mb-4">Seberapa banyak idiom Bahasa Inggris yang kamu ketahui?</p>
                     <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">Mulai Kuis &rarr;</a>
                 </div>
-                <!-- Contoh Kuis Card 3 -->
+                <!-- Contoh Kuis Card 3 (Akses Terbuka) -->
                 <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200">
                     <div class="flex items-center mb-3">
                         <div class="p-3 bg-blue-200 rounded-full mr-4">
@@ -234,6 +303,13 @@
                     <p class="text-sm text-slate-600 mb-4">Dengarkan dialog singkat dan jawab pertanyaannya.</p>
                     <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800">Mulai Kuis &rarr;</a>
                 </div>
+            </div>
+            <div id="loginPromptKuis" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
+                <p class="text-yellow-700 font-medium">
+                    Untuk mengakses lebih banyak kuis, silakan 
+                    <a href="login-page.html?redirect=semua-kuis.html" class="font-bold underline hover:text-yellow-800">Login</a> atau 
+                    <a href="registrasi.html" class="font-bold underline hover:text-yellow-800">Daftar</a>.
+                </p>
             </div>
             <div class="text-center mt-12">
                 <a href="semua-kuis.html" class="cta-button bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg">
@@ -287,8 +363,8 @@
                     <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="#home" class="hover:text-blue-400 transition-colors">Home</a></li>
-                        <li><a href="#materi" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
-                        <li><a href="#kuis" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
+                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
+                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
                         <li><a href="#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
                         <li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li>
                         <li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li>
@@ -301,10 +377,9 @@
                     <p class="text-sm mb-4">Telepon: 081334629983</p>
                     <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
                     <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/extracourse_temanbelajar/" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
+                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08.648-2.034 1.62-2.428.66-.266 1.37-.32 2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
                             <span>Instagram</span>
-                            <span class="sr-only">Instagram</span>
                         </a>
                     </div>
                 </div>
@@ -312,41 +387,152 @@
         </div>
     </footer>
 
-    <script>
-        // Mobile menu toggle
+    <script type="module">
+        // Firebase Config (Gunakan yang telah Anda dapatkan)
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app", // Pastikan ini benar dari console Anda
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59",
+          measurementId: "G-MT58HLBRDY"
+        };
+
+        // Import fungsi Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Element DOM
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const currentYearSpan = document.getElementById('currentYear');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        // Auth UI Elements - Desktop
+        const authLinksDiv = document.getElementById('authLinks');
+        const userInfoDiv = document.getElementById('userInfo');
+        const userPhotoImg = document.getElementById('userPhoto');
+        const userDisplayNameSpan = document.getElementById('userDisplayName');
+        const logoutButton = document.getElementById('logoutButton');
 
-        // Close mobile menu when a link is clicked
-        const mobileNavLinks = mobileMenu.querySelectorAll('a');
-        mobileNavLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
+        // Auth UI Elements - Mobile
+        const mobileAuthLinksDiv = document.getElementById('mobileAuthLinks');
+        const mobileUserInfoDiv = document.getElementById('mobileUserInfo');
+        const mobileUserPhotoImg = document.getElementById('mobileUserPhoto');
+        const mobileUserDisplayNameSpan = document.getElementById('mobileUserDisplayName');
+        const mobileLogoutButton = document.getElementById('mobileLogoutButton');
         
-        // Smooth scroll for anchor links
+        // Login Prompts
+        const loginPromptMateri = document.getElementById('loginPromptMateri');
+        const loginPromptKuis = document.getElementById('loginPromptKuis');
+
+
+        // Fungsi untuk update UI berdasarkan status login
+        function updateAuthUI(user) {
+            if (user) {
+                // Pengguna login
+                if (authLinksDiv) authLinksDiv.classList.add('hidden');
+                if (mobileAuthLinksDiv) mobileAuthLinksDiv.classList.add('hidden');
+
+                if (userInfoDiv) userInfoDiv.classList.remove('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.remove('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.add('flex'); // Pastikan flex untuk layout mobile
+
+                const displayName = user.displayName || user.email; // Gunakan email jika displayName tidak ada
+                const photoURL = user.photoURL || 'https://placehold.co/32x32/CCCCCC/FFFFFF?text=U';
+                
+                if (userDisplayNameSpan) userDisplayNameSpan.textContent = displayName;
+                if (userPhotoImg) userPhotoImg.src = photoURL;
+                if (mobileUserDisplayNameSpan) mobileUserDisplayNameSpan.textContent = displayName;
+                if (mobileUserPhotoImg) mobileUserPhotoImg.src = photoURL;
+
+                // Sembunyikan prompt login
+                if(loginPromptMateri) loginPromptMateri.classList.add('hidden');
+                if(loginPromptKuis) loginPromptKuis.classList.add('hidden');
+
+                // (TODO: Tambahkan logika untuk menampilkan semua materi/kuis di sini jika diperlukan)
+
+            } else {
+                // Pengguna logout
+                if (authLinksDiv) authLinksDiv.classList.remove('hidden');
+                if (mobileAuthLinksDiv) mobileAuthLinksDiv.classList.remove('hidden');
+                
+                if (userInfoDiv) userInfoDiv.classList.add('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.add('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.remove('flex');
+
+
+                // Tampilkan prompt login jika ada
+                if(loginPromptMateri) loginPromptMateri.classList.remove('hidden');
+                if(loginPromptKuis) loginPromptKuis.classList.remove('hidden');
+
+                // (TODO: Tambahkan logika untuk membatasi tampilan materi/kuis di sini)
+            }
+        }
+
+        // Listener status autentikasi
+        onAuthStateChanged(auth, (user) => {
+            updateAuthUI(user);
+            if (user) {
+                console.log("Pengguna login:", user);
+                // Di sini Anda bisa mengambil data spesifik pengguna jika diperlukan
+            } else {
+                console.log("Pengguna logout.");
+            }
+        });
+
+        // Event listener untuk tombol logout
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                signOut(auth).catch((error) => console.error("Error logout:", error));
+            });
+        }
+        if (mobileLogoutButton) {
+             mobileLogoutButton.addEventListener('click', () => {
+                signOut(auth).catch((error) => console.error("Error logout mobile:", error));
+            });
+        }
+
+        // Mobile menu toggle
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Close mobile menu when a link is clicked (opsional, bisa jadi pengguna ingin tetap terbuka)
+            // const mobileNavLinks = mobileMenu.querySelectorAll('a:not([href^="login-page.html"]):not([href^="registrasi.html"])'); // Abaikan link login/daftar
+            // mobileNavLinks.forEach(link => {
+            //     link.addEventListener('click', () => {
+            //         if (!mobileMenu.classList.contains('hidden')) {
+            //              mobileMenu.classList.add('hidden');
+            //         }
+            //     });
+            // });
+        }
+        
+        // Smooth scroll untuk anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
-                // Check if target is not just "#" (top of page)
                 if (targetId.length > 1 && document.querySelector(targetId)) {
                     document.querySelector(targetId).scrollIntoView({
                         behavior: 'smooth'
                     });
-                } else if (targetId === "#") { // For links like href="#" that might be placeholders for the top of the page
+                } else if (targetId === "#") {
                      window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
         });
 
-        // Set current year in footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // Set tahun footer
+        if (currentYearSpan) {
+            currentYearSpan.textContent = new Date().getFullYear();
+        }
     </script>
 
 </body>
