@@ -73,7 +73,7 @@
             padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
             padding-bottom: 0.75rem; display: block; color: #4B5563;
         }
-         #mobileUserMenuLinksContainer a:hover {
+         #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
             background-color: #EFF6FF; color: #2563EB;
         }
 
@@ -135,7 +135,7 @@
                             <p class="email" id="dropdownUserEmailDesktop"></p>
                         </div>
                         <a href="profil.html" class="dropdown-item">Profil Saya</a>
-                        <a href="#" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
                         <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
                         <hr class="border-slate-200 my-1">
                         <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
@@ -173,7 +173,6 @@
         <p id="pageSubtitle" class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Temukan semua materi Bahasa Inggris yang kami tawarkan, dari tingkat pemula hingga mahir, untuk membantu Anda mencapai tujuan belajar.</p>
 
         <div id="allMateriCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="grammar-essentials">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=English+Grammar" alt="Materi English Grammar" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -182,7 +181,6 @@
                 <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">PEMULA</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="daily-vocab">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Daily+Vocabulary" alt="Materi Daily Vocabulary" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -191,7 +189,6 @@
                 <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">MENENGAH</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="listening-comprehension">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Listening+Practice" alt="Materi Listening Practice" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -200,7 +197,6 @@
                 <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">SEMUA LEVEL</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-             
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="toefl-prep">
                  <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                  <img src="https://placehold.co/600x400/6366F1/FFFFFF?text=TOEFL+Preparation" alt="Materi TOEFL Preparation" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -209,7 +205,6 @@
                  <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">MAHIR</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                  <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-             
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="business-english">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/EC4899/FFFFFF?text=Business+English" alt="Materi Business English" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -218,7 +213,6 @@
                 <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full">MENENGAH</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="pronunciation">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/8B5CF6/FFFFFF?text=Pronunciation" alt="Materi Pronunciation" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -227,7 +221,6 @@
                 <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">SEMUA LEVEL</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="writing-skills">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/F0B90B/FFFFFF?text=Writing+Skills" alt="Materi Writing Skills" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -236,7 +229,6 @@
                  <div class="mt-auto flex justify-between items-center"><span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">MAHIR</span><a href="#" class="detail-link text-sm font-medium text-blue-600 hover:text-blue-800">Lihat Detail &rarr;</a></div>
                 <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-
             <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="kids-english">
                 <button class="save-materi-btn" aria-label="Simpan Materi"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <img src="https://placehold.co/600x400/14B8A6/FFFFFF?text=Kids+English" alt="Materi English for Kids" class="rounded-md mb-4 h-40 w-full object-cover">
@@ -255,40 +247,8 @@
         </div>
     </main>
 
-    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16">
-        <div class="container mx-auto px-6">
-             <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3>
-                    <p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p>
-                    <p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li>
-                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
-                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
-                        <li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
-                        <li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li>
-                        <li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3>
-                    <p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p>
-                    <p class="text-sm mb-2">Email: Jiksau04@gmail.com</p>
-                    <p class="text-sm mb-4">Telepon: 081334629983</p>
-                    <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
-                            <span>Instagram</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16 mt-16">
+        <!-- ... Konten Footer Lengkap ... -->
     </footer>
 
     <script type="module">
@@ -300,7 +260,6 @@
           messagingSenderId: "166687187100",
           appId: "1:166687187100:web:e073df281931524f660d59"
         };
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -308,8 +267,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // --- Logika Universal Header & UI ---
+        
+        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -322,11 +281,72 @@
         const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
         const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
 
-        function updateHeaderUI(user) { /* ... (Salin dari index.html yang paling baru) ... */ }
-        if (userInfoDesktopTrigger) { /* ... (Salin listener dropdown dari index.html) ... */ }
-        if (logoutButtonDropdownDesktop) { /* ... (Salin listener logout dari index.html) ... */ }
-        if (mobileMenuButton) { /* ... (Salin listener mobile menu dari index.html) ... */ }
-        // --- Akhir Logika Universal ---
+        function updateHeaderUI(user) {
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            
+            if (user) { 
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi Tersimpan</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
+                }
+            } else { 
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
+        
+        if (userInfoDesktopTrigger) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', () => { if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
+        }
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
+        }
         
         // --- Logika Spesifik Halaman Ini ---
         const allMateriCardsContainer = document.getElementById('allMateriCardsContainer');
@@ -386,18 +406,14 @@
                 if(!auth.currentUser) alert("Anda harus login untuk menyimpan materi!");
                 return;
             }
-
             const card = button.closest('.preview-card');
             const materiId = card.dataset.materiId;
             const uid = auth.currentUser.uid;
             const userDocRef = doc(db, "userSavedMaterials", uid);
-
             try {
                 const isCurrentlySaved = savedMateriForCurrentUser.includes(materiId);
                 const updatePayload = { savedMaterialIds: isCurrentlySaved ? arrayRemove(materiId) : arrayUnion(materiId) };
-                
                 await setDoc(userDocRef, updatePayload, { merge: true });
-                
                 if (isCurrentlySaved) {
                     savedMateriForCurrentUser = savedMateriForCurrentUser.filter(id => id !== materiId);
                 } else {
@@ -415,9 +431,8 @@
         }
 
         onAuthStateChanged(auth, async (user) => {
-            // updateHeaderUI(user);
+            updateHeaderUI(user);
             updateContentUI(user);
-
             if (user) {
                 const uid = user.uid;
                 const userDocRef = doc(db, "userSavedMaterials", uid);
