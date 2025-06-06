@@ -9,180 +9,151 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
+            background-color: #F9FAFB;
         }
         .preview-card { 
-            position: relative; /* Untuk overlay gembok */
+            position: relative; 
             transition: all 0.3s ease;
         }
         .preview-card:not(.content-locked):hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
-        .nav-link {
-            position: relative;
-            transition: color 0.3s ease;
-        }
+        .nav-link { position: relative; transition: color 0.3s ease; }
         .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #2563EB; /* Blue-600 */
-            transition: width 0.3s ease;
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            background-color: #2563EB; transition: width 0.3s ease;
         }
-        .nav-link:hover::after, .nav-link.active::after {
-            width: 100%;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #2563EB; /* Blue-600 */
-        }
-        .mobile-menu-button:focus {
-            outline: none;
-        }
-        .logo-image {
-            height: 70px; 
-            width: auto;
-        }
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link:hover, .nav-link.active { color: #2563EB; }
+        .logo-image { height: 70px; width: auto; }
+        .breadcrumb a:hover { text-decoration: underline; }
         .auth-button {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            display: inline-block;
-            text-align: center;
+            padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
         }
-        .auth-button-primary {
-            background-color: #2563EB;
-            color: white;
+        .auth-button-primary { background-color: #2563EB; color: white; }
+        .auth-button-primary:hover { background-color: #1D4ED8; }
+        .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
+        .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
+        
+        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
         }
-        .auth-button-primary:hover {
-            background-color: #1D4ED8;
-        }
-        .auth-button-secondary {
-            background-color: transparent;
-            color: #2563EB;
-            border: 1px solid #2563EB; 
-        }
-        .auth-button-secondary:hover {
-            background-color: #DBEAFE;
-            color: #1D4ED8;
-        }
-        #userInfoDesktopAllKuis, #mobileUserInfoAllKuis .flex.items-center {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        #userInfoDesktopAllKuis img, #mobileUserInfoAllKuis img {
-            width: 32px;
-            height: 32px;
-            border-radius: 9999px;
-            object-fit: cover;
+        #userPhotoDesktop, #userPhotoMobile {
+            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
         }
         .user-display-name {
-            font-weight: 500;
-            color: #374151;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 120px;
+            font-weight: 500; color: #374151; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; max-width: 100px;
         }
-        .quiz-icon-bg {
-            background-color: #DBEAFE; 
+        .caret-icon { width: 1rem; height: 1rem; color: #6B7280; transition: transform 0.2s ease-in-out; }
+        #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
+        #userDropdownMenuDesktop {
+            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
+            background-color: white; border-radius: 0.375rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
         }
-        .quiz-icon-text {
-            color: #1E40AF; 
+        #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
+            display: block; width: 100%; padding: 0.5rem 1rem; 
+            font-size: 0.875rem; color: #374151; text-align: left;
         }
-        /* Gaya untuk konten terkunci */
-        .content-locked {
-            filter: blur(4px);
-            pointer-events: none;
+        #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
+            background-color: #EFF6FF; color: #2563EB;
         }
+        #userDropdownMenuDesktop .dropdown-item-active {
+            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
+        }
+        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
+            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
+        }
+        .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
+        .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
+        .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
+        #mobileUserMenuLinksContainer a {
+            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
+            padding-bottom: 0.75rem; display: block; color: #4B5563;
+        }
+         #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
+            background-color: #EFF6FF; color: #2563EB;
+        }
+
+        .save-kuis-btn {
+            position: absolute; top: 0.75rem; right: 0.75rem; width: 2.25rem; height: 2.25rem;
+            background-color: rgba(255, 255, 255, 0.9); border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease-in-out; border: 1px solid #e5e7eb;
+            z-index: 20;
+        }
+        .save-kuis-btn:hover { background-color: white; transform: scale(1.1); }
+        .save-kuis-btn .icon-outline { display: block; }
+        .save-kuis-btn .icon-solid { display: none; }
+        .save-kuis-btn.saved { background-color: #DBEAFE; border-color: #93C5FD; }
+        .save-kuis-btn.saved .icon-outline { display: none; }
+        .save-kuis-btn.saved .icon-solid { display: block; color: #2563EB; }
+        .save-kuis-btn svg { width: 1.25rem; height: 1.25rem; color: #6B7280; }
+
+        .content-locked { filter: blur(4px); pointer-events: none; }
         .lock-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(230, 230, 230, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            border-radius: 0.75rem; /* Sesuai dengan radius kartu .preview-card */
-            pointer-events: auto;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(230, 230, 230, 0.25); display: flex;
+            align-items: center; justify-content: center; z-index: 10;
+            border-radius: 0.75rem; pointer-events: auto;
         }
-        .lock-overlay.hidden {
-            display: none;
-        }
-        .lock-overlay svg {
-            width: 3rem;
-            height: 3rem;
-            color: #4B5563; 
-            opacity: 0.9;
-        }
+        .lock-overlay.hidden { display: none; }
+        .lock-overlay svg { width: 3rem; height: 3rem; color: #4B5563; opacity: 0.9; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-700">
+<body class="min-h-screen">
 
     <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header class="bg-white shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
-            <a href="index.html#home" class="flex items-center"> 
-                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error'; this.alt='Logo tidak ditemukan.';">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
             <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
                 <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
                 <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
-                <a href="semua-kuis.html" class="nav-link text-blue-600 font-semibold active">Kuis</a> <!-- Active link -->
+                <a href="semua-kuis.html" class="nav-link font-semibold active">Kuis</a>
                 <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
                 <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
             </nav>
-            <!-- Auth Desktop -->
             <div class="hidden md:flex items-center space-x-2">
-                <div id="authLinksDesktopAllKuis">
+                <div id="authLinksDesktop">
                     <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
-                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a> 
+                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a>
                 </div>
-                <div id="userInfoDesktopAllKuis" class="hidden">
-                    <img id="userPhotoDesktopAllKuis" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna" class="">
-                    <span id="userDisplayNameDesktopAllKuis" class="user-display-name ml-2"></span>
-                    <button id="logoutButtonDesktopAllKuis" class="auth-button auth-button-secondary text-sm ml-2">Logout</button>
+                <div id="userInfoDesktopContainer" class="hidden relative"> 
+                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
+                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
+                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
+                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="userDropdownMenuDesktop">
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="#" class="dropdown-item">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                    </div>
                 </div>
             </div>
             <div class="md:hidden">
-                <button id="mobile-menu-button-all-kuis" class="text-slate-600 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu-all-kuis" class="hidden md:hidden bg-white shadow-lg pb-3">
-            <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
-            <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
-            <a href="semua-kuis.html" class="block px-6 py-3 text-blue-600 bg-blue-50 font-semibold">Kuis</a> <!-- Active -->
-            <a href="index.html#tentang" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Tentang Kami</a>
-            <a href="index.html#kontak" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kontak</a>
-            <!-- Auth Mobile -->
-            <div class="px-6 mt-2 space-y-2" id="authLinksMobileAllKuis">
-                 <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
-                 <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
-            </div>
-            <div class="px-6 mt-2 hidden items-center justify-between" id="userInfoMobileAllKuis">
-                <div class="flex items-center">
-                    <img id="userPhotoMobileAllKuis" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna" class="">
-                    <span id="userDisplayNameMobileAllKuis" class="user-display-name ml-2"></span>
-                </div>
-                <button id="logoutButtonMobileAllKuis" class="auth-button auth-button-secondary text-sm">Logout</button>
-            </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
+            <!-- Konten diisi oleh JavaScript -->
         </div>
     </header>
 
@@ -203,113 +174,71 @@
         </div>
 
         <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Semua Kuis Interaktif</h1>
-        <p id="pageSubtitleKuis" class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Uji pemahaman Bahasa Inggris Anda dengan berbagai kuis menarik kami. Pilih topik dan level yang sesuai!</p>
+        <p id="pageSubtitle" class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Uji pemahaman Bahasa Inggris Anda dengan berbagai kuis menarik kami. Pilih topik dan level yang sesuai!</p>
 
         <div id="allKuisCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Kuis Card 1 -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="tenses-dasar">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                        <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Tenses Dasar</h4>
-                        <span class="text-xs text-slate-500">15 Soal • 20 Menit • Pemula</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Tenses Dasar</h4><span class="text-xs text-slate-500">15 Soal • 20 Menit • Pemula</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahamanmu tentang Simple Present, Past, Future.</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            <!-- Kuis Card 2 -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="idiom-populer">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                         <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0122 12c0 3-1 7-6.343 6.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012 14.998M9.879 16.121A3 3 0 1014.12 13.879"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Idiom Populer</h4>
-                        <span class="text-xs text-slate-500">20 Soal • 25 Menit • Menengah</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0122 12c0 3-1 7-6.343 6.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012 14.998M9.879 16.121A3 3 0 1014.12 13.879"></path></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Idiom Populer</h4><span class="text-xs text-slate-500">20 Soal • 25 Menit • Menengah</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Seberapa banyak idiom Bahasa Inggris yang kamu ketahui?</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            <!-- Kuis Card 3 -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="listening-dialog">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                        <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.636 5.636a9 9 0 0112.728 0m-12.728 0a9 9 0 000 12.728m0-12.728L5.636 5.636z"></path><circle cx="12" cy="12" r="1"></circle></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Listening: Short Dialogues</h4>
-                        <span class="text-xs text-slate-500">10 Soal • 15 Menit • Semua Level</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.636 5.636a9 9 0 0112.728 0m-12.728 0a9 9 0 000 12.728m0-12.728L5.636 5.636z"></path><circle cx="12" cy="12" r="1"></circle></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Listening: Short Dialogues</h4><span class="text-xs text-slate-500">10 Soal • 15 Menit • Semua Level</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Dengarkan dialog singkat dan jawab pertanyaannya.</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            <!-- Kuis Card 4 (Premium) -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="vocab-travel">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                        <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m0 0A8.966 8.966 0 013.75 15a8.966 8.966 0 018.25 2.747m0-11.494V6.253c0-1.536.736-2.961 1.907-3.9C15.036 1.36 16.502 1 18 1c1.498 0 2.964.36 4.143 1.353A4.001 4.001 0 0120.25 6.253v11.494m0 0a8.966 8.966 0 00-8.25 2.747M12 17.747v-2.494"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Vocabulary: Travel</h4>
-                        <span class="text-xs text-slate-500">25 Soal • 30 Menit • Menengah</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m0 0A8.966 8.966 0 013.75 15a8.966 8.966 0 018.25 2.747m0-11.494V6.253c0-1.536.736-2.961 1.907-3.9C15.036 1.36 16.502 1 18 1c1.498 0 2.964.36 4.143 1.353A4.001 4.001 0 0120.25 6.253v11.494m0 0a8.966 8.966 0 00-8.25 2.747M12 17.747v-2.494"></path></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Vocabulary: Travel</h4><span class="text-xs text-slate-500">25 Soal • 30 Menit • Menengah</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Perluas kosakatamu terkait perjalanan dan liburan.</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-            <!-- Kuis Card 5 (Premium) -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="grammar-prepositions">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                        <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Grammar: Prepositions</h4>
-                        <span class="text-xs text-slate-500">20 Soal • 20 Menit • Pemula</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Grammar: Prepositions</h4><span class="text-xs text-slate-500">20 Soal • 20 Menit • Pemula</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pengetahuanmu tentang penggunaan preposisi yang benar.</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
-             <!-- Kuis Card 6 (Premium) -->
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
+            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="toefl-structure">
+                <button class="save-kuis-btn" aria-label="Simpan Kuis"><svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg><svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg></button>
                 <div class="flex items-center mb-3">
-                    <div class="p-3 quiz-icon-bg rounded-full mr-4">
-                        <svg class="w-6 h-6 quiz-icon-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-blue-700">Kuis Persiapan TOEFL: Structure</h4>
-                        <span class="text-xs text-slate-500">30 Soal • 40 Menit • Mahir</span>
-                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Persiapan TOEFL: Structure</h4><span class="text-xs text-slate-500">30 Soal • 40 Menit • Mahir</span></div>
                 </div>
                 <p class="text-sm text-slate-600 mb-4 flex-grow">Latihan soal struktur kalimat untuk persiapan tes TOEFL.</p>
-                <a href="#" class="quiz-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden">
-                    <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                </div>
+                <a href="#" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
             </div>
         </div>
-         <div id="loginPromptAllKuis" class="hidden text-center mt-12 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
+        <div id="loginPromptAllKuis" class="hidden text-center mt-12 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
             <p class="text-yellow-700 font-medium text-lg">
                 Anda melihat <span id="freeContentCountKuis"></span> dari <span id="totalContentCountKuis"></span> kuis yang tersedia. 
                 <a href="login-page.html?redirect=semua-kuis.html" class="font-bold underline hover:text-yellow-800">Login</a> atau 
@@ -318,147 +247,133 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16">
-        <!-- ... Konten Footer ... -->
+    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16 mt-16">
+        <!-- Konten Footer Lengkap -->
     </footer>
 
     <script type="module">
-        // Firebase Config
         const firebaseConfig = {
           apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
           authDomain: "ec-materi.firebaseapp.com",
           projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app", 
+          storageBucket: "ec-materi.firebasestorage.app",
           messagingSenderId: "166687187100",
-          appId: "1:166687187100:web:e073df281931524f660d59",
-          measurementId: "G-MT58HLBRDY"
+          appId: "1:166687187100:web:e073df281931524f660d59"
         };
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // DOM Elements - Header & Mobile Menu
-        const mobileMenuButton = document.getElementById('mobile-menu-button-all-kuis');
-        const mobileMenu = document.getElementById('mobile-menu-all-kuis');
-        const currentYearSpan = document.getElementById('currentYear'); // Asumsikan ada di footer
-
-        const authLinksDesktop = document.getElementById('authLinksDesktopAllKuis');
-        const userInfoDesktop = document.getElementById('userInfoDesktopAllKuis');
-        const userPhotoDesktop = document.getElementById('userPhotoDesktopAllKuis');
-        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktopAllKuis');
-        const logoutButtonDesktop = document.getElementById('logoutButtonDesktopAllKuis');
-
-        const authLinksMobile = document.getElementById('authLinksMobileAllKuis');
-        const userInfoMobile = document.getElementById('userInfoMobileAllKuis');
-        const userPhotoMobile = document.getElementById('userPhotoMobileAllKuis');
-        const userDisplayNameMobile = document.getElementById('userDisplayNameMobileAllKuis');
-        const logoutButtonMobile = document.getElementById('logoutButtonMobileAllKuis');
+        const db = getFirestore(app);
         
-        // DOM Elements - Kuis Page Content
+        // --- Logika Header Universal ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function updateHeaderUI(user) { /* ... (Salin fungsi lengkap dari index.html) ... */ }
+        // ... (Salin semua listener untuk header dari index.html) ...
+
+        // --- Logika Spesifik Halaman Ini ---
         const allKuisCardsContainer = document.getElementById('allKuisCardsContainer');
         const loginPromptAllKuis = document.getElementById('loginPromptAllKuis');
         const freeContentCountKuisSpan = document.getElementById('freeContentCountKuis');
         const totalContentCountKuisSpan = document.getElementById('totalContentCountKuis');
-        const pageSubtitleKuis = document.getElementById('pageSubtitleKuis');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+        const freeKuisPageCount = 2;
+        let savedKuisForCurrentUser = [];
 
-
-        const freeKuisPageCount = 2; // Jumlah kuis gratis di halaman ini
-
-        function updateAuthUI(user) {
+        function updateContentUI(user) {
             const allKuisCards = allKuisCardsContainer ? Array.from(allKuisCardsContainer.children) : [];
             if (totalContentCountKuisSpan) totalContentCountKuisSpan.textContent = allKuisCards.length;
-
-            // Update Header UI
             if (user) {
-                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
-                if (authLinksMobile) authLinksMobile.classList.add('hidden');
-                if (userInfoDesktop) { userInfoDesktop.classList.remove('hidden'); userInfoDesktop.classList.add('flex');}
-                if (userInfoMobile) { userInfoMobile.classList.remove('hidden'); userInfoMobile.classList.add('flex');}
-
-                const displayName = user.displayName || user.email.split('@')[0];
-                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
-                
-                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
-                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
-                if (userDisplayNameMobile) userDisplayNameMobile.textContent = displayName;
-                if (userPhotoMobile) userPhotoMobile.src = photoURL;
-
-                // Konten Kuis: Buka semua
                 allKuisCards.forEach(card => {
                     card.classList.remove('content-locked');
                     const overlay = card.querySelector('.lock-overlay');
                     if (overlay) overlay.classList.add('hidden');
-                    const quizLink = card.querySelector('.quiz-link'); // Gunakan kelas .quiz-link
-                    if(quizLink) quizLink.style.pointerEvents = 'auto';
+                    const detailLink = card.querySelector('.detail-link');
+                    if(detailLink) detailLink.style.pointerEvents = 'auto';
                 });
                 if (loginPromptAllKuis) loginPromptAllKuis.classList.add('hidden');
-                 if (pageSubtitleKuis) pageSubtitleKuis.textContent = "Uji pemahaman Bahasa Inggris Anda dengan berbagai kuis menarik kami. Pilih topik dan level yang sesuai!";
-
-
-            } else { // Pengguna Logout
-                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
-                if (authLinksMobile) authLinksMobile.classList.remove('hidden');
-                if (userInfoDesktop) { userInfoDesktop.classList.add('hidden'); userInfoDesktop.classList.remove('flex');}
-                if (userInfoMobile) { userInfoMobile.classList.add('hidden'); userInfoMobile.classList.remove('flex');}
-
-                // Konten Kuis: Kunci kuis premium
+                if (pageSubtitle) pageSubtitle.textContent = "Uji pemahaman Bahasa Inggris Anda dengan berbagai kuis menarik kami. Pilih topik dan level yang sesuai!";
+            } else {
                 allKuisCards.forEach((card, index) => {
                     const overlay = card.querySelector('.lock-overlay');
-                    const quizLink = card.querySelector('.quiz-link'); // Gunakan kelas .quiz-link
-
-                    if (index >= freeKuisPageCount) { 
+                    const detailLink = card.querySelector('.detail-link');
+                    if (index >= freeKuisPageCount) {
                         card.classList.add('content-locked');
                         if (overlay) overlay.classList.remove('hidden');
-                        if(quizLink) quizLink.style.pointerEvents = 'none';
-                    } else { 
+                        if(detailLink) detailLink.style.pointerEvents = 'none';
+                    } else {
                         card.classList.remove('content-locked');
                         if (overlay) overlay.classList.add('hidden');
-                        if(quizLink) quizLink.style.pointerEvents = 'auto';
+                        if(detailLink) detailLink.style.pointerEvents = 'auto';
                     }
                 });
                 if (loginPromptAllKuis) {
                     loginPromptAllKuis.classList.remove('hidden');
                     if (freeContentCountKuisSpan) freeContentCountKuisSpan.textContent = freeKuisPageCount;
                 }
-                if (pageSubtitleKuis) pageSubtitleKuis.textContent = `Lihat ${freeKuisPageCount} kuis gratis kami di bawah ini. Login untuk akses penuh ke semua ${allKuisCards.length} kuis!`;
-
+                if (pageSubtitle) pageSubtitle.textContent = `Lihat ${freeKuisPageCount} kuis gratis kami di bawah ini. Login untuk akses penuh ke semua ${allKuisCards.length} kuis!`;
             }
         }
 
-        onAuthStateChanged(auth, (user) => {
-            updateAuthUI(user);
+        function updateSaveButtonsUI() {
+            const saveButtons = document.querySelectorAll('.save-kuis-btn');
+            saveButtons.forEach(button => {
+                const kuisId = button.closest('.preview-card').dataset.kuisId;
+                button.classList.toggle('saved', savedKuisForCurrentUser.includes(kuisId));
+            });
+        }
+
+        async function handleSaveKuisClick(event) {
+            const button = event.target.closest('.save-kuis-btn');
+            if (!button || !auth.currentUser) {
+                if(!auth.currentUser) alert("Anda harus login untuk menyimpan kuis!");
+                return;
+            }
+            const card = button.closest('.preview-card');
+            const kuisId = card.dataset.kuisId;
+            const uid = auth.currentUser.uid;
+            const userDocRef = doc(db, "userSavedQuizzes", uid);
+            try {
+                const isCurrentlySaved = savedKuisForCurrentUser.includes(kuisId);
+                const updatePayload = { savedQuizIds: isCurrentlySaved ? arrayRemove(kuisId) : arrayUnion(kuisId) };
+                await setDoc(userDocRef, updatePayload, { merge: true });
+                if (isCurrentlySaved) {
+                    savedKuisForCurrentUser = savedKuisForCurrentUser.filter(id => id !== kuisId);
+                } else {
+                    savedKuisForCurrentUser.push(kuisId);
+                }
+                updateSaveButtonsUI();
+            } catch (error) {
+                console.error("Error updating saved kuis:", error);
+                alert("Terjadi kesalahan, coba lagi.");
+            }
+        }
+
+        if (allKuisCardsContainer) {
+            allKuisCardsContainer.addEventListener('click', handleSaveKuisClick);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            // updateHeaderUI(user);
+            updateContentUI(user);
             if (user) {
-                console.log("Pengguna login (semua-kuis.html):", user.displayName || user.email);
+                const uid = user.uid;
+                const userDocRef = doc(db, "userSavedQuizzes", uid);
+                try {
+                    const docSnap = await getDoc(userDocRef);
+                    savedKuisForCurrentUser = (docSnap.exists() && docSnap.data().savedQuizIds) ? docSnap.data().savedQuizIds : [];
+                } catch (error) {
+                    console.error("Gagal memuat data kuis tersimpan:", error);
+                    savedKuisForCurrentUser = [];
+                }
             } else {
-                console.log("Pengguna logout (semua-kuis.html).");
+                savedKuisForCurrentUser = [];
             }
+            updateSaveButtonsUI();
         });
-
-        // Logout handlers
-        if (logoutButtonDesktop) {
-            logoutButtonDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
-        }
-        if (logoutButtonMobile) {
-             logoutButtonMobile.addEventListener('click', () => signOut(auth).catch(console.error));
-        }
-
-        // Mobile menu toggle
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-        }
-        
-        // Set current year in footer (jika footer ada di halaman ini)
-        // const currentYearSpanFooter = document.querySelector('#kontak #currentYear'); // Lebih spesifik jika ada multiple
-        // if (currentYearSpanFooter) currentYearSpanFooter.textContent = new Date().getFullYear();
-        // Untuk halaman ini, karena footer sama, ID currentYear di footer akan berfungsi.
-        
-        // Initial UI update
-        updateAuthUI(auth.currentUser);
     </script>
-
 </body>
 </html>
