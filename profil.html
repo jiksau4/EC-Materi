@@ -82,6 +82,13 @@
             background-color: white; border-radius: 0.75rem;
             padding: 1.5rem; text-align: center; border: 1px solid #e5e7eb;
         }
+        .placeholder-card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 2rem; /* p-8 */
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -118,6 +125,8 @@
                         </div>
                         <a href="profil.html" class="dropdown-item">Profil Saya</a>
                         <a href="#" class="dropdown-item">Pengaturan Akun</a>
+                        <a href="#" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="#" class="dropdown-item">Riwayat Kuis</a>
                         <hr class="border-slate-200 my-1">
                         <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
                     </div>
@@ -157,24 +166,44 @@
                 <p id="profileEmail" class="text-slate-500 mt-1"></p>
                 <a href="edit-profil.html" class="auth-button auth-button-secondary mt-6 inline-block">Edit Profil</a>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Progres Belajar Anda</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="stat-card">
-                        <p class="text-sm text-slate-500">Materi Selesai</p>
-                        <p class="text-4xl font-bold text-blue-600">0</p>
+            
+            <!-- Grid untuk bagian tambahan -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Bagian Progres Belajar -->
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Progres Belajar Anda</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="stat-card">
+                            <p class="text-sm text-slate-500">Materi Selesai</p>
+                            <p class="text-4xl font-bold text-blue-600">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <p class="text-sm text-slate-500">Kuis Diselesaikan</p>
+                            <p class="text-4xl font-bold text-blue-600">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <p class="text-sm text-slate-500">Poin XP</p>
+                            <p class="text-4xl font-bold text-blue-600">0</p>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <p class="text-sm text-slate-500">Kuis Diselesaikan</p>
-                        <p class="text-4xl font-bold text-blue-600">0</p>
+                    <p class="text-center mt-6 text-slate-400 text-sm">Fitur progres belajar akan segera hadir!</p>
+                </div>
+
+                <!-- Bagian Materi Tersimpan & Riwayat Kuis (Placeholder) -->
+                <div class="space-y-8">
+                    <div id="materiTersimpan" class="placeholder-card">
+                         <h2 class="text-2xl font-bold text-slate-800 mb-4">Materi Tersimpan</h2>
+                         <p class="text-slate-500">Anda belum memiliki materi yang disimpan.</p>
+                         <a href="semua-materi.html" class="auth-button auth-button-primary mt-4">Jelajahi Materi</a>
                     </div>
-                    <div class="stat-card">
-                        <p class="text-sm text-slate-500">Poin XP</p>
-                        <p class="text-4xl font-bold text-blue-600">0</p>
+                     <div id="riwayatKuis" class="placeholder-card">
+                         <h2 class="text-2xl font-bold text-slate-800 mb-4">Riwayat Kuis</h2>
+                         <p class="text-slate-500">Anda belum mengerjakan kuis.</p>
+                         <a href="semua-kuis.html" class="auth-button auth-button-primary mt-4">Coba Kuis Sekarang</a>
                     </div>
                 </div>
-                <p class="text-center mt-6 text-slate-400 text-sm">Fitur progres belajar akan segera hadir!</p>
             </div>
+
         </div>
 
         <div id="loadingState" class="text-center py-20">
@@ -215,11 +244,9 @@
 
         // Fungsi untuk mengupdate UI Header
         function updateHeaderUI(user) {
-            // Bersihkan menu mobile dulu
             if(mobileMenu) mobileMenu.innerHTML = ''; 
             
-            if (user) { // Pengguna Login
-                // Update Header Desktop
+            if (user) { 
                 if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
                 if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
                 
@@ -232,14 +259,13 @@
                 if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
                 if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
 
-                // Bangun Ulang Menu Mobile untuk Pengguna Login
                 if(mobileMenu) {
                     mobileMenu.innerHTML = `
                         <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
                             <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
                             <span class="user-display-name !max-w-full">${displayName}</span>
                         </div>
-                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Profil Saya</a>
                         <a href="#" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
                         <hr class="border-slate-200 mx-6 my-1">
                         <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
@@ -250,15 +276,12 @@
                              <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
                         </div>
                     `;
-                    // Tambahkan event listener untuk tombol logout mobile yang baru dibuat
                     document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
                 }
-            } else { // Pengguna Logout
-                // Update Header Desktop
+            } else { 
                 if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
                 if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
                 
-                // Bangun Ulang Menu Mobile untuk Pengguna Logout
                 if(mobileMenu) {
                      mobileMenu.innerHTML = `
                         <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
@@ -273,18 +296,15 @@
             }
         }
         
-        // Listener untuk dropdown desktop
         if (userInfoDesktopTrigger && userDropdownMenuDesktop) {
-            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); userDropdownMenuDesktop.style.display = 'block'; });
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
             document.addEventListener('click', () => { userDropdownMenuDesktop.style.display = 'none'; });
         }
         
-        // Listener untuk tombol logout desktop
         if (logoutButtonDropdownDesktop) {
             logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
         }
 
-        // Listener untuk tombol menu mobile
         if (mobileMenuButton && mobileMenu) {
             mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
         }
@@ -297,11 +317,9 @@
         const profileEmail = document.getElementById('profileEmail');
 
         onAuthStateChanged(auth, (user) => {
-            // Selalu update header pada setiap perubahan status
             updateHeaderUI(user);
 
             if (user) {
-                // Tampilkan konten halaman profil
                 loadingStateDiv.style.display = 'none';
                 profileContentDiv.style.display = 'block';
 
@@ -314,7 +332,6 @@
                 profileEmail.textContent = email;
 
             } else {
-                // Redirect jika tidak login
                 window.location.href = `login-page.html?redirect=${window.location.pathname}`;
             }
         });
