@@ -33,10 +33,17 @@
         .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
         .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
         
-        /* Style untuk dropdown (sama seperti di index.html) */
-        #userInfoDesktopTrigger { cursor: pointer; }
-        #userPhotoDesktop { width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; }
-        .user-display-name { font-weight: 500; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
+            display: flex; align-items: center; gap: 0.5rem; 
+            cursor: pointer;
+        }
+        #userPhotoDesktop, #userPhotoMobile {
+            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
+        }
+        .user-display-name {
+            font-weight: 500; color: #374151; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; max-width: 100px; 
+        }
         .caret-icon { width: 1rem; height: 1rem; color: #6B7280; transition: transform 0.2s ease-in-out; }
         #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
         #userDropdownMenuDesktop {
@@ -45,28 +52,41 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
             z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
         }
-        /* ... (sisa style dropdown bisa disalin jika perlu) ... */
+        #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
+            display: block; width: 100%; padding: 0.5rem 1rem; 
+            font-size: 0.875rem; color: #374151; text-align: left;
+        }
+        #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
+            background-color: #EFF6FF; color: #2563EB;
+        }
+        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
+            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
+        }
+        .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
+        .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
+        .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
+        #mobileUserMenuLinksContainer a {
+            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
+            padding-bottom: 0.75rem; display: block; color: #4B5563;
+        }
+         #mobileUserMenuLinksContainer a:hover {
+            background-color: #EFF6FF; color: #2563EB;
+        }
 
-        /* Style khusus halaman profil */
         .profile-avatar {
-            width: 8rem; /* 128px */
-            height: 8rem; /* 128px */
-            border-radius: 9999px; /* rounded-full */
+            width: 8rem; height: 8rem; border-radius: 9999px;
             border: 4px solid white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .stat-card {
-            background-color: white;
-            border-radius: 0.75rem; /* rounded-xl */
-            padding: 1.5rem; /* p-6 */
-            text-align: center;
-            border: 1px solid #e5e7eb;
+            background-color: white; border-radius: 0.75rem;
+            padding: 1.5rem; text-align: center; border: 1px solid #e5e7eb;
         }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- Header (Sama seperti halaman lain untuk konsistensi) -->
+    <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
             <a href="index.html#home" class="flex items-center">
@@ -79,13 +99,28 @@
                 <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
                 <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
             </nav>
+            <!-- STRUKTUR HEADER UNTUK AUTH DISALIN DARI index.html -->
             <div class="hidden md:flex items-center space-x-2">
                 <div id="authLinksDesktop">
                     <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
                     <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a> 
                 </div>
-                <div id="userInfoDesktopContainer" class="hidden relative">
-                    <!-- Konten ini diisi oleh JS -->
+                <div id="userInfoDesktopContainer" class="hidden relative"> 
+                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
+                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
+                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
+                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="userDropdownMenuDesktop">
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="#" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                    </div>
                 </div>
             </div>
             <div class="md:hidden">
@@ -94,7 +129,9 @@
                 </button>
             </div>
         </div>
-        <!-- ... Menu Mobile (diisi oleh JS) ... -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
+            <!-- Konten menu mobile diisi oleh JavaScript -->
+        </div>
     </header>
 
     <!-- Main Content: Halaman Profil -->
@@ -113,31 +150,24 @@
             </nav>
         </div>
 
-        <!-- Bagian ini hanya akan terlihat jika pengguna sudah login -->
         <div id="profileContent" class="hidden">
-            <!-- Kartu Profil Utama -->
             <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 text-center">
                 <img id="profileAvatar" src="https://placehold.co/128x128/CCCCCC/FFFFFF?text=U" alt="Foto Profil" class="profile-avatar mx-auto -mt-16 md:-mt-20">
-                <h1 id="profileDisplayName" class="text-3xl font-bold text-slate-800 mt-4">Nama Pengguna</h1>
-                <p id="profileEmail" class="text-slate-500 mt-1">email@pengguna.com</p>
+                <h1 id="profileDisplayName" class="text-3xl font-bold text-slate-800 mt-4"></h1>
+                <p id="profileEmail" class="text-slate-500 mt-1"></p>
                 <a href="edit-profil.html" class="auth-button auth-button-secondary mt-6 inline-block">Edit Profil</a>
             </div>
-
-            <!-- Bagian Progres Belajar (Placeholder) -->
             <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Progres Belajar Anda</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Contoh Stat Card -->
                     <div class="stat-card">
                         <p class="text-sm text-slate-500">Materi Selesai</p>
                         <p class="text-4xl font-bold text-blue-600">0</p>
                     </div>
-                     <!-- Contoh Stat Card -->
                     <div class="stat-card">
                         <p class="text-sm text-slate-500">Kuis Diselesaikan</p>
                         <p class="text-4xl font-bold text-blue-600">0</p>
                     </div>
-                     <!-- Contoh Stat Card -->
                     <div class="stat-card">
                         <p class="text-sm text-slate-500">Poin XP</p>
                         <p class="text-4xl font-bold text-blue-600">0</p>
@@ -147,16 +177,11 @@
             </div>
         </div>
 
-         <!-- Pesan Loading atau Redirect -->
         <div id="loadingState" class="text-center py-20">
             <p class="text-slate-500">Memeriksa status login...</p>
         </div>
-
     </main>
     
-    <!-- Footer (Sama seperti halaman lain) -->
-    <!-- ... -->
-
     <script type="module">
         // Firebase Config
         const firebaseConfig = {
@@ -174,25 +199,113 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // DOM Elements
+        // ===== LOGIKA HEADER UNIVERSAL (Disalin dari index.html) =====
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        const authLinksDesktop = document.getElementById('authLinksDesktop');
+        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
+        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
+        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
+        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
+        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
+        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
+        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
+        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
+
+        // Fungsi untuk mengupdate UI Header
+        function updateHeaderUI(user) {
+            // Bersihkan menu mobile dulu
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            
+            if (user) { // Pengguna Login
+                // Update Header Desktop
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                // Bangun Ulang Menu Mobile untuk Pengguna Login
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="#" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    // Tambahkan event listener untuk tombol logout mobile yang baru dibuat
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
+                }
+            } else { // Pengguna Logout
+                // Update Header Desktop
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                // Bangun Ulang Menu Mobile untuk Pengguna Logout
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
+        
+        // Listener untuk dropdown desktop
+        if (userInfoDesktopTrigger && userDropdownMenuDesktop) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); userDropdownMenuDesktop.style.display = 'block'; });
+            document.addEventListener('click', () => { userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        // Listener untuk tombol logout desktop
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
+        }
+
+        // Listener untuk tombol menu mobile
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        }
+
+        // ===== LOGIKA KHUSUS HALAMAN PROFIL =====
         const loadingStateDiv = document.getElementById('loadingState');
         const profileContentDiv = document.getElementById('profileContent');
         const profileAvatar = document.getElementById('profileAvatar');
         const profileDisplayName = document.getElementById('profileDisplayName');
         const profileEmail = document.getElementById('profileEmail');
-        
-        // Elemen Header (di-refactor ke fungsi untuk DRY)
-        // ... (Sama seperti di index.html, tapi idealnya di-refactor menjadi file JS terpisah)
 
-        // Logika utama halaman profil
         onAuthStateChanged(auth, (user) => {
+            // Selalu update header pada setiap perubahan status
+            updateHeaderUI(user);
+
             if (user) {
-                // Pengguna sudah login, tampilkan konten profil
+                // Tampilkan konten halaman profil
                 loadingStateDiv.style.display = 'none';
                 profileContentDiv.style.display = 'block';
 
-                // Isi data ke elemen profil
-                const displayName = user.displayName || user.email;
+                const displayName = user.displayName || user.email.split('@')[0];
                 const email = user.email;
                 const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=128&color=fff&font-size=0.5`;
 
@@ -200,19 +313,11 @@
                 profileDisplayName.textContent = displayName;
                 profileEmail.textContent = email;
 
-                // Update juga header
-                // (Anda akan menyalin fungsi update header dari index.html ke sini,
-                // atau idealnya memisahkannya menjadi file JS bersama)
-                console.log("Menampilkan profil untuk:", user.uid);
-
             } else {
-                // Pengguna tidak login, redirect ke halaman login
-                console.log("Pengguna tidak login. Mengarahkan ke halaman login...");
-                // Tambahkan parameter redirect agar setelah login, pengguna kembali ke halaman profil
+                // Redirect jika tidak login
                 window.location.href = `login-page.html?redirect=${window.location.pathname}`;
             }
         });
-
     </script>
 </body>
 </html>
