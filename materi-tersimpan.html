@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB;
+            background-color: #F9FAFB; /* bg-slate-50 */
         }
         .preview-card {
             position: relative; 
@@ -79,12 +79,24 @@
          #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
             background-color: #EFF6FF; color: #2563EB;
         }
+        
+        .save-materi-btn {
+            position: absolute; top: 0.75rem; right: 0.75rem; width: 2.25rem; height: 2.25rem;
+            background-color: rgba(255, 255, 255, 0.8); border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease-in-out; border: 1px solid #e5e7eb;
+            z-index: 20;
+        }
+        .save-materi-btn:hover { background-color: white; transform: scale(1.1); }
+        .save-materi-btn .icon-outline { display: block; }
+        .save-materi-btn .icon-solid { display: none; }
+        .save-materi-btn.saved { background-color: #DBEAFE; border-color: #93C5FD; }
+        .save-materi-btn.saved .icon-outline { display: none; }
+        .save-materi-btn.saved .icon-solid { display: block; color: #2563EB; }
+        .save-materi-btn svg { width: 1.25rem; height: 1.25rem; color: #6B7280; }
         .placeholder-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            text-align: center;
-            border: 1px solid #e5e7eb;
+            background-color: white; border-radius: 0.75rem; padding: 2rem;
+            text-align: center; border: 1px solid #e5e7eb;
         }
     </style>
 </head>
@@ -121,7 +133,7 @@
                         </div>
                         <a href="profil.html" class="dropdown-item">Profil Saya</a>
                         <a href="materi-tersimpan.html" class="dropdown-item dropdown-item-active">Materi Tersimpan</a>
-                        <a href="#" class="dropdown-item">Pengaturan Akun</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
                         <hr class="border-slate-200 my-1">
                         <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
                     </div>
@@ -174,8 +186,8 @@
             <a href="semua-materi.html" class="auth-button auth-button-primary">Jelajahi Semua Materi</a>
         </div>
     </main>
-
-    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16 mt-16">
+    
+    <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-3 gap-8 mb-8">
                 <div>
@@ -223,7 +235,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -266,7 +278,7 @@
                         </div>
                         <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
                         <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Materi Tersimpan</a>
-                        <a href="#" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
                         <hr class="border-slate-200 mx-6 my-1">
                         <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
                         <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
@@ -308,6 +320,7 @@
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
         }
+        
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
@@ -344,6 +357,10 @@
                     const levelClass = levelColorClasses[materiData.levelColor] || 'bg-gray-100 text-gray-700';
                     const cardHTML = `
                         <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="${materiId}">
+                            <button class="save-materi-btn saved" aria-label="Hapus dari Materi Tersimpan">
+                                <svg class="icon-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                <svg class="icon-solid" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                            </button>
                             <img src="${materiData.img}" alt="Materi ${materiData.title}" class="rounded-md mb-4 h-40 w-full object-cover">
                             <h4 class="text-lg font-semibold text-blue-700 mb-2">${materiData.title}</h4>
                             <p class="text-sm text-slate-600 mb-3 flex-grow">${materiData.desc}</p>
@@ -355,6 +372,36 @@
                     savedMateriContainer.innerHTML += cardHTML;
                 }
             });
+        }
+
+        async function handleUnsaveMateriClick(event) {
+            const button = event.target.closest('.save-materi-btn');
+            if (!button || !auth.currentUser) return;
+            const card = button.closest('.preview-card');
+            const materiId = card.dataset.materiId;
+            const uid = auth.currentUser.uid;
+            const userDocRef = doc(db, "userSavedMaterials", uid);
+            button.disabled = true;
+            try {
+                await updateDoc(userDocRef, { savedMaterialIds: arrayRemove(materiId) });
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.transform = 'scale(0.95)';
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    if (savedMateriContainer.childElementCount === 0) {
+                        emptyStateDiv.classList.remove('hidden');
+                    }
+                }, 500);
+            } catch (error) {
+                console.error("Gagal menghapus materi:", error);
+                alert("Gagal menghapus materi, silakan coba lagi.");
+                button.disabled = false;
+            }
+        }
+
+        if (savedMateriContainer) {
+            savedMateriContainer.addEventListener('click', handleUnsaveMateriClick);
         }
 
         onAuthStateChanged(auth, async (user) => {
