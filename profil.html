@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB;
+            background-color: #F9FAFB; /* bg-slate-50 */
         }
         .nav-link { position: relative; transition: color 0.3s ease; }
         .nav-link::after {
@@ -306,7 +306,7 @@
         
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
-
+        
         // --- Logika Halaman Profil ---
         const loadingStateDiv = document.getElementById('loadingState');
         const profileContentDiv = document.getElementById('profileContent');
@@ -338,7 +338,7 @@
                     quizzesStatEl.textContent = stats.quizzesCompleted || 0;
                     xpStatEl.textContent = stats.xpPoints || 0;
                 } else {
-                    console.log("Dokumen pengguna atau statistik belum ada.");
+                    console.log("Dokumen pengguna atau statistik belum ada, menampilkan 0.");
                     materialsStatEl.textContent = 0;
                     quizzesStatEl.textContent = 0;
                     xpStatEl.textContent = 0;
