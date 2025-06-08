@@ -152,7 +152,8 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        // BARU: Impor fungsi increment dan updateDoc
+        import { getFirestore, doc, collection, addDoc, serverTimestamp, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -270,6 +271,9 @@
         }
 
         async function finishQuiz() {
+            nextButton.disabled = true;
+            nextButton.textContent = "Menyimpan hasil...";
+
             let score = 0;
             currentQuizData.questions.forEach((q, index) => {
                 if (userAnswers[index] === q.correctAnswer) {
@@ -277,12 +281,14 @@
                 }
             });
             const finalScore = Math.round((score / currentQuizData.questions.length) * 100);
+            const xpGained = finalScore; // XP yang didapat = skor
             
             try {
                 const user = auth.currentUser;
-                const quizHistoryRef = collection(db, "users", user.uid, "quizHistory");
                 const kuisId = new URLSearchParams(window.location.search).get('id');
 
+                // 1. Simpan riwayat kuis
+                const quizHistoryRef = collection(db, "users", user.uid, "quizHistory");
                 const docRef = await addDoc(quizHistoryRef, {
                     kuisId: kuisId,
                     title: currentQuizData.title,
@@ -291,10 +297,20 @@
                     completedAt: serverTimestamp()
                 });
                 console.log("Riwayat kuis berhasil disimpan dengan ID:", docRef.id);
+                
+                // 2. BARU: Update statistik pengguna
+                const userDocRef = doc(db, "users", user.uid);
+                await updateDoc(userDocRef, {
+                    "stats.quizzesCompleted": increment(1),
+                    "stats.xpPoints": increment(xpGained)
+                });
+                console.log(`Statistik pengguna diperbarui: +1 kuis, +${xpGained} XP`);
+
+                // 3. Arahkan ke halaman hasil
                 window.location.href = `hasil-kuis.html?attemptId=${docRef.id}`;
             } catch (error) {
-                console.error("Gagal menyimpan riwayat kuis:", error);
-                alert("Gagal menyimpan hasil kuis Anda. Coba lagi.");
+                console.error("Gagal menyimpan riwayat kuis atau update statistik:", error);
+                alert("Gagal menyimpan hasil kuis Anda. Anda akan diarahkan ke halaman utama.");
                 window.location.href = 'semua-kuis.html';
             }
         }
@@ -322,7 +338,7 @@
             }
 
             currentQuizData = quizzesDatabase[kuisId];
-            document.title = `Mengerjakan: ${currentQuizData.title}`; // Update title halaman
+            document.title = `Mengerjakan: ${currentQuizData.title}`; 
             quizTitleEl.textContent = currentQuizData.title;
 
             loadingStateDiv.style.display = 'none';
