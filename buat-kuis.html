@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Kuis Baru - Admin ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
+        .logo-image { height: 70px; width: auto; }
+        .input-field {
+            margin-top: 0.25rem; display: block; width: 100%;
+            padding: 0.5rem 0.75rem; border-width: 1px;
+            border-color: #D1D5DB; border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .input-field:focus {
+            outline: 2px solid transparent; outline-offset: 2px;
+            --tw-ring-color: #2563EB; border-color: #2563EB;
+        }
+        .submit-button {
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+            background-color: #16A34A; color: white; /* Green */
+        }
+        .submit-button:hover { background-color: #15803D; }
+        .submit-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        .add-question-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; border: 2px dashed #9CA3AF; color: #6B7280;
+            padding: 1rem; border-radius: 0.5rem; transition: all 0.2s ease;
+        }
+        .add-question-btn:hover { border-color: #2563EB; color: #2563EB; background-color: #EFF6FF; }
+        .question-block {
+            background-color: #F9FAFB; border: 1px solid #E5E7EB;
+            padding: 1.5rem; border-radius: 0.5rem; position: relative;
+        }
+        .remove-question-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+            background-color: #F3F4F6; color: #6B7280;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .remove-question-btn:hover { background-color: #FECACA; color: #DC2626; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <h1 class="text-xl font-bold text-slate-700">Admin Panel</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        
+        <div id="adminContent" class="hidden max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Buat Kuis Baru</h1>
+            <p class="text-slate-500 mb-8">Isi detail kuis dan tambahkan pertanyaan di bawah ini.</p>
+
+            <form id="quiz-form" class="space-y-8">
+                <!-- Detail Kuis Utama -->
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h2 class="text-xl font-semibold mb-4">Informasi Kuis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="quizTitle" class="block text-sm font-medium text-slate-700">Judul Kuis</label>
+                            <input type="text" id="quizTitle" class="input-field" placeholder="Kuis Simple Present Tense" required>
+                        </div>
+                        <div>
+                            <label for="quizId" class="block text-sm font-medium text-slate-700">ID Kuis (otomatis)</label>
+                            <input type="text" id="quizId" class="input-field bg-slate-100" readonly>
+                        </div>
+                        <div>
+                            <label for="passingScore" class="block text-sm font-medium text-slate-700">Skor Kelulusan (%)</label>
+                            <input type="number" id="passingScore" class="input-field" value="75" min="0" max="100" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kontainer untuk Pertanyaan -->
+                <div id="questions-container" class="space-y-6">
+                    <!-- Pertanyaan akan ditambahkan di sini oleh JavaScript -->
+                </div>
+
+                <!-- Tombol Tambah Pertanyaan -->
+                <button type="button" id="add-question-btn" class="add-question-btn">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Tambah Pertanyaan
+                </button>
+                
+                <!-- Tombol Aksi Form -->
+                <div class="pt-6 flex justify-end items-center">
+                    <p id="formMessage" class="mr-4 text-red-600 text-sm"></p>
+                    <button type="submit" id="save-quiz-btn" class="submit-button">
+                        Simpan Kuis ke Database
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memeriksa hak akses...</p>
+        </div>
+    </main>
+
+    <script type="module">
+        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Elements ---
+        const loadingStateDiv = document.getElementById('loadingState');
+        const adminContentDiv = document.getElementById('adminContent');
+        const quizForm = document.getElementById('quiz-form');
+        const quizTitleInput = document.getElementById('quizTitle');
+        const quizIdInput = document.getElementById('quizId');
+        const questionsContainer = document.getElementById('questions-container');
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        const saveQuizBtn = document.getElementById('save-quiz-btn');
+        const formMessage = document.getElementById('formMessage');
+
+        let questionCounter = 0;
+
+        function generateQuizId(title) {
+            return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+        
+        quizTitleInput.addEventListener('input', () => {
+            quizIdInput.value = generateQuizId(quizTitleInput.value);
+        });
+
+        function addQuestionBlock() {
+            questionCounter++;
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block';
+            questionBlock.innerHTML = `
+                <button type="button" class="remove-question-btn" title="Hapus Pertanyaan">&times;</button>
+                <h3 class="text-lg font-semibold mb-4 text-slate-600">Pertanyaan ${questionCounter}</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Teks Pertanyaan</label>
+                        <input type="text" class="input-field question-text" required placeholder="Contoh: She ___ a book.">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${[1, 2, 3, 4].map(i => `
+                            <div class="flex items-center">
+                                <input type="radio" name="correct-answer-${questionCounter}" value="${i-1}" required class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <label class="ml-3 block w-full">
+                                    <span class="text-sm text-slate-500">Pilihan ${i}</span>
+                                    <input type="text" class="input-field option-text" required placeholder="Jawaban ${i}">
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            questionsContainer.appendChild(questionBlock);
+            questionBlock.querySelector('.remove-question-btn').addEventListener('click', () => {
+                questionBlock.remove();
+                // Update nomor pertanyaan jika perlu
+            });
+        }
+        
+        addQuestionBtn.addEventListener('click', addQuestionBlock);
+
+        quizForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formMessage.textContent = '';
+            
+            const quizTitle = quizTitleInput.value.trim();
+            const quizId = quizIdInput.value.trim();
+            const passingScore = parseInt(document.getElementById('passingScore').value, 10);
+            
+            if (!quizTitle || !quizId || isNaN(passingScore)) {
+                formMessage.textContent = "Informasi kuis (Judul, ID, Skor) tidak boleh kosong.";
+                return;
+            }
+
+            const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+            if (questionBlocks.length === 0) {
+                formMessage.textContent = "Kuis harus memiliki setidaknya satu pertanyaan.";
+                return;
+            }
+
+            saveQuizBtn.disabled = true;
+            saveQuizBtn.textContent = 'Menyimpan...';
+            
+            try {
+                const questionsData = [];
+                for (const block of questionBlocks) {
+                    const questionText = block.querySelector('.question-text').value.trim();
+                    const optionInputs = block.querySelectorAll('.option-text');
+                    const options = Array.from(optionInputs).map(input => input.value.trim());
+                    const correctAnswerRadio = block.querySelector(`input[name^="correct-answer-"]:checked`);
+                    
+                    if (!questionText || options.some(opt => !opt) || !correctAnswerRadio) {
+                        throw new Error("Semua field pertanyaan dan pilihan harus diisi, dan satu jawaban benar harus dipilih.");
+                    }
+                    const correctAnswer = options[parseInt(correctAnswerRadio.value, 10)];
+                    questionsData.push({ questionText, options, correctAnswer });
+                }
+
+                // Gunakan Batch Write untuk menyimpan semuanya sekaligus
+                const batch = writeBatch(db);
+
+                // 1. Simpan data utama kuis
+                const quizDocRef = doc(db, "quizzes", quizId);
+                batch.set(quizDocRef, {
+                    title: quizTitle,
+                    passingScore: passingScore,
+                    questionCount: questionsData.length
+                });
+
+                // 2. Simpan setiap pertanyaan di subcollection
+                const questionsColRef = collection(db, "quizzes", quizId, "questions");
+                questionsData.forEach(qData => {
+                    const questionDocRef = doc(questionsColRef); // Buat dokumen baru dengan ID acak
+                    batch.set(questionDocRef, qData);
+                });
+
+                // 3. Jalankan semua operasi tulis
+                await batch.commit();
+
+                alert(`Kuis "${quizTitle}" berhasil disimpan!`);
+                window.location.href = 'semua-kuis.html';
+
+            } catch (error) {
+                console.error("Gagal menyimpan kuis:", error);
+                formMessage.textContent = "Gagal menyimpan: " + error.message;
+            } finally {
+                saveQuizBtn.disabled = false;
+                saveQuizBtn.textContent = 'Simpan Kuis ke Database';
+            }
+        });
+
+
+        // Cek otentikasi
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // TODO: Di masa depan, cek apakah user.uid adalah admin
+                console.log("Akses diberikan untuk:", user.uid);
+                loadingStateDiv.style.display = 'none';
+                adminContentDiv.classList.remove('hidden');
+                addQuestionBlock(); // Tambahkan blok pertanyaan pertama secara otomatis
+            } else {
+                alert("Anda harus login untuk mengakses halaman ini.");
+                window.location.href = `login-page.html?redirect=buat-kuis.html`;
+            }
+        });
+
+    </script>
+</body>
+</html>
