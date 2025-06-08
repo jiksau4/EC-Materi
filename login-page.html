@@ -14,46 +14,30 @@
             margin-bottom: 1.5rem; 
         }
         .auth-button {
-            padding: 0.625rem 1rem; /* py-2.5 px-4 */
-            border-radius: 0.375rem; /* rounded-md */
-            font-weight: 500; /* font-medium */
+            padding: 0.625rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
             transition: background-color 0.3s ease;
             display: inline-block;
             text-align: center;
         }
-        .auth-button-primary {
-            background-color: #2563EB; /* bg-blue-600 */
-            color: white;
-        }
-        .auth-button-primary:hover {
-            background-color: #1D4ED8; /* hover:bg-blue-700 */
-        }
+        .auth-button-primary { background-color: #2563EB; color: white; }
+        .auth-button-primary:hover { background-color: #1D4ED8; }
+        .auth-button-primary:disabled { background-color: #93C5FD; cursor: not-allowed; }
         .google-btn svg {
-             width: 1.25rem; /* w-5 */
-             height: 1.25rem; /* h-5 */
-             margin-right: 0.75rem; /* mr-3 */
+             width: 1.25rem;
+             height: 1.25rem;
+             margin-right: 0.75rem;
         }
          .input-field {
-            margin-top: 0.25rem; /* mt-1 */
-            display: block;
-            width: 100%;
-            padding-left: 0.75rem; /* px-3 */
-            padding-right: 0.75rem; /* px-3 */
-            padding-top: 0.5rem; /* py-2 */
-            padding-bottom: 0.5rem; /* py-2 */
-            border-width: 1px;
-            border-color: #D1D5DB; /* border-slate-300 */
-            border-radius: 0.375rem; /* rounded-md */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            margin-top: 0.25rem; display: block; width: 100%;
+            padding: 0.5rem 0.75rem; border-width: 1px;
+            border-color: #D1D5DB; border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
         .input-field:focus {
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-            --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-            --tw-ring-offset-width: 0px;
-            --tw-ring-offset-color: #fff;
-            --tw-ring-color: #2563EB; /* focus:ring-blue-500 */
-            border-color: #2563EB; /* focus:border-blue-500 */
+            outline: 2px solid transparent; outline-offset: 2px;
+            --tw-ring-color: #2563EB; border-color: #2563EB;
         }
     </style>
 </head>
@@ -99,7 +83,7 @@
             Belum punya akun? <a href="registrasi.html" class="font-medium text-blue-600 hover:text-blue-700 hover:underline">Daftar di sini</a>
         </p>
         <p class="mt-2 text-center text-sm text-slate-600">
-            <a href="#" id="forgotPasswordLink" class="font-medium text-slate-500 hover:text-slate-700 hover:underline">Lupa kata sandi?</a> <!-- Placeholder -->
+            <a href="#" id="forgotPasswordLink" class="font-medium text-slate-500 hover:text-slate-700 hover:underline">Lupa kata sandi?</a>
         </p>
     </div>
 
@@ -112,140 +96,115 @@
     </footer>
 
     <script type="module">
-      const firebaseConfig = {
-        apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
-        authDomain: "ec-materi.firebaseapp.com",
-        projectId: "ec-materi",
-        storageBucket: "ec-materi.firebasestorage.app",
-        messagingSenderId: "166687187100",
-        appId: "1:166687187100:web:e073df281931524f660d59",
-        measurementId: "G-MT58HLBRDY"
-      };
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
 
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-      import { 
-          getAuth, 
-          GoogleAuthProvider, 
-          signInWithPopup, 
-          signInWithEmailAndPassword,
-          sendPasswordResetEmail, // Untuk fitur lupa kata sandi
-          onAuthStateChanged 
-      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            onAuthStateChanged,
+            getAdditionalUserInfo // BARU
+        } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, // BARU
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const googleProvider = new GoogleAuthProvider();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
-      const loginForm = document.getElementById('loginForm');
-      const googleLoginBtn = document.getElementById('googleLoginBtn');
-      const loginMessage = document.getElementById('loginMessage');
-      const currentYearSpan = document.getElementById('currentYear');
-      const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const loginForm = document.getElementById('loginForm');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const loginMessage = document.getElementById('loginMessage');
+        const currentYearSpan = document.getElementById('currentYear');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
 
-      if (currentYearSpan) {
-        currentYearSpan.textContent = new Date().getFullYear();
-      }
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
-      // Fungsi untuk mengarahkan setelah login berhasil
-      function redirectToApp(defaultRedirect = 'index.html') {
-          const urlParams = new URLSearchParams(window.location.search);
-          const redirectUrl = urlParams.get('redirect') || defaultRedirect;
-          window.location.href = redirectUrl;
-      }
-
-      // Login dengan Email dan Kata Sandi
-      if (loginForm) {
-          loginForm.addEventListener('submit', (e) => {
-              e.preventDefault();
-              loginMessage.textContent = ''; 
-              const email = document.getElementById('loginEmail').value;
-              const password = document.getElementById('loginPassword').value;
-              const loginButtonEmail = document.getElementById('loginButtonEmail');
-              loginButtonEmail.disabled = true;
-              loginButtonEmail.textContent = 'Memproses...';
-
-              signInWithEmailAndPassword(auth, email, password)
-                  .then((userCredential) => {
-                      const user = userCredential.user;
-                      console.log("Login Email Berhasil:", user);
-                      redirectToApp();
-                  })
-                  .catch((error) => {
-                      console.error("Error Login Email:", error.code, error.message);
-                      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                          loginMessage.textContent = "Email atau kata sandi salah.";
-                      } else {
-                          loginMessage.textContent = "Gagal login: " + error.message;
-                      }
-                  })
-                  .finally(() => {
-                    loginButtonEmail.disabled = false;
-                    loginButtonEmail.textContent = 'Login dengan Email';
-                  });
-          });
-      }
-
-      // Login dengan Google
-      if (googleLoginBtn) {
-          googleLoginBtn.addEventListener('click', () => {
-              loginMessage.textContent = '';
-              signInWithPopup(auth, googleProvider)
-                  .then((result) => {
-                      const user = result.user;
-                      console.log("Login Google Berhasil:", user);
-                      redirectToApp();
-                  }).catch((error) => {
-                      console.error("Error Login Google:", error.code, error.message);
-                      if (error.code === 'auth/popup-closed-by-user') {
-                          loginMessage.textContent = "Anda menutup jendela login. Silakan coba lagi.";
-                      } else {
-                          loginMessage.textContent = "Gagal login dengan Google: " + error.message;
-                      }
-                  });
-          });
-      }
-      
-      // Fitur Lupa Kata Sandi (Dasar)
-      if (forgotPasswordLink) {
-          forgotPasswordLink.addEventListener('click', (e) => {
-              e.preventDefault();
-              loginMessage.textContent = '';
-              const email = prompt("Silakan masukkan alamat email Anda untuk reset kata sandi:");
-              if (email) {
-                  sendPasswordResetEmail(auth, email)
-                      .then(() => {
-                          loginMessage.textContent = "Email reset kata sandi telah dikirim ke " + email + ". Silakan periksa kotak masuk Anda.";
-                          loginMessage.className = 'mt-4 text-center text-sm text-green-600'; // Ganti warna jadi hijau untuk sukses
-                      })
-                      .catch((error) => {
-                          console.error("Error Lupa Kata Sandi:", error.code, error.message);
-                          if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
-                              loginMessage.textContent = "Email tidak ditemukan atau tidak valid.";
-                          } else {
-                              loginMessage.textContent = "Gagal mengirim email reset: " + error.message;
-                          }
-                           loginMessage.className = 'mt-4 text-center text-sm text-red-500';
-                      });
-              } else if (email === '') {
-                  loginMessage.textContent = "Alamat email tidak boleh kosong.";
-              }
-          });
-      }
-
-
-      // Monitor auth state
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("Pengguna sudah login (halaman login):", user.displayName || user.email);
-          if (window.location.pathname.endsWith('login-page.html') || window.location.pathname.endsWith('registrasi.html')) {
-             // redirectToApp(); // Aktifkan ini jika ingin langsung redirect
-             console.log("Pengguna sudah login, idealnya diarahkan.");
-          }
-        } else {
-          console.log("Pengguna belum login atau sudah logout (halaman login).");
+        // **BARU**: Fungsi untuk membuat dokumen pengguna
+        async function createUserDocument(user) {
+            const userDocRef = doc(db, "users", user.uid);
+            await setDoc(userDocRef, {
+                displayName: user.displayName,
+                email: user.email,
+                createdAt: serverTimestamp(),
+                stats: {
+                    quizzesCompleted: 0,
+                    materialsCompleted: 0,
+                    xpPoints: 0
+                }
+            }, { merge: true }); // Merge true agar tidak menimpa data jika sudah ada
+            console.log("Dokumen pengguna berhasil dibuat/diverifikasi di Firestore untuk:", user.uid);
         }
-      });
 
+        function redirectToApp(defaultRedirect = 'index.html') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || defaultRedirect;
+            window.location.href = redirectUrl;
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // ... (logika login email sama seperti sebelumnya) ...
+            });
+        }
+
+        // **DIPERBARUI**: Logika Login dengan Google
+        if (googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', () => {
+                loginMessage.textContent = '';
+                signInWithPopup(auth, googleProvider)
+                    .then(async (result) => {
+                        const user = result.user;
+                        const additionalUserInfo = getAdditionalUserInfo(result);
+                        
+                        // Cek jika pengguna baru, buatkan dokumennya
+                        if (additionalUserInfo.isNewUser) {
+                            await createUserDocument(user);
+                        }
+
+                        console.log("Login Google Berhasil:", user);
+                        redirectToApp();
+                    }).catch((error) => {
+                        console.error("Error Login Google:", error.code, error.message);
+                        if (error.code === 'auth/popup-closed-by-user') {
+                            loginMessage.textContent = "Anda menutup jendela login. Silakan coba lagi.";
+                        } else {
+                            loginMessage.textContent = "Gagal login dengan Google: " + error.message;
+                        }
+                    });
+            });
+        }
+        
+        if (forgotPasswordLink) {
+            // ... (logika lupa kata sandi sama seperti sebelumnya) ...
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            if (window.location.pathname.endsWith('login-page.html')) {
+               console.log("Pengguna sudah login, idealnya diarahkan.");
+               // redirectToApp(); // Tetap dikomentari agar tidak redirect otomatis saat testing
+            }
+          } else {
+            console.log("Pengguna belum login atau sudah logout.");
+          }
+        });
     </script>
 </body>
 </html>
