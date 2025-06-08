@@ -8,52 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .logo-image-register {
-            height: 80px; 
-            width: auto;
-            margin-bottom: 1.5rem;
-        }
-        .auth-button {
-            padding: 0.625rem 1rem; /* py-2.5 px-4 */
-            border-radius: 0.375rem; /* rounded-md */
-            font-weight: 500; /* font-medium */
-            transition: background-color 0.3s ease;
-            display: inline-block;
-            text-align: center;
-        }
-        .auth-button-primary {
-            background-color: #2563EB; /* bg-blue-600 */
-            color: white;
-        }
-        .auth-button-primary:hover {
-            background-color: #1D4ED8; /* hover:bg-blue-700 */
-        }
-        .google-btn svg {
-             width: 1.25rem; /* w-5 */
-             height: 1.25rem; /* h-5 */
-             margin-right: 0.75rem; /* mr-3 */
-        }
+        .logo-image-register { height: 80px; width: auto; margin-bottom: 1.5rem; }
+        .auth-button { padding: 0.625rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.3s ease; display: inline-block; text-align: center; }
+        .auth-button-primary { background-color: #2563EB; color: white; }
+        .auth-button-primary:hover { background-color: #1D4ED8; }
+        .auth-button-primary:disabled { background-color: #93C5FD; cursor: not-allowed; }
+        .google-btn svg { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; }
         .input-field {
-            margin-top: 0.25rem; /* mt-1 */
-            display: block;
-            width: 100%;
-            padding-left: 0.75rem; /* px-3 */
-            padding-right: 0.75rem; /* px-3 */
-            padding-top: 0.5rem; /* py-2 */
-            padding-bottom: 0.5rem; /* py-2 */
-            border-width: 1px;
-            border-color: #D1D5DB; /* border-slate-300 */
-            border-radius: 0.375rem; /* rounded-md */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            margin-top: 0.25rem; display: block; width: 100%; padding: 0.5rem 0.75rem;
+            border-width: 1px; border-color: #D1D5DB; border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
         .input-field:focus {
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-            --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-            --tw-ring-offset-width: 0px;
-            --tw-ring-offset-color: #fff;
-            --tw-ring-color: #2563EB; /* focus:ring-blue-500 */
-            border-color: #2563EB; /* focus:border-blue-500 */
+            outline: 2px solid transparent; outline-offset: 2px;
+            --tw-ring-color: #2563EB; border-color: #2563EB;
         }
     </style>
 </head>
@@ -101,20 +69,12 @@
             Daftar dengan Google
         </button>
 
-        <p id="registerMessage" class="mt-4 text-center text-sm text-red-500"></p> <!-- Untuk menampilkan pesan error -->
+        <p id="registerMessage" class="mt-4 text-center text-sm text-red-500"></p>
 
         <p class="mt-8 text-center text-sm text-slate-600">
             Sudah punya akun? <a href="login-page.html" class="font-medium text-blue-600 hover:text-blue-700 hover:underline">Login di sini</a>
         </p>
     </div>
-
-    <footer class="mt-12 text-center text-sm text-slate-500">
-        <p>&copy; <span id="currentYear"></span> ExtraCourse. All rights reserved.</p>
-         <p class="mt-1">
-            <a href="kebijakan-privasi.html" class="hover:underline">Kebijakan Privasi</a> &bull; 
-            <a href="syarat-ketentuan.html" class="hover:underline">Syarat & Ketentuan</a>
-        </p>
-    </footer>
 
     <script type="module">
       const firebaseConfig = {
@@ -123,8 +83,7 @@
         projectId: "ec-materi",
         storageBucket: "ec-materi.firebasestorage.app",
         messagingSenderId: "166687187100",
-        appId: "1:166687187100:web:e073df281931524f660d59",
-        measurementId: "G-MT58HLBRDY"
+        appId: "1:166687187100:web:e073df281931524f660d59"
       };
 
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -134,28 +93,43 @@
           signInWithPopup, 
           createUserWithEmailAndPassword,
           updateProfile,
-          onAuthStateChanged 
+          getAdditionalUserInfo
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+      import { 
+          getFirestore, 
+          doc, 
+          setDoc,
+          serverTimestamp 
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+      const db = getFirestore(app);
       const googleProvider = new GoogleAuthProvider();
 
       const registerForm = document.getElementById('registerForm');
       const googleRegisterBtn = document.getElementById('googleRegisterBtn');
       const registerMessage = document.getElementById('registerMessage');
-      const currentYearSpan = document.getElementById('currentYear');
 
-      if (currentYearSpan) {
-        currentYearSpan.textContent = new Date().getFullYear();
+      async function createUserDocument(user) {
+          const userDocRef = doc(db, "users", user.uid);
+          await setDoc(userDocRef, {
+              displayName: user.displayName,
+              email: user.email,
+              createdAt: serverTimestamp(),
+              stats: {
+                  quizzesCompleted: 0,
+                  materialsCompleted: 0,
+                  xpPoints: 0
+              }
+          });
+          console.log("Dokumen pengguna berhasil dibuat di Firestore untuk:", user.uid);
       }
 
-      // Pendaftaran dengan Email dan Kata Sandi
       if (registerForm) {
           registerForm.addEventListener('submit', (e) => {
               e.preventDefault();
               registerMessage.textContent = ''; 
-
               const displayName = document.getElementById('registerDisplayName').value;
               const email = document.getElementById('registerEmail').value;
               const password = document.getElementById('registerPassword').value;
@@ -174,21 +148,11 @@
               registerButtonEmail.disabled = true;
               registerButtonEmail.textContent = 'Mendaftar...';
 
-
               createUserWithEmailAndPassword(auth, email, password)
-                  .then((userCredential) => {
-                      // Pendaftaran berhasil
+                  .then(async (userCredential) => {
                       const user = userCredential.user;
-                      console.log("Pendaftaran email berhasil:", user);
-                      
-                      // Update profil dengan nama tampilan
-                      return updateProfile(user, {
-                          displayName: displayName
-                      });
-                  })
-                  .then(() => {
-                      console.log("Profil berhasil diperbarui dengan nama tampilan.");
-                      // Arahkan ke halaman utama atau dashboard setelah pendaftaran dan update profil
+                      await updateProfile(user, { displayName: displayName });
+                      await createUserDocument({ ...user, displayName }); // Pass updated info
                       window.location.href = 'index.html'; 
                   })
                   .catch((error) => {
@@ -196,57 +160,34 @@
                       if (error.code === 'auth/email-already-in-use') {
                           registerMessage.textContent = "Alamat email ini sudah terdaftar.";
                       } else if (error.code === 'auth/weak-password') {
-                          registerMessage.textContent = "Kata sandi terlalu lemah. Gunakan minimal 6 karakter.";
+                          registerMessage.textContent = "Kata sandi terlalu lemah.";
                       } else {
                           registerMessage.textContent = "Gagal mendaftar: " + error.message;
                       }
                   })
                   .finally(() => {
-                    registerButtonEmail.disabled = false;
-                    registerButtonEmail.textContent = 'Daftar dengan Email';
+                      registerButtonEmail.disabled = false;
+                      registerButtonEmail.textContent = 'Daftar dengan Email';
                   });
           });
       }
 
-      // Pendaftaran/Login dengan Google
       if (googleRegisterBtn) {
           googleRegisterBtn.addEventListener('click', () => {
-              registerMessage.textContent = '';
               signInWithPopup(auth, googleProvider)
-                  .then((result) => {
+                  .then(async (result) => {
                       const user = result.user;
-                      console.log("Pendaftaran/Login Google Berhasil:", user);
-                      // Arahkan ke halaman utama atau dashboard
-                      const urlParams = new URLSearchParams(window.location.search);
-                      const redirectUrl = urlParams.get('redirect') || 'index.html';
+                      const additionalUserInfo = getAdditionalUserInfo(result);
+                      if (additionalUserInfo.isNewUser) {
+                          await createUserDocument(user);
+                      }
+                      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'index.html';
                       window.location.href = redirectUrl; 
                   }).catch((error) => {
-                      console.error("Error Daftar/Login Google:", error.code, error.message);
-                      if (error.code === 'auth/popup-closed-by-user') {
-                          registerMessage.textContent = "Anda menutup jendela pendaftaran. Silakan coba lagi.";
-                      } else {
-                          registerMessage.textContent = "Gagal dengan Google: " + error.message;
-                      }
+                      registerMessage.textContent = "Gagal dengan Google: " + error.message;
                   });
           });
       }
-
-      // Monitor auth state
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("Pengguna sudah login (halaman registrasi):", user.displayName || user.email);
-          // Jika pengguna sudah login dan berada di halaman registrasi, arahkan mereka
-          if (window.location.pathname.endsWith('registrasi.html')) {
-             const urlParams = new URLSearchParams(window.location.search);
-             const redirectUrl = urlParams.get('redirect') || 'index.html';
-             // window.location.href = redirectUrl; // Komentari untuk testing agar tidak langsung redirect
-             console.log("Pengguna sudah login, idealnya diarahkan ke:", redirectUrl);
-          }
-        } else {
-          console.log("Pengguna belum login atau sudah logout (halaman registrasi).");
-        }
-      });
-
     </script>
 </body>
 </html>
