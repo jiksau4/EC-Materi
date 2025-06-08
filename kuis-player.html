@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mengerjakan Kuis: Simple Present - ExtraCourse</title>
+    <title>Mengerjakan Kuis - ExtraCourse</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11,14 +11,6 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB; /* bg-slate-50 */
         }
-        .nav-link { position: relative; transition: color 0.3s ease; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: -4px; left: 50%; transform: translateX(-50%);
-            background-color: #2563EB; transition: width 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link:hover, .nav-link.active { color: #2563EB; }
         .logo-image { height: 70px; width: auto; }
         .auth-button {
             padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
@@ -28,7 +20,6 @@
         .auth-button-primary:hover { background-color: #1D4ED8; }
         .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
         .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
-        
         #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
             display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
         }
@@ -60,13 +51,6 @@
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
         .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-        #mobileUserMenuLinksContainer a {
-            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
-            padding-bottom: 0.75rem; display: block; color: #4B5563;
-        }
-         #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
-            background-color: #EFF6FF; color: #2563EB;
-        }
 
         #quiz-container { max-width: 800px; margin: auto; }
         .progress-bar-bg { background-color: #E5E7EB; }
@@ -98,13 +82,6 @@
             <a href="index.html#home" class="flex items-center">
                 <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
-            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
-                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
-                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
-                <a href="semua-kuis.html" class="nav-link font-semibold active">Kuis</a>
-                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
-                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
-            </nav>
             <div class="hidden md:flex items-center space-x-2">
                 <div id="authLinksDesktop">
                     <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
@@ -116,7 +93,7 @@
                         <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
                         <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div id="userDropdownMenuDesktop">
+                    <div id="userDropdownMenuDesktop" style="display: none;">
                         <div class="dropdown-user-info">
                             <p class="name" id="dropdownUserNameDesktop"></p>
                             <p class="email" id="dropdownUserEmailDesktop"></p>
@@ -131,13 +108,8 @@
                 </div>
             </div>
             <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
+                <a href="semua-kuis.html" class="font-medium text-slate-600 hover:text-blue-600">&larr; Keluar Kuis</a>
             </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
-            <!-- Konten diisi oleh JavaScript -->
         </div>
     </header>
 
@@ -164,38 +136,8 @@
     </main>
     
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3>
-                    <p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p>
-                    <p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li>
-                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
-                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
-                        <li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
-                        <li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li>
-                        <li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3>
-                    <p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p>
-                    <p class="text-sm mb-2">Email: Jiksau04@gmail.com</p>
-                    <p class="text-sm mb-4">Telepon: 081334629983</p>
-                    <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
-                            <span>Instagram</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm">&copy; <span id="currentYear"></span> ExtraCourse. All rights reserved.</p>
         </div>
     </footer>
 
@@ -217,8 +159,6 @@
         const db = getFirestore(app);
         
         // --- Logika Header Universal ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
         const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
         const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
@@ -230,7 +170,6 @@
         const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
 
         function updateHeaderUI(user) {
-            if(mobileMenu) mobileMenu.innerHTML = ''; 
             if (user) { 
                 if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
                 if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
@@ -243,43 +182,9 @@
                 if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
                 if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
                 if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
-
-                if(mobileMenu) {
-                    mobileMenu.innerHTML = `
-                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
-                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
-                            <span class="user-display-name !max-w-full">${displayName}</span>
-                        </div>
-                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
-                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi Tersimpan</a>
-                        <a href="riwayat-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Riwayat Kuis</a>
-                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
-                        <hr class="border-slate-200 mx-6 my-1">
-                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
-                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
-                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Kuis</a>
-                        <hr class="border-slate-200 mx-6 my-1">
-                        <div class="px-6 mt-2">
-                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
-                        </div>
-                    `;
-                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
-                }
             } else { 
                 if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
                 if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
-                
-                if(mobileMenu) {
-                     mobileMenu.innerHTML = `
-                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
-                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
-                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Kuis</a>
-                        <div class="px-6 mt-2 space-y-2">
-                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
-                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
-                        </div>
-                     `;
-                }
             }
         }
         
@@ -290,10 +195,6 @@
         
         if (logoutButtonDropdownDesktop) {
             logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
-        }
-
-        if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
         }
         
         const currentYearSpan = document.getElementById('currentYear');
@@ -312,17 +213,25 @@
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let currentSelectedAnswer = null;
-        
+
         const quizzesDatabase = {
             'tenses-dasar': {
-                title: 'Kuis Tenses Dasar',
-                passingScore: 70, 
+                title: 'Kuis Tenses Dasar', passingScore: 70, 
                 questions: [
                     { questionText: 'She ___ to school by bus every day.', options: ['go', 'goes', 'went', 'is going'], correctAnswer: 'goes' },
                     { questionText: 'My parents ___ in a small apartment.', options: ['live', 'lives', 'lived', 'are living'], correctAnswer: 'live' },
                     { questionText: 'The sun ___ in the east.', options: ['rise', 'rises', 'rose', 'is rising'], correctAnswer: 'rises' },
                     { questionText: 'I ___ English and Indonesian.', options: ['speaks', 'speak', 'spoke', 'am speaking'], correctAnswer: 'speak' },
                     { questionText: 'Water ___ at 100 degrees Celsius.', options: ['boil', 'boils', 'boiled', 'is boiling'], correctAnswer: 'boils' }
+                ]
+            },
+            'simple-past': {
+                title: 'Kuis Simple Past', passingScore: 75,
+                questions: [
+                    { questionText: 'He ___ to the cinema last night.', options: ['go', 'goes', 'went', 'is going'], correctAnswer: 'went' },
+                    { questionText: 'We ___ that movie two weeks ago.', options: ['see', 'saw', 'have seen', 'sees'], correctAnswer: 'saw' },
+                    { questionText: 'I did not ___ my homework yesterday.', options: ['do', 'did', 'does', 'done'], correctAnswer: 'do' },
+                    { questionText: '___ you visit your grandmother last weekend?', options: ['Do', 'Does', 'Did', 'Are'], correctAnswer: 'Did' }
                 ]
             }
         };
@@ -372,15 +281,16 @@
             try {
                 const user = auth.currentUser;
                 const quizHistoryRef = collection(db, "users", user.uid, "quizHistory");
+                const kuisId = new URLSearchParams(window.location.search).get('id');
+
                 const docRef = await addDoc(quizHistoryRef, {
-                    kuisId: new URLSearchParams(window.location.search).get('id'),
+                    kuisId: kuisId,
                     title: currentQuizData.title,
                     score: finalScore,
                     passingScore: currentQuizData.passingScore,
                     completedAt: serverTimestamp()
                 });
                 console.log("Riwayat kuis berhasil disimpan dengan ID:", docRef.id);
-                // Redirect ke halaman hasil dengan membawa ID attempt
                 window.location.href = `hasil-kuis.html?attemptId=${docRef.id}`;
             } catch (error) {
                 console.error("Gagal menyimpan riwayat kuis:", error);
@@ -401,7 +311,7 @@
             }
         });
 
-        function initQuiz(user) {
+        function initQuiz() {
             const urlParams = new URLSearchParams(window.location.search);
             const kuisId = urlParams.get('id');
 
@@ -412,6 +322,7 @@
             }
 
             currentQuizData = quizzesDatabase[kuisId];
+            document.title = `Mengerjakan: ${currentQuizData.title}`; // Update title halaman
             quizTitleEl.textContent = currentQuizData.title;
 
             loadingStateDiv.style.display = 'none';
@@ -423,7 +334,7 @@
         onAuthStateChanged(auth, (user) => {
             updateHeaderUI(user);
             if (user) {
-                initQuiz(user);
+                initQuiz(); 
             } else {
                 alert("Anda harus login untuk mengerjakan kuis.");
                 window.location.href = `login-page.html?redirect=${window.location.pathname}${window.location.search}`;
