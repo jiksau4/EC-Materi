@@ -109,7 +109,14 @@
     </main>
 
     <script type="module">
-        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -167,7 +174,6 @@
             questionsContainer.appendChild(questionBlock);
             questionBlock.querySelector('.remove-question-btn').addEventListener('click', () => {
                 questionBlock.remove();
-                // Update nomor pertanyaan jika perlu
             });
         }
         
@@ -210,10 +216,7 @@
                     questionsData.push({ questionText, options, correctAnswer });
                 }
 
-                // Gunakan Batch Write untuk menyimpan semuanya sekaligus
                 const batch = writeBatch(db);
-
-                // 1. Simpan data utama kuis
                 const quizDocRef = doc(db, "quizzes", quizId);
                 batch.set(quizDocRef, {
                     title: quizTitle,
@@ -221,14 +224,12 @@
                     questionCount: questionsData.length
                 });
 
-                // 2. Simpan setiap pertanyaan di subcollection
                 const questionsColRef = collection(db, "quizzes", quizId, "questions");
                 questionsData.forEach(qData => {
-                    const questionDocRef = doc(questionsColRef); // Buat dokumen baru dengan ID acak
+                    const questionDocRef = doc(questionsColRef);
                     batch.set(questionDocRef, qData);
                 });
 
-                // 3. Jalankan semua operasi tulis
                 await batch.commit();
 
                 alert(`Kuis "${quizTitle}" berhasil disimpan!`);
@@ -243,18 +244,27 @@
             }
         });
 
-
-        // Cek otentikasi
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // TODO: Di masa depan, cek apakah user.uid adalah admin
-                console.log("Akses diberikan untuk:", user.uid);
+            // Daftar UID yang diizinkan menjadi admin
+            const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; // UID Anda sudah dimasukkan
+
+            if (user && adminUIDs.includes(user.uid)) {
+                console.log("Akses admin diberikan untuk:", user.uid);
                 loadingStateDiv.style.display = 'none';
                 adminContentDiv.classList.remove('hidden');
-                addQuestionBlock(); // Tambahkan blok pertanyaan pertama secara otomatis
+                
+                if (questionsContainer.children.length === 0) {
+                    addQuestionBlock(); 
+                }
             } else {
-                alert("Anda harus login untuk mengakses halaman ini.");
-                window.location.href = `login-page.html?redirect=buat-kuis.html`;
+                loadingStateDiv.innerHTML = `
+                    <div class="text-center py-20 bg-white p-8 rounded-xl shadow-md">
+                        <h2 class="text-2xl font-semibold text-red-700">Akses Ditolak</h2>
+                        <p class="text-slate-500 mt-2 mb-6">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+                        <a href="index.html" class="auth-button auth-button-secondary">Kembali ke Halaman Utama</a>
+                    </div>
+                `;
+                loadingStateDiv.style.display = 'block';
             }
         });
 
