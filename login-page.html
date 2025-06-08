@@ -113,12 +113,12 @@
             signInWithEmailAndPassword,
             sendPasswordResetEmail,
             onAuthStateChanged,
-            getAdditionalUserInfo // BARU
+            getAdditionalUserInfo
         } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { 
             getFirestore, 
             doc, 
-            setDoc, // BARU
+            setDoc,
             serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
@@ -135,7 +135,6 @@
 
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
-        // **BARU**: Fungsi untuk membuat dokumen pengguna
         async function createUserDocument(user) {
             const userDocRef = doc(db, "users", user.uid);
             await setDoc(userDocRef, {
@@ -147,7 +146,7 @@
                     materialsCompleted: 0,
                     xpPoints: 0
                 }
-            }, { merge: true }); // Merge true agar tidak menimpa data jika sudah ada
+            }, { merge: true });
             console.log("Dokumen pengguna berhasil dibuat/diverifikasi di Firestore untuk:", user.uid);
         }
 
@@ -160,11 +159,34 @@
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                // ... (logika login email sama seperti sebelumnya) ...
+                loginMessage.textContent = ''; 
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const loginButtonEmail = document.getElementById('loginButtonEmail');
+                loginButtonEmail.disabled = true;
+                loginButtonEmail.textContent = 'Memproses...';
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        console.log("Login Email Berhasil:", user);
+                        redirectToApp();
+                    })
+                    .catch((error) => {
+                        console.error("Error Login Email:", error.code, error.message);
+                        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                            loginMessage.textContent = "Email atau kata sandi salah.";
+                        } else {
+                            loginMessage.textContent = "Gagal login: " + error.message;
+                        }
+                    })
+                    .finally(() => {
+                        loginButtonEmail.disabled = false;
+                        loginButtonEmail.textContent = 'Login dengan Email';
+                    });
             });
         }
 
-        // **DIPERBARUI**: Logika Login dengan Google
         if (googleLoginBtn) {
             googleLoginBtn.addEventListener('click', () => {
                 loginMessage.textContent = '';
@@ -172,12 +194,9 @@
                     .then(async (result) => {
                         const user = result.user;
                         const additionalUserInfo = getAdditionalUserInfo(result);
-                        
-                        // Cek jika pengguna baru, buatkan dokumennya
                         if (additionalUserInfo.isNewUser) {
                             await createUserDocument(user);
                         }
-
                         console.log("Login Google Berhasil:", user);
                         redirectToApp();
                     }).catch((error) => {
@@ -192,17 +211,35 @@
         }
         
         if (forgotPasswordLink) {
-            // ... (logika lupa kata sandi sama seperti sebelumnya) ...
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginMessage.textContent = '';
+                const email = prompt("Silakan masukkan alamat email Anda untuk reset kata sandi:");
+                if (email) {
+                    sendPasswordResetEmail(auth, email)
+                        .then(() => {
+                            loginMessage.textContent = "Email reset kata sandi telah dikirim ke " + email + ". Silakan periksa kotak masuk Anda.";
+                            loginMessage.className = 'mt-4 text-center text-sm text-green-600'; // Ganti warna jadi hijau untuk sukses
+                        })
+                        .catch((error) => {
+                            console.error("Error Lupa Kata Sandi:", error.code, error.message);
+                            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+                                loginMessage.textContent = "Email tidak ditemukan atau tidak valid.";
+                            } else {
+                                loginMessage.textContent = "Gagal mengirim email reset: " + error.message;
+                            }
+                           loginMessage.className = 'mt-4 text-center text-sm text-red-500';
+                        });
+                }
+            });
         }
 
         onAuthStateChanged(auth, (user) => {
           if (user) {
             if (window.location.pathname.endsWith('login-page.html')) {
                console.log("Pengguna sudah login, idealnya diarahkan.");
-               // redirectToApp(); // Tetap dikomentari agar tidak redirect otomatis saat testing
+               // redirectToApp();
             }
-          } else {
-            console.log("Pengguna belum login atau sudah logout.");
           }
         });
     </script>
