@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Kuis - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB; /* bg-slate-50 */
+        }
+        .logo-image { height: 70px; width: auto; }
+        .auth-button {
+            padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-weight: 500;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+        }
+        .auth-button-primary { background-color: #2563EB; color: white; }
+        .auth-button-primary:hover { background-color: #1D4ED8; }
+        .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
+        .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
+        
+        #result-card {
+            max-width: 600px;
+            margin: auto;
+        }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 9999px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            border-width: 8px;
+        }
+        .score-circle.pass {
+            background-color: #ECFDF5; /* green-50 */
+            border-color: #10B981; /* green-500 */
+            color: #065F46; /* green-800 */
+        }
+        .score-circle.fail {
+            background-color: #FEF2F2; /* red-50 */
+            border-color: #EF4444; /* red-500 */
+            color: #991B1B; /* red-800 */
+        }
+        .score-text {
+            font-size: 3rem; /* text-5xl */
+            font-weight: 800; /* extrabold */
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500;
+        }
+        .result-message {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* bold */
+        }
+        .result-message.pass {
+            color: #059669; /* green-600 */
+        }
+        .result-message.fail {
+            color: #DC2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <a href="semua-kuis.html" class="font-medium text-slate-600 hover:text-blue-600">&larr; Kembali ke Daftar Kuis</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memuat hasil kuis...</p>
+        </div>
+        
+        <div id="errorState" class="hidden text-center py-20 bg-white rounded-xl shadow">
+             <h2 class="text-2xl font-semibold text-red-700">Gagal Memuat Hasil</h2>
+            <p class="text-slate-500 mt-2 mb-6">Tidak dapat menemukan riwayat kuis yang Anda cari.</p>
+            <a href="semua-kuis.html" class="auth-button auth-button-secondary">Kembali ke Daftar Kuis</a>
+        </div>
+
+        <div id="resultContent" class="hidden">
+            <div id="result-card" class="bg-white rounded-xl shadow-lg p-6 md:p-10 text-center">
+                <h1 id="quizTitle" class="text-2xl font-semibold text-slate-700 mb-2"></h1>
+                <p class="text-slate-500 mb-8">Berikut adalah hasil kuis yang baru saja Anda selesaikan.</p>
+
+                <div id="scoreCircle" class="score-circle">
+                    <span id="scoreText" class="score-text">0</span>
+                    <span class="score-label">SKOR</span>
+                </div>
+
+                <p id="resultMessage" class="result-message mt-6"></p>
+
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a id="retryButton" href="#" class="auth-button auth-button-primary w-full sm:w-auto">Ulangi Kuis</a>
+                    <a href="riwayat-kuis.html" class="auth-button auth-button-secondary w-full sm:w-auto">Lihat Semua Riwayat</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm">&copy; <span id="currentYear"></span> ExtraCourse. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loadingStateDiv = document.getElementById('loadingState');
+        const errorStateDiv = document.getElementById('errorState');
+        const resultContentDiv = document.getElementById('resultContent');
+        const quizTitleEl = document.getElementById('quizTitle');
+        const scoreCircleEl = document.getElementById('scoreCircle');
+        const scoreTextEl = document.getElementById('scoreText');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const retryButton = document.getElementById('retryButton');
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+
+        function showResult(attemptData) {
+            const { title, score, passingScore, kuisId } = attemptData;
+
+            quizTitleEl.textContent = title;
+            scoreTextEl.textContent = score;
+
+            if (score >= passingScore) {
+                scoreCircleEl.classList.add('pass');
+                resultMessageEl.classList.add('pass');
+                resultMessageEl.textContent = "Selamat, Anda Lulus!";
+            } else {
+                scoreCircleEl.classList.add('fail');
+                resultMessageEl.classList.add('fail');
+                resultMessageEl.textContent = "Coba lagi, terus berlatih!";
+            }
+            
+            // Mengarahkan ke kuis-player.html dengan ID yang benar
+            retryButton.href = `kuis-player.html?id=${kuisId}`;
+
+            loadingStateDiv.style.display = 'none';
+            resultContentDiv.classList.remove('hidden');
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const attemptId = urlParams.get('attemptId');
+
+                if (!attemptId) {
+                    loadingStateDiv.style.display = 'none';
+                    errorStateDiv.classList.remove('hidden');
+                    return;
+                }
+
+                try {
+                    const attemptDocRef = doc(db, "users", user.uid, "quizHistory", attemptId);
+                    const docSnap = await getDoc(attemptDocRef);
+
+                    if (docSnap.exists()) {
+                        showResult(docSnap.data());
+                    } else {
+                        console.log("Riwayat kuis tidak ditemukan!");
+                        loadingStateDiv.style.display = 'none';
+                        errorStateDiv.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error("Gagal mengambil hasil kuis:", error);
+                    loadingStateDiv.style.display = 'none';
+                    errorStateDiv.classList.remove('hidden');
+                }
+
+            } else {
+                window.location.href = `login-page.html?redirect=${window.location.pathname}${window.location.search}`;
+            }
+        });
+    </script>
+</body>
+</html>
