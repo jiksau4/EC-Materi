@@ -159,27 +159,14 @@
         <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Semua Kuis Interaktif</h1>
         <p id="pageSubtitle" class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Uji pemahaman Bahasa Inggris Anda dengan berbagai kuis menarik kami. Pilih topik dan level yang sesuai!</p>
 
-        <div id="allKuisCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="tenses-dasar">
-                <div class="flex items-center mb-3">
-                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div>
-                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Tenses Dasar</h4><span class="text-xs text-slate-500">5 Soal • 10 Menit • Pemula</span></div>
-                </div>
-                <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahamanmu tentang Simple Present.</p>
-                <a href="kuis-player.html?id=tenses-dasar" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
-            </div>
-            <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="simple-past">
-                <div class="flex items-center mb-3">
-                    <div class="p-3 bg-blue-100 rounded-full mr-4"><svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                    <div><h4 class="text-lg font-semibold text-blue-700">Kuis Simple Past</h4><span class="text-xs text-slate-500">4 Soal • 10 Menit • Pemula</span></div>
-                </div>
-                <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahamanmu tentang kejadian di masa lampau.</p>
-                <a href="kuis-player.html?id=simple-past" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                <div class="lock-overlay hidden"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg></div>
-            </div>
-            <!-- Kartu-kartu kuis lainnya yang terkunci bisa ditambahkan di sini -->
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memuat daftar kuis...</p>
         </div>
+
+        <div id="allKuisCardsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Kartu kuis akan di-render di sini oleh JavaScript -->
+        </div>
+
         <div id="loginPromptAllKuis" class="hidden text-center mt-12 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
             <p class="text-yellow-700 font-medium text-lg">
                 Anda melihat <span id="freeContentCountKuis"></span> dari <span id="totalContentCountKuis"></span> kuis yang tersedia. 
@@ -190,7 +177,14 @@
     </main>
 
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
-        <!-- ... Konten Footer Lengkap ... -->
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div><h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3><p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p><p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3><ul class="space-y-2 text-sm"><li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li><li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li><li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li><li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li><li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li><li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li></ul></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3><p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p><p class="text-sm mb-2">Email: Jiksau04@gmail.com</p><p class="text-sm mb-4">Telepon: 081334629983</p><h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3><div class="flex space-x-4"><a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg><span>Instagram</span></a></div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script type="module">
@@ -204,23 +198,144 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         
         // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        function updateHeaderUI(user) { /* ... (Salin fungsi lengkap dari index.html) ... */ }
-        // ... (Salin semua listener untuk header dari index.html) ...
+        const authLinksDesktop = document.getElementById('authLinksDesktop');
+        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
+        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
+        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
+        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
+        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
+        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
+        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
+        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
+
+        function updateHeaderUI(user) {
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            if (user) { 
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
+                }
+            } else { 
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
         
+        if (userInfoDesktopTrigger) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', () => { if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
+        }
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
+        }
+        
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+
         // --- Logika Halaman Ini ---
+        const loadingStateDiv = document.getElementById('loadingState');
         const allKuisCardsContainer = document.getElementById('allKuisCardsContainer');
         const loginPromptAllKuis = document.getElementById('loginPromptAllKuis');
         const freeContentCountKuisSpan = document.getElementById('freeContentCountKuis');
         const totalContentCountKuisSpan = document.getElementById('totalContentCountKuis');
         const pageSubtitle = document.getElementById('pageSubtitle');
-        const freeKuisPageCount = 1; // Jumlah kuis gratis yang ditampilkan
+        const freeKuisPageCount = 1;
+
+        async function loadAndRenderQuizzes() {
+            try {
+                const quizzesRef = collection(db, "quizzes");
+                const q = query(quizzesRef, orderBy("title", "asc"));
+                const querySnapshot = await getDocs(q);
+                
+                allKuisCardsContainer.innerHTML = ''; 
+
+                querySnapshot.forEach((doc) => {
+                    const kuisId = doc.id;
+                    const kuisData = doc.data();
+
+                    const cardHTML = `
+                        <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-kuis-id="${kuisId}">
+                            <div class="flex items-center mb-3">
+                                <div class="p-3 bg-blue-100 rounded-full mr-4">
+                                    <svg class="w-6 h-6 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-blue-700">${kuisData.title}</h4>
+                                    <span class="text-xs text-slate-500">${kuisData.questionCount || 0} Soal • ~${(kuisData.questionCount || 0) * 1.5} Menit</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahaman Anda tentang ${kuisData.title}.</p>
+                            <a href="kuis-player.html?id=${kuisId}" class="detail-link mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
+                            <div class="lock-overlay hidden">
+                                <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    `;
+                    allKuisCardsContainer.innerHTML += cardHTML;
+                });
+                
+            } catch (error) {
+                console.error("Gagal memuat daftar kuis:", error);
+                allKuisCardsContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar kuis. Silakan coba lagi nanti.</p>`;
+            } finally {
+                loadingStateDiv.style.display = 'none';
+            }
+        }
 
         function updateContentUI(user) {
             const allKuisCards = allKuisCardsContainer ? Array.from(allKuisCardsContainer.children) : [];
@@ -258,8 +373,9 @@
             }
         }
 
-        onAuthStateChanged(auth, (user) => {
-            // updateHeaderUI(user);
+        onAuthStateChanged(auth, async (user) => {
+            updateHeaderUI(user);
+            await loadAndRenderQuizzes();
             updateContentUI(user);
         });
     </script>
