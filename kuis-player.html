@@ -11,6 +11,14 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB; /* bg-slate-50 */
         }
+        .nav-link { position: relative; transition: color 0.3s ease; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            background-color: #2563EB; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link:hover, .nav-link.active { color: #2563EB; }
         .logo-image { height: 70px; width: auto; }
         .auth-button {
             padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
@@ -20,6 +28,7 @@
         .auth-button-primary:hover { background-color: #1D4ED8; }
         .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
         .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
+        
         #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
             display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
         }
@@ -133,6 +142,11 @@
         <div id="loadingState" class="text-center py-20">
             <p class="text-slate-500">Mempersiapkan kuis...</p>
         </div>
+        <div id="errorState" class="hidden text-center py-20 bg-white p-8 rounded-xl shadow-md">
+            <h2 class="text-2xl font-semibold text-red-700">Kuis Tidak Ditemukan</h2>
+            <p class="text-slate-500 mt-2 mb-6">Maaf, kami tidak dapat menemukan kuis yang Anda cari. Mungkin ID kuis salah atau telah dihapus.</p>
+            <a href="semua-kuis.html" class="auth-button auth-button-secondary">Kembali ke Daftar Kuis</a>
+        </div>
     </main>
     
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
@@ -152,8 +166,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        // BARU: Impor fungsi increment dan updateDoc
-        import { getFirestore, doc, collection, addDoc, serverTimestamp, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, collection, getDoc, getDocs, addDoc, serverTimestamp, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -203,6 +216,7 @@
 
         // --- Logika Halaman Kuis Player ---
         const loadingStateDiv = document.getElementById('loadingState');
+        const errorStateDiv = document.getElementById('errorState');
         const quizContainer = document.getElementById('quiz-container');
         const quizTitleEl = document.getElementById('quizTitle');
         const progressIndicatorEl = document.getElementById('progressIndicator');
@@ -214,28 +228,6 @@
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let currentSelectedAnswer = null;
-
-        const quizzesDatabase = {
-            'tenses-dasar': {
-                title: 'Kuis Tenses Dasar', passingScore: 70, 
-                questions: [
-                    { questionText: 'She ___ to school by bus every day.', options: ['go', 'goes', 'went', 'is going'], correctAnswer: 'goes' },
-                    { questionText: 'My parents ___ in a small apartment.', options: ['live', 'lives', 'lived', 'are living'], correctAnswer: 'live' },
-                    { questionText: 'The sun ___ in the east.', options: ['rise', 'rises', 'rose', 'is rising'], correctAnswer: 'rises' },
-                    { questionText: 'I ___ English and Indonesian.', options: ['speaks', 'speak', 'spoke', 'am speaking'], correctAnswer: 'speak' },
-                    { questionText: 'Water ___ at 100 degrees Celsius.', options: ['boil', 'boils', 'boiled', 'is boiling'], correctAnswer: 'boils' }
-                ]
-            },
-            'simple-past': {
-                title: 'Kuis Simple Past', passingScore: 75,
-                questions: [
-                    { questionText: 'He ___ to the cinema last night.', options: ['go', 'goes', 'went', 'is going'], correctAnswer: 'went' },
-                    { questionText: 'We ___ that movie two weeks ago.', options: ['see', 'saw', 'have seen', 'sees'], correctAnswer: 'saw' },
-                    { questionText: 'I did not ___ my homework yesterday.', options: ['do', 'did', 'does', 'done'], correctAnswer: 'do' },
-                    { questionText: '___ you visit your grandmother last weekend?', options: ['Do', 'Does', 'Did', 'Are'], correctAnswer: 'Did' }
-                ]
-            }
-        };
 
         function showQuestion(index) {
             const question = currentQuizData.questions[index];
@@ -273,7 +265,6 @@
         async function finishQuiz() {
             nextButton.disabled = true;
             nextButton.textContent = "Menyimpan hasil...";
-
             let score = 0;
             currentQuizData.questions.forEach((q, index) => {
                 if (userAnswers[index] === q.correctAnswer) {
@@ -281,13 +272,11 @@
                 }
             });
             const finalScore = Math.round((score / currentQuizData.questions.length) * 100);
-            const xpGained = finalScore; // XP yang didapat = skor
+            const xpGained = finalScore;
             
             try {
                 const user = auth.currentUser;
                 const kuisId = new URLSearchParams(window.location.search).get('id');
-
-                // 1. Simpan riwayat kuis
                 const quizHistoryRef = collection(db, "users", user.uid, "quizHistory");
                 const docRef = await addDoc(quizHistoryRef, {
                     kuisId: kuisId,
@@ -298,15 +287,12 @@
                 });
                 console.log("Riwayat kuis berhasil disimpan dengan ID:", docRef.id);
                 
-                // 2. BARU: Update statistik pengguna
                 const userDocRef = doc(db, "users", user.uid);
                 await updateDoc(userDocRef, {
                     "stats.quizzesCompleted": increment(1),
                     "stats.xpPoints": increment(xpGained)
                 });
                 console.log(`Statistik pengguna diperbarui: +1 kuis, +${xpGained} XP`);
-
-                // 3. Arahkan ke halaman hasil
                 window.location.href = `hasil-kuis.html?attemptId=${docRef.id}`;
             } catch (error) {
                 console.error("Gagal menyimpan riwayat kuis atau update statistik:", error);
@@ -327,24 +313,49 @@
             }
         });
 
-        function initQuiz() {
+        async function initQuiz() {
             const urlParams = new URLSearchParams(window.location.search);
             const kuisId = urlParams.get('id');
 
-            if (!kuisId || !quizzesDatabase[kuisId]) {
-                alert("Kuis tidak ditemukan!");
-                window.location.href = 'semua-kuis.html';
+            if (!kuisId) {
+                loadingStateDiv.style.display = 'none';
+                errorStateDiv.classList.remove('hidden');
+                console.error("Tidak ada ID kuis di URL.");
                 return;
             }
 
-            currentQuizData = quizzesDatabase[kuisId];
-            document.title = `Mengerjakan: ${currentQuizData.title}`; 
-            quizTitleEl.textContent = currentQuizData.title;
+            try {
+                const quizDocRef = doc(db, "quizzes", kuisId);
+                const quizDocSnap = await getDoc(quizDocRef);
 
-            loadingStateDiv.style.display = 'none';
-            quizContainer.classList.remove('hidden');
+                if (!quizDocSnap.exists()) {
+                    throw new Error("Dokumen kuis tidak ditemukan.");
+                }
+                
+                const quizData = quizDocSnap.data();
+                const questionsColRef = collection(db, "quizzes", kuisId, "questions");
+                const questionsSnapshot = await getDocs(questionsColRef);
+                const questions = [];
+                questionsSnapshot.forEach(doc => {
+                    questions.push(doc.data());
+                });
 
-            showQuestion(currentQuestionIndex);
+                if (questions.length === 0) {
+                    throw new Error("Kuis ini tidak memiliki pertanyaan.");
+                }
+
+                currentQuizData = { ...quizData, questions: questions };
+                document.title = `Mengerjakan: ${currentQuizData.title}`; 
+                quizTitleEl.textContent = currentQuizData.title;
+                loadingStateDiv.style.display = 'none';
+                quizContainer.classList.remove('hidden');
+                showQuestion(currentQuestionIndex);
+
+            } catch (error) {
+                console.error("Gagal memuat kuis dari Firestore:", error);
+                loadingStateDiv.style.display = 'none';
+                errorStateDiv.classList.remove('hidden');
+            }
         }
 
         onAuthStateChanged(auth, (user) => {
