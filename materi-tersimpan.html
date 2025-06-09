@@ -11,10 +11,20 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB; /* bg-slate-50 */
         }
-        /* ... (Salin semua style CSS dari halaman lain untuk konsistensi) ... */
-        .preview-card { position: relative; transition: all 0.3s ease; }
+        .preview-card {
+            position: relative; 
+            transition: all 0.3s ease;
+        }
+        .preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
         .nav-link { position: relative; transition: color 0.3s ease; }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; transform: translateX(-50%); background-color: #2563EB; transition: width 0.3s ease; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            background-color: #2563EB; transition: width 0.3s ease;
+        }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         .nav-link:hover, .nav-link.active { color: #2563EB; }
         .logo-image { height: 70px; width: auto; }
@@ -90,7 +100,51 @@
 <body class="min-h-screen">
 
     <header class="bg-white shadow-md sticky top-0 z-40">
-        <!-- Struktur Header lengkap disalin dari halaman lain -->
+        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
+                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
+                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
+                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
+                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
+            </nav>
+            <div class="hidden md:flex items-center space-x-2">
+                <div id="authLinksDesktop">
+                    <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
+                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a>
+                </div>
+                <div id="userInfoDesktopContainer" class="hidden relative"> 
+                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
+                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
+                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
+                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="userDropdownMenuDesktop">
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item dropdown-item-active">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
+            <!-- Konten diisi oleh JavaScript -->
+        </div>
     </header>
 
     <main class="container mx-auto px-6 py-12 md:py-16">
@@ -130,7 +184,14 @@
     </main>
     
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
-        <!-- Konten Footer Lengkap -->
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div><h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3><p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p><p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3><ul class="space-y-2 text-sm"><li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li><li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li><li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li><li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li><li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li><li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li></ul></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3><p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p><p class="text-sm mb-2">Email: Jiksau04@gmail.com</p><p class="text-sm mb-4">Telepon: 081334629983</p><h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3><div class="flex space-x-4"><a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg><span>Instagram</span></a></div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script type="module">
@@ -150,8 +211,88 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Logika Header Universal (Salin dari index.html) ---
-        // ... ...
+        // --- Logika Header Universal ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authLinksDesktop = document.getElementById('authLinksDesktop');
+        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
+        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
+        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
+        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
+        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
+        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
+        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
+        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
+
+        function updateHeaderUI(user) {
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            if (user) { 
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600 font-semibold bg-blue-50">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
+                }
+            } else { 
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
+        
+        if (userInfoDesktopTrigger) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', () => { if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
+        }
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
+        }
+        
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
         // --- Logika Halaman Ini ---
         const loadingStateDiv = document.getElementById('loadingState');
@@ -162,7 +303,6 @@
             'MAHIR': 'bg-indigo-100 text-indigo-700', 'SEMUA LEVEL': 'bg-yellow-100 text-yellow-700'
         };
 
-        // **BARU**: Fungsi untuk mengambil detail dari banyak materi
         async function fetchAndRenderSavedMaterials(savedIds) {
             savedMateriContainer.innerHTML = '';
             if (!savedIds || savedIds.length === 0) {
@@ -171,10 +311,8 @@
             }
             emptyStateDiv.classList.add('hidden');
             
-            // Buat array berisi promise untuk setiap pengambilan dokumen materi
             const materiPromises = savedIds.map(id => getDoc(doc(db, "materials", id)));
             
-            // Jalankan semua promise secara bersamaan
             const materiSnapshots = await Promise.all(materiPromises);
 
             materiSnapshots.forEach(docSnap => {
@@ -233,7 +371,7 @@
         }
 
         onAuthStateChanged(auth, async (user) => {
-            // updateHeaderUI(user);
+            updateHeaderUI(user);
             if (user) {
                 const uid = user.uid;
                 const userDocRef = doc(db, "userSavedMaterials", uid);
@@ -243,7 +381,7 @@
                     await fetchAndRenderSavedMaterials(savedIds);
                 } catch (error) {
                     console.error("Gagal mengambil data:", error);
-                    renderSavedMaterials([]);
+                    fetchAndRenderSavedMaterials([]); // Tampilkan halaman kosong jika ada error
                 } finally {
                     loadingStateDiv.style.display = 'none';
                 }
