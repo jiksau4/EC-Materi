@@ -26,6 +26,23 @@
         }
         .submit-button:hover { background-color: #15803D; }
         .submit-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        .add-question-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; border: 2px dashed #9CA3AF; color: #6B7280;
+            padding: 1rem; border-radius: 0.5rem; transition: all 0.2s ease;
+        }
+        .add-question-btn:hover { border-color: #2563EB; color: #2563EB; background-color: #EFF6FF; }
+        .question-block {
+            background-color: #F9FAFB; border: 1px solid #E5E7EB;
+            padding: 1.5rem; border-radius: 0.5rem; position: relative;
+        }
+        .remove-question-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+            background-color: #F3F4F6; color: #6B7280;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .remove-question-btn:hover { background-color: #FECACA; color: #DC2626; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -35,57 +52,55 @@
             <a href="index.html#home" class="flex items-center">
                 <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
-            <h1 class="text-xl font-bold text-slate-700">Admin: Buat Materi</h1>
+            <h1 class="text-xl font-bold text-slate-700">Admin Panel</h1>
         </div>
     </header>
 
     <main class="container mx-auto px-6 py-12 md:py-16">
         
         <div id="adminContent" class="hidden max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Buat Materi Baru</h1>
+            <p class="text-slate-500 mb-8">Isi detail di bawah ini untuk membuat materi pembelajaran baru.</p>
+
             <form id="materi-form" class="space-y-8 bg-white p-8 rounded-xl shadow-lg">
                 <div>
-                    <h1 class="text-3xl font-bold text-slate-800">Formulir Materi Baru</h1>
-                    <p class="text-slate-500 mt-1">Isi semua detail di bawah ini untuk membuat materi pembelajaran baru.</p>
-                </div>
-
-                <div class="border-t border-slate-200 pt-8 space-y-6">
-                    <div>
-                        <label for="materiTitle" class="block text-sm font-medium text-slate-700">Judul Materi</label>
-                        <input type="text" id="materiTitle" class="input-field" placeholder="Contoh: Pengenalan Simple Present Tense" required>
-                    </div>
-
-                    <div>
-                        <label for="materiId" class="block text-sm font-medium text-slate-700">ID Materi (dibuat otomatis, bisa diubah jika perlu)</label>
-                        <input type="text" id="materiId" class="input-field font-mono text-sm bg-slate-100" required>
-                    </div>
-
-                    <div>
-                        <label for="materiDesc" class="block text-sm font-medium text-slate-700">Deskripsi Singkat (untuk kartu materi)</label>
-                        <textarea id="materiDesc" rows="3" class="input-field" placeholder="Materi ini akan menjelaskan..." required></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <h2 class="text-xl font-semibold mb-4">Informasi Materi</h2>
+                    <div class="space-y-6">
                         <div>
-                             <label for="materiLevel" class="block text-sm font-medium text-slate-700">Level Materi</label>
-                             <select id="materiLevel" class="input-field">
-                                 <option value="PEMULA">Pemula</option>
-                                 <option value="MENENGAH">Menengah</option>
-                                 <option value="MAHIR">Mahir</option>
-                                 <option value="SEMUA LEVEL">Semua Level</option>
-                             </select>
+                            <label for="materiTitle" class="block text-sm font-medium text-slate-700">Judul Materi</label>
+                            <input type="text" id="materiTitle" class="input-field" placeholder="Contoh: Pengenalan Simple Present Tense" required>
+                        </div>
+                        <div>
+                            <label for="materiId" class="block text-sm font-medium text-slate-700">ID Materi (dibuat otomatis, bisa diubah jika perlu)</label>
+                            <input type="text" id="materiId" class="input-field font-mono text-sm bg-slate-100" required>
+                        </div>
+                        <div>
+                            <label for="materiDesc" class="block text-sm font-medium text-slate-700">Deskripsi Singkat (untuk kartu materi)</label>
+                            <textarea id="materiDesc" rows="3" class="input-field" placeholder="Materi ini akan menjelaskan..." required></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                 <label for="materiLevel" class="block text-sm font-medium text-slate-700">Level Materi</label>
+                                 <select id="materiLevel" class="input-field">
+                                     <option value="PEMULA">Pemula</option>
+                                     <option value="MENENGAH">Menengah</option>
+                                     <option value="MAHIR">Mahir</option>
+                                     <option value="SEMUA LEVEL">Semua Level</option>
+                                 </select>
+                            </div>
+                             <div>
+                                <label for="materiImageUrl" class="block text-sm font-medium text-slate-700">URL Gambar Sampul</label>
+                                <input type="url" id="materiImageUrl" class="input-field" placeholder="https://.../gambar.jpg" required>
+                            </div>
                         </div>
                          <div>
-                            <label for="materiImageUrl" class="block text-sm font-medium text-slate-700">URL Gambar Sampul</label>
-                            <input type="url" id="materiImageUrl" class="input-field" placeholder="https://.../gambar.jpg" required>
+                            <label for="materiContent" class="block text-sm font-medium text-slate-700">Isi Materi Lengkap</label>
+                            <textarea id="materiContent" rows="15" class="input-field font-mono text-sm" placeholder="Tuliskan isi materi di sini. Anda bisa menggunakan tag HTML dasar seperti <h2>, <p>, <ul>, <li>, <b>, <i>." required></textarea>
+                             <p class="mt-2 text-xs text-slate-500">Tips: Gunakan tag HTML seperti `&lt;h2&gt;Judul&lt;/h2&gt;`, `&lt;p&gt;Paragraf.&lt;/p&gt;`, `&lt;ul&gt;&lt;li&gt;Poin&lt;/li&gt;&lt;/ul&gt;` untuk format.</p>
                         </div>
                     </div>
-                     <div>
-                        <label for="materiContent" class="block text-sm font-medium text-slate-700">Isi Materi Lengkap</label>
-                        <textarea id="materiContent" rows="15" class="input-field font-mono text-sm" placeholder="Tuliskan isi materi di sini. Anda bisa menggunakan tag HTML dasar seperti <h2>, <p>, <ul>, <li>, <b>, <i>." required></textarea>
-                         <p class="mt-2 text-xs text-slate-500">Tips: Gunakan tag HTML seperti `&lt;h2&gt;Judul&lt;/h2&gt;`, `&lt;p&gt;Paragraf.&lt;/p&gt;`, `&lt;ul&gt;&lt;li&gt;Poin&lt;/li&gt;&lt;/ul&gt;` untuk format.</p>
-                    </div>
                 </div>
-
+                
                 <div class="pt-6 flex justify-end items-center border-t border-slate-200">
                     <p id="formMessage" class="mr-4 text-sm"></p>
                     <button type="submit" id="save-materi-btn" class="submit-button">
@@ -101,7 +116,14 @@
     </main>
 
     <script type="module">
-        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -110,7 +132,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // DOM Elements
+        // --- DOM Elements ---
         const loadingStateDiv = document.getElementById('loadingState');
         const adminContentDiv = document.getElementById('adminContent');
         const materiForm = document.getElementById('materi-form');
@@ -170,12 +192,18 @@
             }
         });
 
+        // ===== BLOK LOGIKA YANG DIPERBAIKI =====
         onAuthStateChanged(auth, (user) => {
-            const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; 
+            const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; // UID Anda sudah ada di sini
+
             if (user && adminUIDs.includes(user.uid)) {
+                // KASUS 1: Pengguna adalah admin, tampilkan konten
+                console.log("Akses admin diberikan untuk:", user.uid);
                 loadingStateDiv.style.display = 'none';
                 adminContentDiv.classList.remove('hidden');
             } else {
+                // KASUS 2: Bukan admin atau tidak login, tampilkan pesan akses ditolak
+                console.log("Akses ditolak. UID saat ini:", user ? user.uid : "Tidak ada pengguna login");
                 loadingStateDiv.innerHTML = `
                     <div class="text-center py-20 bg-white p-8 rounded-xl shadow-md">
                         <h2 class="text-2xl font-semibold text-red-700">Akses Ditolak</h2>
