@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Materi Baru - Admin ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
+        .logo-image { height: 70px; width: auto; }
+        .input-field {
+            margin-top: 0.25rem; display: block; width: 100%;
+            padding: 0.5rem 0.75rem; border-width: 1px;
+            border-color: #D1D5DB; border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .input-field:focus {
+            outline: 2px solid transparent; outline-offset: 2px;
+            --tw-ring-color: #2563EB; border-color: #2563EB;
+        }
+        .submit-button {
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+            background-color: #16A34A; color: white; /* Green */
+        }
+        .submit-button:hover { background-color: #15803D; }
+        .submit-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <h1 class="text-xl font-bold text-slate-700">Admin: Buat Materi</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        
+        <div id="adminContent" class="hidden max-w-4xl mx-auto">
+            <form id="materi-form" class="space-y-8 bg-white p-8 rounded-xl shadow-lg">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-800">Formulir Materi Baru</h1>
+                    <p class="text-slate-500 mt-1">Isi semua detail di bawah ini untuk membuat materi pembelajaran baru.</p>
+                </div>
+
+                <div class="border-t border-slate-200 pt-8 space-y-6">
+                    <div>
+                        <label for="materiTitle" class="block text-sm font-medium text-slate-700">Judul Materi</label>
+                        <input type="text" id="materiTitle" class="input-field" placeholder="Contoh: Pengenalan Simple Present Tense" required>
+                    </div>
+
+                    <div>
+                        <label for="materiId" class="block text-sm font-medium text-slate-700">ID Materi (dibuat otomatis, bisa diubah jika perlu)</label>
+                        <input type="text" id="materiId" class="input-field font-mono text-sm bg-slate-100" required>
+                    </div>
+
+                    <div>
+                        <label for="materiDesc" class="block text-sm font-medium text-slate-700">Deskripsi Singkat (untuk kartu materi)</label>
+                        <textarea id="materiDesc" rows="3" class="input-field" placeholder="Materi ini akan menjelaskan..." required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                             <label for="materiLevel" class="block text-sm font-medium text-slate-700">Level Materi</label>
+                             <select id="materiLevel" class="input-field">
+                                 <option value="PEMULA">Pemula</option>
+                                 <option value="MENENGAH">Menengah</option>
+                                 <option value="MAHIR">Mahir</option>
+                                 <option value="SEMUA LEVEL">Semua Level</option>
+                             </select>
+                        </div>
+                         <div>
+                            <label for="materiImageUrl" class="block text-sm font-medium text-slate-700">URL Gambar Sampul</label>
+                            <input type="url" id="materiImageUrl" class="input-field" placeholder="https://.../gambar.jpg" required>
+                        </div>
+                    </div>
+                     <div>
+                        <label for="materiContent" class="block text-sm font-medium text-slate-700">Isi Materi Lengkap</label>
+                        <textarea id="materiContent" rows="15" class="input-field font-mono text-sm" placeholder="Tuliskan isi materi di sini. Anda bisa menggunakan tag HTML dasar seperti <h2>, <p>, <ul>, <li>, <b>, <i>." required></textarea>
+                         <p class="mt-2 text-xs text-slate-500">Tips: Gunakan tag HTML seperti `&lt;h2&gt;Judul&lt;/h2&gt;`, `&lt;p&gt;Paragraf.&lt;/p&gt;`, `&lt;ul&gt;&lt;li&gt;Poin&lt;/li&gt;&lt;/ul&gt;` untuk format.</p>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex justify-end items-center border-t border-slate-200">
+                    <p id="formMessage" class="mr-4 text-sm"></p>
+                    <button type="submit" id="save-materi-btn" class="submit-button">
+                        Simpan Materi
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memeriksa hak akses...</p>
+        </div>
+    </main>
+
+    <script type="module">
+        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const loadingStateDiv = document.getElementById('loadingState');
+        const adminContentDiv = document.getElementById('adminContent');
+        const materiForm = document.getElementById('materi-form');
+        const materiTitleInput = document.getElementById('materiTitle');
+        const materiIdInput = document.getElementById('materiId');
+        const saveMateriBtn = document.getElementById('save-materi-btn');
+        const formMessage = document.getElementById('formMessage');
+
+        function generateMateriId(title) {
+            return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+        
+        materiTitleInput.addEventListener('input', () => {
+            materiIdInput.value = generateMateriId(materiTitleInput.value);
+        });
+
+        materiForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formMessage.textContent = '';
+            
+            const materiId = materiIdInput.value.trim();
+            if (!materiId) {
+                formMessage.textContent = "ID Materi tidak boleh kosong.";
+                formMessage.className = 'mr-4 text-sm text-red-600';
+                return;
+            }
+
+            saveMateriBtn.disabled = true;
+            saveMateriBtn.textContent = 'Menyimpan...';
+
+            try {
+                const materiData = {
+                    title: document.getElementById('materiTitle').value,
+                    description: document.getElementById('materiDesc').value,
+                    level: document.getElementById('materiLevel').value,
+                    imageUrl: document.getElementById('materiImageUrl').value,
+                    content: document.getElementById('materiContent').value,
+                    createdAt: serverTimestamp()
+                };
+
+                const materiDocRef = doc(db, "materials", materiId);
+                await setDoc(materiDocRef, materiData);
+
+                formMessage.textContent = "Materi berhasil disimpan!";
+                formMessage.className = 'mr-4 text-sm text-green-600';
+
+                alert(`Materi "${materiData.title}" berhasil disimpan!`);
+                window.location.href = 'semua-materi.html';
+
+            } catch (error) {
+                console.error("Gagal menyimpan materi:", error);
+                formMessage.textContent = "Gagal menyimpan: " + error.message;
+                formMessage.className = 'mr-4 text-sm text-red-600';
+            } finally {
+                saveMateriBtn.disabled = false;
+                saveMateriBtn.textContent = 'Simpan Materi';
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; 
+            if (user && adminUIDs.includes(user.uid)) {
+                loadingStateDiv.style.display = 'none';
+                adminContentDiv.classList.remove('hidden');
+            } else {
+                loadingStateDiv.innerHTML = `
+                    <div class="text-center py-20 bg-white p-8 rounded-xl shadow-md">
+                        <h2 class="text-2xl font-semibold text-red-700">Akses Ditolak</h2>
+                        <p class="text-slate-500 mt-2 mb-6">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+                        <a href="index.html" class="auth-button auth-button-secondary">Kembali ke Halaman Utama</a>
+                    </div>
+                `;
+                loadingStateDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
