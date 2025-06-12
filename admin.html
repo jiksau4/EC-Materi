@@ -34,6 +34,22 @@
             height: 1.25rem; /* h-5 */
             margin-right: 0.75rem; /* mr-3 */
         }
+        /* Style untuk daftar konten */
+        .content-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F3F4F6; /* border-slate-100 */
+        }
+        .content-list-item:last-child {
+            border-bottom: none;
+        }
+        .action-link {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* medium */
+            transition: color 0.2s;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -73,14 +89,18 @@
                 <!-- Kelola Materi -->
                 <div class="dashboard-card">
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Materi</h2>
-                    <p class="text-slate-500">Daftar semua materi akan ditampilkan di sini. (Fitur dalam pengembangan)</p>
-                    <!-- Placeholder for materi list -->
+                    <div id="materi-list-container" class="space-y-2">
+                        <!-- Daftar materi akan dimuat di sini -->
+                        <p class="text-slate-400 text-sm">Memuat materi...</p>
+                    </div>
                 </div>
                 <!-- Kelola Kuis -->
                 <div class="dashboard-card">
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Kuis</h2>
-                    <p class="text-slate-500">Daftar semua kuis akan ditampilkan di sini. (Fitur dalam pengembangan)</p>
-                     <!-- Placeholder for kuis list -->
+                     <div id="kuis-list-container" class="space-y-2">
+                        <!-- Daftar kuis akan dimuat di sini -->
+                         <p class="text-slate-400 text-sm">Memuat kuis...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,15 +121,64 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        // BARU: Impor fungsi-fungsi Firestore
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // DOM Elements
         const loadingStateDiv = document.getElementById('loadingState');
         const adminContentDiv = document.getElementById('adminContent');
         const adminWelcomeEl = document.getElementById('admin-welcome');
         const adminLogoutBtn = document.getElementById('admin-logout-btn');
+        const materiListContainer = document.getElementById('materi-list-container');
+        const kuisListContainer = document.getElementById('kuis-list-container');
+
+        // Fungsi untuk memuat dan menampilkan materi
+        async function loadMaterials() {
+            try {
+                const materiRef = collection(db, "materials");
+                const q = query(materiRef, orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                materiListContainer.innerHTML = ''; // Kosongkan placeholder
+
+                if (querySnapshot.empty) {
+                    materiListContainer.innerHTML = '<p class="text-slate-500 text-sm">Belum ada materi yang dibuat.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const materi = doc.data();
+                    const materiId = doc.id;
+                    const date = materi.createdAt ? materi.createdAt.toDate().toLocaleDateString('id-ID') : 'N/A';
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'content-list-item';
+                    itemDiv.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-slate-700">${materi.title}</p>
+                            <p class="text-xs text-slate-500">Dibuat pada: ${date}</p>
+                        </div>
+                        <div class="space-x-4">
+                            <a href="#" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
+                            <button data-id="${materiId}" data-title="${materi.title}" class="action-link text-red-600 hover:text-red-800 btn-delete-materi">Hapus</button>
+                        </div>
+                    `;
+                    materiListContainer.appendChild(itemDiv);
+                });
+            } catch (error) {
+                console.error("Gagal memuat materi:", error);
+                materiListContainer.innerHTML = '<p class="text-red-500 text-sm">Gagal memuat daftar materi.</p>';
+            }
+        }
+        
+        // ** (Placeholder) Fungsi untuk memuat dan menampilkan kuis **
+        async function loadQuizzes() {
+            kuisListContainer.innerHTML = '<p class="text-slate-500 text-sm">Fitur kelola kuis dalam pengembangan.</p>';
+        }
 
         adminLogoutBtn.addEventListener('click', () => {
             signOut(auth).catch(error => console.error("Logout error", error));
@@ -119,18 +188,18 @@
             const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; 
 
             if (user && adminUIDs.includes(user.uid)) {
-                // KASUS 1: Pengguna adalah admin
-                console.log("Akses admin diberikan untuk:", user.uid);
                 loadingStateDiv.style.display = 'none';
                 adminContentDiv.classList.remove('hidden');
 
-                // Tampilkan info admin di header
                 adminWelcomeEl.textContent = `Halo, ${user.displayName || user.email}!`;
                 adminWelcomeEl.classList.remove('hidden');
                 adminLogoutBtn.classList.remove('hidden');
+
+                // Panggil fungsi untuk memuat konten
+                loadMaterials();
+                loadQuizzes();
                 
             } else {
-                // KASUS 2: Bukan admin atau tidak login
                 loadingStateDiv.innerHTML = `
                     <div class="text-center py-20 bg-white p-8 rounded-xl shadow-md">
                         <h2 class="text-2xl font-semibold text-red-700">Akses Ditolak</h2>
