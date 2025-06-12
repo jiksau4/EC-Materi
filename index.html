@@ -197,6 +197,7 @@
         </div>
     </section>
 
+    <!-- Preview Materi -->
     <section id="materi" class="py-16 md:py-24 bg-blue-50">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Materi Bahasa Inggris Unggulan</h2>
@@ -219,9 +220,10 @@
         </div>
     </section>
 
+    <!-- Preview Kuis -->
     <section id="kuis" class="py-16 md:py-24 bg-white">
         <div class="container mx-auto px-6">
-             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Asah Kemampuan Bahasa Inggrismu</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Asah Kemampuan Bahasa Inggrismu</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Pilih kuis Bahasa Inggris sesuai tingkat kemampuanmu, lalu lihat seberapa jauh pemahamanmu!</p>
             <div id="kuisList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <p class="col-span-full text-center text-slate-500">Memuat kuis...</p>
@@ -299,6 +301,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
+        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -385,6 +388,7 @@
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
+        // --- Logika Halaman Ini ---
         const materiListContainer = document.getElementById('materiList');
         const kuisListContainer = document.getElementById('kuisList');
         const loginPromptMateri = document.getElementById('loginPromptMateri');
@@ -486,40 +490,31 @@
             });
         }
         
-        async function handleCardClick(event) {
-            const saveButton = event.target.closest('.save-materi-btn');
-            
-            if (saveButton) {
-                event.preventDefault(); 
-                if (!auth.currentUser) {
-                    alert("Anda harus login untuk menyimpan materi!");
-                    window.location.href = `login-page.html?redirect=index.html#materi`;
-                    return;
-                }
-                
-                const card = saveButton.closest('.preview-card');
-                const materiId = card.dataset.materiId;
-                const uid = auth.currentUser.uid;
-                const userDocRef = doc(db, "userSavedMaterials", uid);
-
-                try {
-                    const isCurrentlySaved = savedMateriForCurrentUser.includes(materiId);
-                    const updatePayload = { savedMaterialIds: isCurrentlySaved ? arrayRemove(materiId) : arrayUnion(materiId) };
-                    await setDoc(userDocRef, updatePayload, { merge: true });
-                    
-                    if (isCurrentlySaved) {
-                        savedMateriForCurrentUser = savedMateriForCurrentUser.filter(id => id !== materiId);
-                    } else {
-                        savedMateriForCurrentUser.push(materiId);
-                    }
-                    updateSaveButtonsUI();
-                } catch (error) {
-                    console.error("Error updating saved materi:", error);
-                }
+        async function handleSaveMateriClick(event) {
+            const button = event.target.closest('.save-materi-btn');
+            if (!button || !auth.currentUser) {
+                if(!auth.currentUser) alert("Anda harus login untuk menyimpan materi!");
                 return;
             }
+            const card = button.closest('.preview-card');
+            const materiId = card.dataset.materiId;
+            const uid = auth.currentUser.uid;
+            const userDocRef = doc(db, "userSavedMaterials", uid);
+            try {
+                const isCurrentlySaved = savedMateriForCurrentUser.includes(materiId);
+                const updatePayload = { savedMaterialIds: isCurrentlySaved ? arrayRemove(materiId) : arrayUnion(materiId) };
+                await setDoc(userDocRef, updatePayload, { merge: true });
+                if (isCurrentlySaved) {
+                    savedMateriForCurrentUser = savedMateriForCurrentUser.filter(id => id !== materiId);
+                } else {
+                    savedMateriForCurrentUser.push(materiId);
+                }
+                updateSaveButtonsUI();
+            } catch (error) {
+                console.error("Error updating saved materi:", error);
+            }
         }
-        if (materiListContainer) materiListContainer.addEventListener('click', handleCardClick);
+        if (materiListContainer) materiListContainer.addEventListener('click', handleSaveMateriClick);
 
         onAuthStateChanged(auth, async (user) => {
             updateHeaderUI(user);
