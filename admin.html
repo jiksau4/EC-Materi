@@ -90,7 +90,6 @@
                 <div class="dashboard-card">
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Materi</h2>
                     <div id="materi-list-container" class="space-y-2">
-                        <!-- Daftar materi akan dimuat di sini -->
                         <p class="text-slate-400 text-sm">Memuat materi...</p>
                     </div>
                 </div>
@@ -98,7 +97,6 @@
                 <div class="dashboard-card">
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Kuis</h2>
                      <div id="kuis-list-container" class="space-y-2">
-                        <!-- Daftar kuis akan dimuat di sini -->
                          <p class="text-slate-400 text-sm">Fitur kelola kuis dalam pengembangan.</p>
                     </div>
                 </div>
@@ -121,7 +119,6 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        // BARU: Impor deleteDoc dan doc
         import { getFirestore, collection, query, orderBy, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
@@ -157,13 +154,14 @@
                     
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'content-list-item';
+                    // **PERBAIKAN:** Mengubah href pada tombol Edit
                     itemDiv.innerHTML = `
                         <div>
                             <p class="font-semibold text-slate-700">${materi.title}</p>
                             <p class="text-xs text-slate-500">Dibuat pada: ${date}</p>
                         </div>
                         <div class="space-x-4">
-                            <a href="#" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
+                            <a href="edit-materi.html?id=${materiId}" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
                             <button data-id="${materiId}" data-title="${materi.title}" class="action-link text-red-600 hover:text-red-800 btn-delete-materi">Hapus</button>
                         </div>
                     `;
@@ -179,20 +177,18 @@
             kuisListContainer.innerHTML = '<p class="text-slate-500 text-sm">Fitur kelola kuis dalam pengembangan.</p>';
         }
 
-        // BARU: Fungsi untuk menghapus materi
         async function deleteMaterial(materiId) {
             try {
                 const materiDocRef = doc(db, "materials", materiId);
                 await deleteDoc(materiDocRef);
                 console.log(`Materi dengan ID: ${materiId} berhasil dihapus.`);
-                loadMaterials(); // Muat ulang daftar setelah menghapus
+                loadMaterials();
             } catch (error) {
                 console.error("Error menghapus materi:", error);
                 alert("Gagal menghapus materi. Silakan coba lagi.");
             }
         }
 
-        // BARU: Event listener untuk tombol hapus
         materiListContainer.addEventListener('click', (event) => {
             if (event.target.classList.contains('btn-delete-materi')) {
                 const button = event.target;
