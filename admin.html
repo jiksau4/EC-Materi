@@ -99,7 +99,7 @@
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Kuis</h2>
                      <div id="kuis-list-container" class="space-y-2">
                         <!-- Daftar kuis akan dimuat di sini -->
-                         <p class="text-slate-400 text-sm">Memuat kuis...</p>
+                         <p class="text-slate-400 text-sm">Fitur kelola kuis dalam pengembangan.</p>
                     </div>
                 </div>
             </div>
@@ -121,8 +121,8 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        // BARU: Impor fungsi-fungsi Firestore
-        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        // BARU: Impor deleteDoc dan doc
+        import { getFirestore, collection, query, orderBy, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -143,7 +143,7 @@
                 const q = query(materiRef, orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
 
-                materiListContainer.innerHTML = ''; // Kosongkan placeholder
+                materiListContainer.innerHTML = '';
 
                 if (querySnapshot.empty) {
                     materiListContainer.innerHTML = '<p class="text-slate-500 text-sm">Belum ada materi yang dibuat.</p>';
@@ -175,10 +175,37 @@
             }
         }
         
-        // ** (Placeholder) Fungsi untuk memuat dan menampilkan kuis **
         async function loadQuizzes() {
             kuisListContainer.innerHTML = '<p class="text-slate-500 text-sm">Fitur kelola kuis dalam pengembangan.</p>';
         }
+
+        // BARU: Fungsi untuk menghapus materi
+        async function deleteMaterial(materiId) {
+            try {
+                const materiDocRef = doc(db, "materials", materiId);
+                await deleteDoc(materiDocRef);
+                console.log(`Materi dengan ID: ${materiId} berhasil dihapus.`);
+                loadMaterials(); // Muat ulang daftar setelah menghapus
+            } catch (error) {
+                console.error("Error menghapus materi:", error);
+                alert("Gagal menghapus materi. Silakan coba lagi.");
+            }
+        }
+
+        // BARU: Event listener untuk tombol hapus
+        materiListContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('btn-delete-materi')) {
+                const button = event.target;
+                const materiId = button.dataset.id;
+                const materiTitle = button.dataset.title;
+
+                const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus materi "${materiTitle}"? Tindakan ini tidak dapat dibatalkan.`);
+                
+                if (isConfirmed) {
+                    deleteMaterial(materiId);
+                }
+            }
+        });
 
         adminLogoutBtn.addEventListener('click', () => {
             signOut(auth).catch(error => console.error("Logout error", error));
@@ -195,7 +222,6 @@
                 adminWelcomeEl.classList.remove('hidden');
                 adminLogoutBtn.classList.remove('hidden');
 
-                // Panggil fungsi untuk memuat konten
                 loadMaterials();
                 loadQuizzes();
                 
