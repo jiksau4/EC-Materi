@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB;
+            background-color: #F9FAFB; /* bg-slate-50 */
         }
         .nav-link { position: relative; transition: color 0.3s ease; }
         .nav-link::after {
@@ -44,7 +44,7 @@
         #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
         #userDropdownMenuDesktop {
             display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
-            background-color: white; border-radius: 0.375rem;
+            background-color: white; border-radius: 0.5rem;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
             z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
         }
@@ -85,6 +85,18 @@
             background-color: white; border-radius: 0.75rem; padding: 2rem;
             text-align: center; border: 1px solid #e5e7eb;
         }
+        .notification-item {
+            display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-item .icon-wrapper {
+            flex-shrink: 0; width: 2.5rem; height: 2.5rem;
+            border-radius: 9999px; display: flex; align-items: center; justify-content: center;
+        }
+        .notification-item.achievement .icon-wrapper { background-color: #FEF9C3; color: #CA8A04; } /* yellow */
+        .notification-item p { font-size: 0.875rem; line-height: 1.4; color: #374151; }
+        .notification-item .time { font-size: 0.75rem; color: #6B7280; margin-top: 0.25rem; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -160,26 +172,35 @@
                 <a href="edit-profil.html" class="auth-button auth-button-secondary mt-6 inline-block">Edit Profil</a>
             </div>
             
-            <div class="space-y-8">
-                 <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Progres Belajar Anda</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="stat-card">
-                            <p class="text-sm text-slate-500">Materi Selesai</p>
-                            <p id="materialsStat" class="text-4xl font-bold text-blue-600">0</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-6">Progres Belajar Anda</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="stat-card">
+                                <p class="text-sm text-slate-500">Materi Selesai</p>
+                                <p id="materialsStat" class="text-4xl font-bold text-blue-600">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <p class="text-sm text-slate-500">Kuis Selesai</p>
+                                <p id="quizzesStat" class="text-4xl font-bold text-blue-600">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <p class="text-sm text-slate-500">Poin XP</p>
+                                <p id="xpStat" class="text-4xl font-bold text-blue-600">0</p>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <p class="text-sm text-slate-500">Kuis Selesai</p>
-                            <p id="quizzesStat" class="text-4xl font-bold text-blue-600">0</p>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-sm text-slate-500">Poin XP</p>
-                            <p id="xpStat" class="text-4xl font-bold text-blue-600">0</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Aktivitas Terbaru</h2>
+                        <div id="notificationList" class="space-y-4">
+                            <p class="text-center text-slate-500 py-4">Memuat aktivitas...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-8">
                     <div class="placeholder-card">
                          <h2 class="text-2xl font-bold text-slate-800 mb-4">Materi Tersimpan</h2>
                          <p class="text-slate-500">Lihat materi yang sudah Anda tandai.</p>
@@ -203,7 +224,7 @@
             <p class="text-slate-500">Memeriksa status login...</p>
         </div>
     </main>
-    
+
     <script type="module">
         const firebaseConfig = {
           apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
@@ -215,7 +236,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, query, orderBy, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -302,9 +323,6 @@
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
         }
-        
-        const currentYearSpan = document.getElementById('currentYear');
-        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
         // --- Logika Halaman Profil ---
         const loadingStateDiv = document.getElementById('loadingState');
@@ -315,10 +333,63 @@
         const materialsStatEl = document.getElementById('materialsStat');
         const quizzesStatEl = document.getElementById('quizzesStat');
         const xpStatEl = document.getElementById('xpStat');
+        const notificationList = document.getElementById('notificationList');
 
+        async function loadAndRenderNotifications(user) {
+            const notificationsRef = collection(db, 'users', user.uid, 'notifications');
+            const q = query(notificationsRef, orderBy('timestamp', 'desc'), limit(5));
+
+            const unreadNotifsToUpdate = [];
+
+            try {
+                const snapshot = await getDocs(q);
+                if (snapshot.empty) {
+                    notificationList.innerHTML = '<p class="text-center text-slate-500 py-4">Belum ada aktivitas.</p>';
+                    return;
+                }
+                
+                notificationList.innerHTML = ''; 
+                snapshot.forEach(docSnap => {
+                    const notif = docSnap.data();
+                    if (!notif.isRead) {
+                        unreadNotifsToUpdate.push(docSnap.id);
+                    }
+                    const item = document.createElement('a');
+                    item.href = notif.link || '#';
+                    item.className = `notification-item ${notif.isRead ? '' : 'unread'}`;
+                    const timeAgo = notif.timestamp ? new Date(notif.timestamp.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'long'}) : 'Baru saja';
+                    
+                    item.innerHTML = `
+                        <div class="icon-wrapper achievement">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-slate-700">${notif.message}</p>
+                            <p class="time">${timeAgo}</p>
+                        </div>
+                    `;
+                    notificationList.appendChild(item);
+                });
+
+                if (unreadNotifsToUpdate.length > 0) {
+                    const batch = writeBatch(db);
+                    unreadNotifsToUpdate.forEach(notifId => {
+                        const notifRef = doc(db, 'users', user.uid, 'notifications', notifId);
+                        batch.update(notifRef, { isRead: true });
+                    });
+                    await batch.commit();
+                    console.log(`${unreadNotifsToUpdate.length} notifikasi ditandai sebagai dibaca.`);
+                }
+
+            } catch (error) {
+                console.error("Gagal memuat notifikasi:", error);
+                notificationList.innerHTML = '<p class="text-center text-red-500 py-4">Gagal memuat aktivitas.</p>';
+            }
+        }
+        
         async function loadUserProfile(user) {
             loadingStateDiv.style.display = 'none';
-            profileContentDiv.style.display = 'block';
+            profileContentDiv.classList.remove('hidden');
 
             const displayName = user.displayName || user.email.split('@')[0];
             const email = user.email;
@@ -337,7 +408,6 @@
                     quizzesStatEl.textContent = stats.quizzesCompleted || 0;
                     xpStatEl.textContent = stats.xpPoints || 0;
                 } else {
-                    console.log("Dokumen pengguna atau statistik belum ada, menampilkan 0.");
                     materialsStatEl.textContent = 0;
                     quizzesStatEl.textContent = 0;
                     xpStatEl.textContent = 0;
@@ -351,6 +421,7 @@
             updateHeaderUI(user);
             if (user) {
                 loadUserProfile(user);
+                loadAndRenderNotifications(user);
             } else {
                 window.location.href = `login-page.html?redirect=${window.location.pathname}`;
             }
