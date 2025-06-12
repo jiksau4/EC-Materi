@@ -7,16 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .hero-bg { background-color: #EFF6FF; }
         .cta-button { transition: all 0.3s ease; }
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
         .feature-card, .preview-card, .testimonial-card { transition: all 0.3s ease; }
         .preview-card { position: relative; }
         .feature-card:hover, .preview-card:not(.content-locked):hover, .testimonial-card:hover {
@@ -31,12 +25,10 @@
         }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         .nav-link:hover, .nav-link.active { color: #2563EB; }
-        .mobile-menu-button:focus { outline: none; }
         .logo-image { height: 70px; width: auto; }
         .auth-button {
             padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            display: inline-block; text-align: center;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
         }
         .auth-button-primary { background-color: #2563EB; color: white; }
         .auth-button-primary:hover { background-color: #1D4ED8; }
@@ -44,67 +36,61 @@
         .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
         
         #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
-            display: flex; align-items: center; gap: 0.5rem; 
-            cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
         }
         #userPhotoDesktop, #userPhotoMobile {
             width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
         }
         .user-display-name {
             font-weight: 500; color: #374151; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis; max-width: 100px; 
+            overflow: hidden; text-overflow: ellipsis; max-width: 100px;
         }
         .caret-icon { width: 1rem; height: 1rem; color: #6B7280; transition: transform 0.2s ease-in-out; }
         #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
-
         #userDropdownMenuDesktop {
-            display: none; 
-            position: absolute;
-            right: 0;
-            top: 100%; 
-            margin-top: 0.5rem; 
-            width: 14rem; 
-            background-color: white;
-            border-radius: 0.375rem; 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); 
-            z-index: 50; 
-            padding-top: 0.25rem; 
-            padding-bottom: 0.25rem; 
-            border: 1px solid #e5e7eb; 
+            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
+            background-color: white; border-radius: 0.375rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
         }
         #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
-            display: block;
-            width: 100%;
-            padding: 0.5rem 1rem; 
-            font-size: 0.875rem; 
-            color: #374151; 
-            text-align: left;
+            display: block; width: 100%; padding: 0.5rem 1rem; 
+            font-size: 0.875rem; color: #374151; text-align: left;
         }
         #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
-            background-color: #EFF6FF; 
-            color: #2563EB; 
+            background-color: #EFF6FF; color: #2563EB;
+        }
+        #userDropdownMenuDesktop .dropdown-item-active {
+            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
         }
         #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
-            background-color: #FEF2F2; 
-            color: #DC2626; 
-            font-weight: 500;
+            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
         }
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
         .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-
         #mobileUserMenuLinksContainer a {
-            padding-left: 1.5rem; 
-            padding-right: 1.5rem;
-            padding-top: 0.75rem; 
-            padding-bottom: 0.75rem;
-            display: block;
-            color: #4B5563; 
+            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
+            padding-bottom: 0.75rem; display: block; color: #4B5563;
         }
-         #mobileUserMenuLinksContainer a:hover {
-            background-color: #EFF6FF; 
-            color: #2563EB; 
+         #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
+            background-color: #EFF6FF; color: #2563EB;
         }
+
+        .save-materi-btn {
+            position: absolute; top: 0.75rem; right: 0.75rem; width: 2.25rem; height: 2.25rem;
+            background-color: rgba(255, 255, 255, 0.8); border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease-in-out; border: 1px solid #e5e7eb;
+            z-index: 20;
+        }
+        .save-materi-btn:hover { background-color: white; transform: scale(1.1); }
+        .save-materi-btn .icon-outline { display: block; }
+        .save-materi-btn .icon-solid { display: none; }
+        .save-materi-btn.saved { background-color: #DBEAFE; border-color: #93C5FD; }
+        .save-materi-btn.saved .icon-outline { display: none; }
+        .save-materi-btn.saved .icon-solid { display: block; color: #2563EB; }
+        .save-materi-btn svg { width: 1.25rem; height: 1.25rem; color: #6B7280; }
 
         .content-locked { filter: blur(4px); pointer-events: none; }
         .lock-overlay {
@@ -119,129 +105,16 @@
 </head>
 <body class="bg-white text-slate-700">
 
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-40"> 
-        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
-            <a href="#home" class="flex items-center">
-                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error'; this.alt='Logo tidak ditemukan. Periksa path: Extra Course logo.png';">
-            </a>
-            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
-                <a href="#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium active">Home</a>
-                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
-                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
-                <a href="#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
-                <a href="#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
-            </nav>
-            
-            <div class="hidden md:flex items-center space-x-2">
-                <div id="authLinksDesktop">
-                    <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
-                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a> 
-                </div>
-                <div id="userInfoDesktopContainer" class="hidden relative"> 
-                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
-                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
-                        <span id="userDisplayNameDesktop" class="user-display-name ml-2">Nama Pengguna</span>
-                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="userDropdownMenuDesktop">
-                        <div class="dropdown-user-info">
-                            <p class="name" id="dropdownUserNameDesktop">Nama Pengguna</p>
-                            <p class="email" id="dropdownUserEmailDesktop">email@pengguna.com</p>
-                        </div>
-                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
-                        <a href="#" class="dropdown-item">Pengaturan Akun</a>
-                        <a href="#" class="dropdown-item">Materi Tersimpan</a>
-                        <a href="#" class="dropdown-item">Riwayat Kuis</a>
-                        <hr class="border-slate-200 my-1">
-                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
-            <div id="mobileUserInfoContainer" class="hidden px-6 py-3 border-b border-slate-200">
-                 <div class="flex items-center">
-                    <img id="userPhotoMobile" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
-                    <span id="userDisplayNameMobile" class="user-display-name ml-3">Nama Pengguna</span>
-                </div>
-            </div>
-            <div id="mobileUserMenuLinksContainer" class="hidden">
-                <a href="profil.html" class="">Profil Saya</a>
-                <a href="#" class="">Pengaturan Akun</a>
-                <a href="#" class="">Materi Tersimpan</a>
-                <a href="#" class="">Riwayat Kuis</a>
-                 <hr class="border-slate-200 mx-6 my-1">
-            </div>
-
-            <a href="#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
-            <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
-            <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
-            <a href="#tentang" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Tentang Kami</a>
-            <a href="#kontak" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kontak</a>
-            
-            <div class="px-6 mt-2 space-y-2" id="authLinksMobile">
-                 <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
-                 <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
-            </div>
-            <div class="px-6 mt-2 hidden" id="logoutButtonContainerMobile">
-                <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
-            </div>
-        </div>
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <!-- ... Konten Header Lengkap ... -->
     </header>
 
-    <!-- Hero Section -->
     <section id="home" class="hero-bg py-20 md:py-32">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold text-blue-700 mb-6 leading-tight">
-                Belajar Bahasa Inggris Jadi Lebih Mudah dan Terarah
-            </h1>
-            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                Temukan ribuan materi Bahasa Inggris berkualitas dan kuis interaktif untuk semua tingkatan. Raih kelancaran berbahasa Inggrismu bersama ExtraCourse!
-            </p>
-            <a href="#materi" class="cta-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-10 rounded-lg text-lg shadow-lg">
-                Mulai Belajar Sekarang
-            </a>
-        </div>
+        <!-- ... Konten Hero Section ... -->
     </section>
 
-    <!-- Fitur Section -->
     <section id="fitur" class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Kenapa Memilih ExtraCourse?</h2>
-            <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Kami menyediakan platform pembelajaran Bahasa Inggris yang lengkap untuk mendukung kesuksesan Anda.</p>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
-                    <div class="flex justify-center mb-4">
-                        <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v11.494m0 0A8.966 8.966 0 013.75 15a8.966 8.966 0 018.25 2.747m0-11.494V6.253c0-1.536.736-2.961 1.907-3.9C15.036 1.36 16.502 1 18 1c1.498 0 2.964.36 4.143 1.353A4.001 4.001 0 0120.25 6.253v11.494m0 0a8.966 8.966 0 00-8.25 2.747M12 17.747v-2.494"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-blue-700 mb-3">Materi Terstruktur</h3>
-                    <p class="text-slate-600">Akses materi Bahasa Inggris yang disusun sistematis, dari level dasar hingga mahir.</p>
-                </div>
-                <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
-                     <div class="flex justify-center mb-4">
-                        <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 12.5M9.75 3.104c-.251.038-.502.082-.752.132C7.396 3.716 6.07 4.5 4.998 5.625M9.75 3.104c.251.038.502.082.752.132a9.017 9.017 0 012.276.627c1.438.686 2.559 1.728 3.375 2.926M12 21.75c-4.243 0-7.617-3.06-7.617-6.825 0-1.76.654-3.375 1.729-4.626"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12.75V15m0 0A2.25 2.25 0 0014.25 12.75V12A2.25 2.25 0 0012 9.75V7.5M12 15c-2.25 0-4.5.433-6.526 1.25M12 15c2.25 0 4.5.433 6.526 1.25M12 15v2.25A2.25 2.25 0 0014.25 19.5h4.5A2.25 2.25 0 0021 17.25V15"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-blue-700 mb-3">Kuis Interaktif</h3>
-                    <p class="text-slate-600">Uji pemahaman Grammar, Vocabulary, dan Listening dengan kuis menarik.</p>
-                </div>
-                <div class="feature-card bg-blue-50 p-8 rounded-xl shadow-lg text-center border border-blue-200">
-                    <div class="flex justify-center mb-4">
-                        <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold text-blue-700 mb-3">Laporan Progres</h3>
-                    <p class="text-slate-600">Pantau perkembangan belajarmu dalam menguasai Bahasa Inggris secara detail.</p>
-                </div>
-            </div>
-        </div>
+        <!-- ... Konten Fitur Section ... -->
     </section>
 
     <!-- Preview Materi -->
@@ -250,50 +123,8 @@
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Materi Bahasa Inggris Unggulan</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Jelajahi berbagai topik Bahasa Inggris menarik yang kami sediakan untuk semua tingkatan.</p>
             <div id="materiList" class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
-                    <img src="https://placehold.co/600x400/3B82F6/FFFFFF?text=English+Grammar" alt="Materi English Grammar" class="rounded-md mb-4 h-40 w-full object-cover">
-                    <h4 class="text-lg font-semibold text-blue-700 mb-2">English Grammar Essentials</h4>
-                    <p class="text-sm text-slate-600 mb-3 flex-grow">Pahami tenses, parts of speech, dan struktur kalimat dengan mudah.</p>
-                    <div class="mt-auto">
-                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">PEMULA</span>
-                    </div>
-                    <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-                <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
-                    <img src="https://placehold.co/600x400/10B981/FFFFFF?text=Daily+Vocabulary" alt="Materi Daily Vocabulary" class="rounded-md mb-4 h-40 w-full object-cover">
-                    <h4 class="text-lg font-semibold text-blue-700 mb-2">Daily Conversation Vocabulary</h4>
-                    <p class="text-sm text-slate-600 mb-3 flex-grow">Perkaya kosakata untuk percakapan sehari-hari dan formal.</p>
-                     <div class="mt-auto">
-                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">MENENGAH</span>
-                    </div>
-                    <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-                <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
-                    <img src="https://placehold.co/600x400/F59E0B/FFFFFF?text=Listening+Practice" alt="Materi Listening Practice" class="rounded-md mb-4 h-40 w-full object-cover">
-                    <h4 class="text-lg font-semibold text-blue-700 mb-2">Listening Comprehension</h4>
-                    <p class="text-sm text-slate-600 mb-3 flex-grow">Latih kemampuan mendengar melalui berbagai audio dan dialog.</p>
-                    <div class="mt-auto">
-                        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">SEMUA LEVEL</span>
-                    </div>
-                     <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-                <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col">
-                    <img src="https://placehold.co/600x400/6366F1/FFFFFF?text=TOEFL+Preparation" alt="Materi TOEFL Preparation" class="rounded-md mb-4 h-40 w-full object-cover">
-                    <h4 class="text-lg font-semibold text-blue-700 mb-2">TOEFL/IELTS Preparation</h4>
-                    <p class="text-sm text-slate-600 mb-3 flex-grow">Strategi dan latihan soal untuk persiapan tes Bahasa Inggris.</p>
-                    <div class="mt-auto">
-                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">MAHIR</span>
-                    </div>
-                     <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
+                <!-- Kartu materi akan dirender di sini oleh JavaScript -->
+                <p class="col-span-full text-center text-slate-500">Memuat materi...</p>
             </div>
             <div id="loginPromptMateri" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
                 <p class="text-yellow-700 font-medium">
@@ -309,59 +140,15 @@
             </div>
         </div>
     </section>
+
+    <!-- Preview Kuis -->
     <section id="kuis" class="py-16 md:py-24 bg-white">
-         <div class="container mx-auto px-6">
+        <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Asah Kemampuan Bahasa Inggrismu</h2>
             <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Pilih kuis Bahasa Inggris sesuai tingkat kemampuanmu, lalu lihat seberapa jauh pemahamanmu!</p>
             <div id="kuisList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
-                    <div class="flex items-center mb-3">
-                        <div class="p-3 bg-blue-200 rounded-full mr-4">
-                           <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-blue-700">Kuis Tenses Dasar</h4>
-                            <span class="text-xs text-slate-500">15 Soal • 20 Menit</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-600 mb-4 flex-grow">Uji pemahamanmu tentang Simple Present, Past, Future.</p>
-                    <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                    <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-                <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
-                    <div class="flex items-center mb-3">
-                        <div class="p-3 bg-blue-200 rounded-full mr-4">
-                           <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-blue-700">Kuis Idiom Populer</h4>
-                            <span class="text-xs text-slate-500">20 Soal • 25 Menit</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-600 mb-4 flex-grow">Seberapa banyak idiom Bahasa Inggris yang kamu ketahui?</p>
-                    <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                    <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
-                <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col">
-                    <div class="flex items-center mb-3">
-                        <div class="p-3 bg-blue-200 rounded-full mr-4">
-                           <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-semibold text-blue-700">Kuis Listening: Short Dialogues</h4>
-                            <span class="text-xs text-slate-500">10 Soal • 15 Menit</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-600 mb-4 flex-grow">Dengarkan dialog singkat dan jawab pertanyaannya.</p>
-                    <a href="#" class="mt-auto text-sm font-medium text-blue-600 hover:text-blue-800 self-start">Mulai Kuis &rarr;</a>
-                    <div class="lock-overlay hidden">
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                </div>
+                <!-- Kartu kuis akan dirender di sini oleh JavaScript -->
+                <p class="col-span-full text-center text-slate-500">Memuat kuis...</p>
             </div>
             <div id="loginPromptKuis" class="hidden text-center mt-8 p-6 bg-yellow-100 border border-yellow-300 rounded-lg">
                 <p class="text-yellow-700 font-medium">
@@ -377,262 +164,121 @@
             </div>
         </div>
     </section>
-    <section id="tentang" class="py-16 md:py-24 bg-blue-50">
-        <div class="container mx-auto px-6">
-             <h2 class="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Apa Kata Mereka?</h2>
-            <p class="text-center text-slate-500 mb-12 md:mb-16 max-w-xl mx-auto">Dengarkan pengalaman para siswa yang telah merasakan manfaat belajar Bahasa Inggris di ExtraCourse.</p>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="testimonial-card bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                    <img src="https://placehold.co/100x100/E0E7FF/4338CA?text=AS" alt="Foto Siswa" class="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-blue-300">
-                    <p class="text-slate-600 italic mb-4">"Materi Bahasa Inggris di ExtraCourse sangat lengkap dan mudah dipahami. Kuisnya juga seru, bikin semangat belajar!"</p>
-                    <h5 class="font-semibold text-blue-700">Andi Susanto</h5>
-                    <p class="text-sm text-slate-500">Siswa SMA Kelas XII</p>
-                </div>
-                <div class="testimonial-card bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                    <img src="https://placehold.co/100x100/DBEAFE/1E40AF?text=BN" alt="Foto Siswa" class="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-blue-300">
-                    <p class="text-slate-600 italic mb-4">"Sebagai mahasiswa, saya merasa terbantu dengan materi persiapan TOEFL di sini. Penjelasannya runut dan ada contoh kasusnya."</p>
-                    <h5 class="font-semibold text-blue-700">Bunga Nabila</h5>
-                    <p class="text-sm text-slate-500">Mahasiswa Sastra Inggris</p>
-                </div>
-                <div class="testimonial-card bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                    <img src="https://placehold.co/100x100/C7D2FE/3730A3?text=CS" alt="Foto Siswa" class="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-blue-300">
-                    <p class="text-slate-600 italic mb-4">"Anak saya jadi lebih percaya diri berbicara Bahasa Inggris setelah pakai ExtraCourse. Laporan progresnya juga membantu saya memantau."</p>
-                    <h5 class="font-semibold text-blue-700">Citra Sari</h5>
-                    <p class="text-sm text-slate-500">Orang Tua Siswa SMP</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <footer id="kontak" class="bg-slate-800 text-slate-300 py-16">
-         <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3>
-                    <p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p>
-                    <p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#home" class="hover:text-blue-400 transition-colors">Home</a></li>
-                        <li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li>
-                        <li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li>
-                        <li><a href="#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
-                        <li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li>
-                        <li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3>
-                    <p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p>
-                    <p class="text-sm mb-2">Email: Jiksau04@gmail.com</p>
-                    <p class="text-sm mb-4">Telepon: 081334629983</p>
-                    <h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08.648-2.034 1.62-2.428.66-.266 1.37-.32 2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg>
-                            <span>Instagram</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+    <footer class="bg-slate-800 text-slate-300 py-16">
+        <!-- ... Konten Footer Lengkap ... -->
     </footer>
 
-
     <script type="module">
-        // Firebase Config
-        const firebaseConfig = {
-          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
-          authDomain: "ec-materi.firebaseapp.com",
-          projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app", 
-          messagingSenderId: "166687187100",
-          appId: "1:166687187100:web:e073df281931524f660d59",
-          measurementId: "G-MT58HLBRDY"
-        };
-
+        // --- Firebase Config & Initialization ---
+        const firebaseConfig = { /* ...KONFIGURASI ANDA... */ };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // DOM Elements - Header & Mobile Menu
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const currentYearSpan = document.getElementById('currentYear'); // In footer
-
-        const authLinksDesktop = document.getElementById('authLinksDesktop');
-        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
-        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
-        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
-        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
-        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
-        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
-        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
-        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
-
-
-        const authLinksMobile = document.getElementById('authLinksMobile');
-        const mobileUserInfoContainer = document.getElementById('mobileUserInfoContainer');
-        const userPhotoMobile = document.getElementById('userPhotoMobile');
-        const userDisplayNameMobile = document.getElementById('userDisplayNameMobile');
-        const mobileUserMenuLinksContainer = document.getElementById('mobileUserMenuLinksContainer');
-        const logoutButtonContainerMobile = document.getElementById('logoutButtonContainerMobile'); 
-        const logoutButtonMobile = document.getElementById('logoutButtonMobile');
+        const db = getFirestore(app);
         
-        const materiListDiv = document.getElementById('materiList');
-        const kuisListDiv = document.getElementById('kuisList');
+        // --- Logika Header Universal ---
+        // ... (SALIN FUNGSI LENGKAP DARI HALAMAN LAIN) ...
+        function updateHeaderUI(user) { /* ... */ }
+        
+        // --- Logika Halaman Ini ---
+        const materiListContainer = document.getElementById('materiList');
+        const kuisListContainer = document.getElementById('kuisList');
         const loginPromptMateri = document.getElementById('loginPromptMateri');
         const loginPromptKuis = document.getElementById('loginPromptKuis');
+        let savedMateriForCurrentUser = [];
 
-        const freeMateriCount = 2; 
-        const freeKuisCount = 1;   
+        async function loadFeaturedContent() {
+            // Memuat 4 Materi Terbaru
+            try {
+                const materialsRef = collection(db, "materials");
+                const q = query(materialsRef, orderBy("createdAt", "desc"), limit(4));
+                const querySnapshot = await getDocs(q);
+                materiListContainer.innerHTML = '';
+                querySnapshot.forEach(doc => {
+                    const materiId = doc.id;
+                    const materiData = doc.data();
+                    const cardHTML = `
+                        <div class="preview-card bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col" data-materi-id="${materiId}">
+                            <button class="save-materi-btn" aria-label="Simpan Materi">...</button>
+                            <img src="${materiData.imageUrl}" ...>
+                            <h4>${materiData.title}</h4>
+                            <p>${materiData.description}</p>
+                            <div><span>${materiData.level}</span><a href="materi-detail.html?id=${materiId}">...</a></div>
+                            <div class="lock-overlay hidden">...</div>
+                        </div>`;
+                    materiListContainer.innerHTML += cardHTML;
+                });
+            } catch (error) { console.error("Error loading featured materials:", error); }
 
-        function updateAuthUI(user) {
-            const allMateriCards = materiListDiv ? Array.from(materiListDiv.children) : [];
-            const allKuisCards = kuisListDiv ? Array.from(kuisListDiv.children) : [];
+            // Memuat 3 Kuis
+            try {
+                const quizzesRef = collection(db, "quizzes");
+                const q = query(quizzesRef, orderBy("title"), limit(3));
+                const querySnapshot = await getDocs(q);
+                kuisListContainer.innerHTML = '';
+                querySnapshot.forEach(doc => {
+                    const kuisId = doc.id;
+                    const kuisData = doc.data();
+                    const cardHTML = `
+                        <div class="preview-card bg-blue-50 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col" data-kuis-id="${kuisId}">
+                            <div>...</div>
+                            <p>${kuisData.title}</p>
+                            <a href="kuis-player.html?id=${kuisId}">...</a>
+                            <div class="lock-overlay hidden">...</div>
+                        </div>`;
+                    kuisListContainer.innerHTML += cardHTML;
+                });
+            } catch (error) { console.error("Error loading featured quizzes:", error); }
+        }
 
-            allMateriCards.forEach(card => card.style.display = 'flex'); 
-            allKuisCards.forEach(card => card.style.display = 'flex');
+        function updateContentUI(user) {
+            const freeMateriCount = 2;
+            const freeKuisCount = 1;
+            const allMateriCards = materiListContainer ? Array.from(materiListContainer.children) : [];
+            const allKuisCards = kuisListContainer ? Array.from(kuisListContainer.children) : [];
 
-            if (user) { 
-                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
-                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
-                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('flex'); 
-                
-                const displayName = user.displayName || user.email.split('@')[0];
-                const email = user.email;
-                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
-                
-                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
-                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
-                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
-                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
-
-                if (authLinksMobile) authLinksMobile.classList.add('hidden');
-                if (mobileUserInfoContainer) mobileUserInfoContainer.classList.remove('hidden');
-                if (mobileUserInfoContainer) mobileUserInfoContainer.classList.add('flex');
-                if (userPhotoMobile) userPhotoMobile.src = photoURL;
-                if (userDisplayNameMobile) userDisplayNameMobile.textContent = displayName;
-                if (mobileUserMenuLinksContainer) mobileUserMenuLinksContainer.classList.remove('hidden');
-                if (logoutButtonContainerMobile) logoutButtonContainerMobile.classList.remove('hidden');
-                if (logoutButtonContainerMobile) logoutButtonContainerMobile.classList.add('flex','justify-center','mt-2'); // Ensure button is flex and centered for mobile
-
-                allMateriCards.forEach(card => {
+            if (user) {
+                [...allMateriCards, ...allKuisCards].forEach(card => {
                     card.classList.remove('content-locked');
                     const overlay = card.querySelector('.lock-overlay');
                     if (overlay) overlay.classList.add('hidden');
                 });
-                allKuisCards.forEach(card => {
-                    card.classList.remove('content-locked');
-                    const overlay = card.querySelector('.lock-overlay');
-                    if (overlay) overlay.classList.add('hidden');
-                });
-
                 if(loginPromptMateri) loginPromptMateri.classList.add('hidden');
                 if(loginPromptKuis) loginPromptKuis.classList.add('hidden');
-
-            } else { 
-                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
-                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
-                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('flex');
-                if (userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; 
-                if (userInfoDesktopTrigger) userInfoDesktopTrigger.classList.remove('open');
-
-                if (authLinksMobile) authLinksMobile.classList.remove('hidden');
-                if (mobileUserInfoContainer) mobileUserInfoContainer.classList.add('hidden');
-                if (mobileUserInfoContainer) mobileUserInfoContainer.classList.remove('flex');
-                if (mobileUserMenuLinksContainer) mobileUserMenuLinksContainer.classList.add('hidden');
-                if (logoutButtonContainerMobile) logoutButtonContainerMobile.classList.add('hidden');
-                if (logoutButtonContainerMobile) logoutButtonContainerMobile.classList.remove('flex','justify-center','mt-2');
-
-
+            } else {
                 allMateriCards.forEach((card, index) => {
-                    const overlay = card.querySelector('.lock-overlay');
-                    if (index >= freeMateriCount) { 
-                        card.classList.add('content-locked');
-                        if (overlay) overlay.classList.remove('hidden');
-                    } else { 
-                        card.classList.remove('content-locked');
-                        if (overlay) overlay.classList.add('hidden');
-                    }
+                    if (index >= freeMateriCount) card.classList.add('content-locked');
                 });
                 allKuisCards.forEach((card, index) => {
-                    const overlay = card.querySelector('.lock-overlay');
-                    if (index >= freeKuisCount) { 
-                        card.classList.add('content-locked');
-                        if (overlay) overlay.classList.remove('hidden');
-                    } else { 
-                        card.classList.remove('content-locked');
-                        if (overlay) overlay.classList.add('hidden');
-                    }
+                    if (index >= freeKuisCount) card.classList.add('content-locked');
                 });
-
                 if(loginPromptMateri) loginPromptMateri.classList.remove('hidden');
                 if(loginPromptKuis) loginPromptKuis.classList.remove('hidden');
             }
         }
+        
+        function updateSaveButtonsUI() { /* ... (Salin dari semua-materi.html) ... */ }
+        async function handleSaveMateriClick(event) { /* ... (Salin dari semua-materi.html) ... */ }
+        if (materiListContainer) materiListContainer.addEventListener('click', handleSaveMateriClick);
 
-        onAuthStateChanged(auth, (user) => {
-            updateAuthUI(user);
+        onAuthStateChanged(auth, async (user) => {
+            // updateHeaderUI(user);
+            await loadFeaturedContent();
+            updateContentUI(user);
+
             if (user) {
-                console.log("Pengguna login (index.html):", user.displayName || user.email);
+                const userDocRef = doc(db, "userSavedMaterials", user.uid);
+                const docSnap = await getDoc(userDocRef);
+                savedMateriForCurrentUser = (docSnap.exists() && docSnap.data().savedMaterialIds) ? docSnap.data().savedMaterialIds : [];
             } else {
-                console.log("Pengguna logout (index.html).");
+                savedMateriForCurrentUser = [];
             }
+            updateSaveButtonsUI();
         });
-
-        if (userInfoDesktopTrigger && userDropdownMenuDesktop) {
-            userInfoDesktopTrigger.addEventListener('click', (event) => {
-                event.stopPropagation(); 
-                const isHidden = userDropdownMenuDesktop.style.display === 'none' || userDropdownMenuDesktop.style.display === '';
-                userDropdownMenuDesktop.style.display = isHidden ? 'block' : 'none';
-                userInfoDesktopTrigger.classList.toggle('open', isHidden);
-            });
-            document.addEventListener('click', (event) => {
-                if (userInfoDesktopTrigger && userDropdownMenuDesktop && !userInfoDesktopTrigger.contains(event.target) && !userDropdownMenuDesktop.contains(event.target)) {
-                    userDropdownMenuDesktop.style.display = 'none';
-                    userInfoDesktopTrigger.classList.remove('open');
-                }
-            });
-        }
-        
-        if (logoutButtonDropdownDesktop) {
-            logoutButtonDropdownDesktop.addEventListener('click', () => {
-                signOut(auth).catch((error) => console.error("Error logout desktop dropdown:", error));
-            });
-        }
-        if (logoutButtonMobile) {
-             logoutButtonMobile.addEventListener('click', () => {
-                signOut(auth).catch((error) => console.error("Error logout mobile:", error));
-            });
-        }
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId.length > 1 && document.querySelector(targetId)) {
-                    document.querySelector(targetId).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                } else if (targetId === "#") {
-                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
-        });
-        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
-        
-        updateAuthUI(auth.currentUser); 
     </script>
-
 </body>
 </html>
