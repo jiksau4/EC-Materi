@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Kuis - Admin ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
+        .logo-image { height: 70px; width: auto; }
+        .input-field {
+            margin-top: 0.25rem; display: block; width: 100%;
+            padding: 0.5rem 0.75rem; border-width: 1px;
+            border-color: #D1D5DB; border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .input-field:focus {
+            outline: 2px solid transparent; outline-offset: 2px;
+            --tw-ring-color: #2563EB; border-color: #2563EB;
+        }
+        .input-field:read-only { background-color: #F3F4F6; cursor: not-allowed; }
+        .submit-button {
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+            background-color: #16A34A; color: white; /* Green */
+        }
+        .submit-button:hover { background-color: #15803D; }
+        .submit-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        .add-question-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; border: 2px dashed #9CA3AF; color: #6B7280;
+            padding: 1rem; border-radius: 0.5rem; transition: all 0.2s ease;
+        }
+        .add-question-btn:hover { border-color: #2563EB; color: #2563EB; background-color: #EFF6FF; }
+        .question-block {
+            background-color: #F9FAFB; border: 1px solid #E5E7EB;
+            padding: 1.5rem; border-radius: 0.5rem; position: relative;
+        }
+        .remove-question-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+            background-color: #F3F4F6; color: #6B7280;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .remove-question-btn:hover { background-color: #FECACA; color: #DC2626; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <h1 class="text-xl font-bold text-slate-700">Admin: Edit Kuis</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        
+        <div id="adminContent" class="hidden max-w-4xl mx-auto">
+            <form id="quiz-form" class="space-y-8">
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h2 class="text-xl font-semibold mb-4">Informasi Kuis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="quizTitle" class="block text-sm font-medium text-slate-700">Judul Kuis</label>
+                            <input type="text" id="quizTitle" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="quizId" class="block text-sm font-medium text-slate-700">ID Kuis (tidak bisa diubah)</label>
+                            <input type="text" id="quizId" class="input-field bg-slate-100" readonly>
+                        </div>
+                        <div>
+                            <label for="passingScore" class="block text-sm font-medium text-slate-700">Skor Kelulusan (%)</label>
+                            <input type="number" id="passingScore" class="input-field" value="75" min="0" max="100" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="questions-container" class="space-y-6">
+                    <h2 class="text-xl font-semibold text-slate-800">Pertanyaan</h2>
+                    <!-- Pertanyaan akan ditambahkan di sini oleh JavaScript -->
+                </div>
+
+                <button type="button" id="add-question-btn" class="add-question-btn">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Tambah Pertanyaan
+                </button>
+                
+                <div class="pt-6 flex justify-end items-center">
+                    <p id="formMessage" class="mr-4 text-sm"></p>
+                    <button type="submit" id="save-quiz-btn" class="submit-button">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memeriksa hak akses...</p>
+        </div>
+        <div id="errorState" class="hidden text-center py-20 bg-white p-8 rounded-xl shadow-md">
+            <h2 class="text-2xl font-semibold text-red-700">Kuis Tidak Ditemukan</h2>
+            <p class="text-slate-500 mt-2 mb-6">Maaf, kami tidak dapat menemukan kuis yang Anda cari.</p>
+            <a href="admin.html" class="auth-button auth-button-secondary">Kembali ke Dashboard</a>
+        </div>
+    </main>
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loadingStateDiv = document.getElementById('loadingState');
+        const adminContentDiv = document.getElementById('adminContent');
+        const errorStateDiv = document.getElementById('errorState');
+        const quizForm = document.getElementById('quiz-form');
+        const quizTitleInput = document.getElementById('quizTitle');
+        const quizIdInput = document.getElementById('quizId');
+        const passingScoreInput = document.getElementById('passingScore');
+        const questionsContainer = document.getElementById('questions-container');
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        const saveQuizBtn = document.getElementById('save-quiz-btn');
+        const formMessage = document.getElementById('formMessage');
+
+        let questionCounter = 0;
+
+        function createQuestionBlock(questionData = null) {
+            questionCounter++;
+            const blockId = `q-block-${questionCounter}`;
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block';
+            questionBlock.id = blockId;
+            questionBlock.innerHTML = `
+                <button type="button" class="remove-question-btn" title="Hapus Pertanyaan">&times;</button>
+                <h3 class="text-lg font-semibold mb-4 text-slate-600">Pertanyaan</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Teks Pertanyaan</label>
+                        <input type="text" class="input-field question-text" required value="${questionData?.questionText || ''}">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${[0, 1, 2, 3].map(i => `
+                            <div class="flex items-center">
+                                <input type="radio" name="correct-answer-${blockId}" value="${i}" required class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" ${questionData?.correctAnswer === questionData?.options[i] ? 'checked' : ''}>
+                                <label class="ml-3 block w-full">
+                                    <span class="text-sm text-slate-500">Pilihan ${i + 1}</span>
+                                    <input type="text" class="input-field option-text" required value="${questionData?.options[i] || ''}">
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            questionsContainer.appendChild(questionBlock);
+            questionBlock.querySelector('.remove-question-btn').addEventListener('click', () => questionBlock.remove());
+        }
+        
+        addQuestionBtn.addEventListener('click', () => createQuestionBlock());
+
+        async function loadQuizForEdit(kuisId) {
+            try {
+                const quizDocRef = doc(db, "quizzes", kuisId);
+                const quizDocSnap = await getDoc(quizDocRef);
+
+                if (!quizDocSnap.exists()) throw new Error("Kuis tidak ditemukan.");
+                
+                const quizData = quizDocSnap.data();
+                quizIdInput.value = kuisId;
+                quizTitleInput.value = quizData.title;
+                passingScoreInput.value = quizData.passingScore;
+
+                const questionsColRef = collection(db, "quizzes", kuisId, "questions");
+                const questionsSnapshot = await getDocs(questionsColRef);
+                
+                questionsSnapshot.forEach(qDoc => {
+                    createQuestionBlock(qDoc.data());
+                });
+
+                loadingStateDiv.style.display = 'none';
+                adminContentDiv.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Gagal memuat kuis untuk diedit:", error);
+                loadingStateDiv.style.display = 'none';
+                errorStateDiv.classList.remove('hidden');
+            }
+        }
+
+        quizForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formMessage.textContent = '';
+            const kuisId = quizIdInput.value.trim();
+            if (!kuisId) return;
+
+            saveQuizBtn.disabled = true;
+            saveQuizBtn.textContent = 'Menyimpan...';
+            
+            try {
+                const batch = writeBatch(db);
+                
+                // 1. Hapus semua pertanyaan lama (agar tidak ada sisa jika pertanyaan dikurangi)
+                const oldQuestionsRef = collection(db, "quizzes", kuisId, "questions");
+                const oldQuestionsSnap = await getDocs(oldQuestionsRef);
+                oldQuestionsSnap.forEach(qDoc => batch.delete(qDoc.ref));
+
+                // 2. Kumpulkan data baru dan set dokumen utama
+                const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+                const questionsData = [];
+                for (const block of questionBlocks) {
+                    const questionText = block.querySelector('.question-text').value.trim();
+                    const options = Array.from(block.querySelectorAll('.option-text')).map(input => input.value.trim());
+                    const correctAnswerRadio = block.querySelector(`input[name^="correct-answer-"]:checked`);
+                    if (!questionText || options.some(opt => !opt) || !correctAnswerRadio) {
+                        throw new Error("Semua field pertanyaan dan pilihan harus diisi, dan satu jawaban benar harus dipilih.");
+                    }
+                    const correctAnswer = options[parseInt(correctAnswerRadio.value, 10)];
+                    questionsData.push({ questionText, options, correctAnswer });
+                }
+
+                const quizDocRef = doc(db, "quizzes", kuisId);
+                batch.set(quizDocRef, {
+                    title: quizTitleInput.value.trim(),
+                    passingScore: parseInt(passingScoreInput.value, 10),
+                    questionCount: questionsData.length
+                });
+
+                // 3. Tambahkan pertanyaan baru
+                questionsData.forEach(qData => {
+                    const questionDocRef = doc(collection(db, "quizzes", kuisId, "questions"));
+                    batch.set(questionDocRef, qData);
+                });
+
+                await batch.commit();
+                alert(`Kuis "${quizTitleInput.value.trim()}" berhasil diperbarui!`);
+                window.location.href = 'admin.html';
+
+            } catch (error) {
+                console.error("Gagal memperbarui kuis:", error);
+                formMessage.textContent = "Gagal menyimpan: " + error.message;
+            } finally {
+                saveQuizBtn.disabled = false;
+                saveQuizBtn.textContent = 'Simpan Perubahan';
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; 
+            if (user && adminUIDs.includes(user.uid)) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const kuisId = urlParams.get('id');
+                if (kuisId) {
+                    loadQuizForEdit(kuisId);
+                } else {
+                    loadingStateDiv.style.display = 'none';
+                    errorStateDiv.classList.remove('hidden');
+                }
+            } else {
+                loadingStateDiv.innerHTML = `<div class="text-center py-20 bg-white p-8 rounded-xl shadow-md"><h2 class="text-2xl font-semibold text-red-700">Akses Ditolak</h2><p class="text-slate-500 mt-2 mb-6">Anda tidak memiliki hak untuk mengakses halaman ini.</p><a href="index.html" class="auth-button auth-button-secondary">Kembali ke Halaman Utama</a></div>`;
+                loadingStateDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
