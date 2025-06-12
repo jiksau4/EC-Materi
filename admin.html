@@ -133,21 +133,24 @@
         const materiListContainer = document.getElementById('materi-list-container');
         const kuisListContainer = document.getElementById('kuis-list-container');
 
-        // Fungsi untuk memuat dan menampilkan materi
         async function loadMaterials() {
             try {
                 const materiRef = collection(db, "materials");
                 const q = query(materiRef, orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
+
                 materiListContainer.innerHTML = '';
+
                 if (querySnapshot.empty) {
                     materiListContainer.innerHTML = '<p class="text-slate-500 text-sm">Belum ada materi yang dibuat.</p>';
                     return;
                 }
+
                 querySnapshot.forEach((doc) => {
                     const materi = doc.data();
                     const materiId = doc.id;
                     const date = materi.createdAt ? materi.createdAt.toDate().toLocaleDateString('id-ID') : 'N/A';
+                    
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'content-list-item';
                     itemDiv.innerHTML = `
@@ -168,7 +171,6 @@
             }
         }
         
-        // **BARU**: Fungsi untuk memuat dan menampilkan kuis
         async function loadQuizzes() {
             try {
                 const quizzesRef = collection(db, "quizzes");
@@ -184,13 +186,14 @@
                     const kuisId = doc.id;
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'content-list-item';
+                    // **PERBAIKAN:** Mengubah href pada tombol Edit Kuis
                     itemDiv.innerHTML = `
                         <div>
                             <p class="font-semibold text-slate-700">${kuis.title}</p>
                             <p class="text-xs text-slate-500">${kuis.questionCount || 0} Pertanyaan</p>
                         </div>
                         <div class="space-x-4">
-                            <a href="#" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
+                            <a href="edit-kuis.html?id=${kuisId}" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
                             <button data-id="${kuisId}" data-title="${kuis.title}" class="action-link text-red-600 hover:text-red-800 btn-delete-kuis">Hapus</button>
                         </div>
                     `;
@@ -203,37 +206,37 @@
         }
 
         async function deleteMaterial(materiId) {
-            await deleteDoc(doc(db, "materials", materiId));
-            console.log(`Materi ${materiId} berhasil dihapus.`);
-            loadMaterials();
+            try {
+                await deleteDoc(doc(db, "materials", materiId));
+                console.log(`Materi ${materiId} berhasil dihapus.`);
+                loadMaterials();
+            } catch (error) {
+                console.error("Error menghapus materi:", error);
+                alert("Gagal menghapus materi. Silakan coba lagi.");
+            }
         }
 
-        // **BARU**: Fungsi untuk menghapus kuis beserta subcollection-nya
         async function deleteQuiz(kuisId) {
             try {
                 const batch = writeBatch(db);
-                // 1. Hapus semua pertanyaan di subcollection
                 const questionsRef = collection(db, "quizzes", kuisId, "questions");
                 const questionsSnapshot = await getDocs(questionsRef);
                 questionsSnapshot.forEach((qDoc) => {
                     batch.delete(qDoc.ref);
                 });
                 
-                // 2. Hapus dokumen kuis utama
                 const quizDocRef = doc(db, "quizzes", kuisId);
                 batch.delete(quizDocRef);
 
-                // 3. Jalankan batch delete
                 await batch.commit();
                 console.log(`Kuis ${kuisId} dan semua pertanyaannya berhasil dihapus.`);
-                loadQuizzes(); // Muat ulang daftar setelah hapus
+                loadQuizzes(); 
             } catch (error) {
                 console.error("Error menghapus kuis:", error);
                 alert("Gagal menghapus kuis. Silakan coba lagi.");
             }
         }
 
-        // Event listener untuk tombol hapus
         adminContentDiv.addEventListener('click', (event) => {
             const target = event.target;
             if (target.classList.contains('btn-delete-materi')) {
