@@ -12,34 +12,11 @@
             background-color: #F9FAFB;
         }
         .logo-image { height: 70px; width: auto; }
-        .auth-button {
-            padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
-            transition: all 0.2s ease; display: inline-block; text-align: center;
-        }
-        .auth-button-primary { background-color: #2563EB; color: white; }
-        .auth-button-primary:hover { background-color: #1D4ED8; }
-        .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
-        .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
-        
-        #userInfoDesktopTrigger { cursor: pointer; }
-        #userPhotoDesktop { width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; }
-        .user-display-name {
-            font-weight: 500; color: #374151; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis; max-width: 100px; 
-        }
-        #userDropdownMenuDesktop {
-            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
-            background-color: white; border-radius: 0.375rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
-        }
-        
-        /* Style untuk konten materi */
         .materi-hero-image {
-            height: 24rem; /* 384px */
+            height: 24rem;
             width: 100%;
             object-fit: cover;
-            border-radius: 0.75rem; /* rounded-xl */
+            border-radius: 0.75rem;
         }
         .prose h2 { margin-top: 2em; margin-bottom: 1em; font-size: 1.5em; font-weight: 600; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5em;}
         .prose p { line-height: 1.75; margin-bottom: 1.25em; }
@@ -51,7 +28,7 @@
         .complete-button {
             padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
             transition: all 0.2s ease; display: inline-block; text-align: center;
-            background-color: #16A34A; color: white; /* Green */
+            background-color: #16A34A; color: white;
         }
         .complete-button:hover { background-color: #15803D; }
         .complete-button:disabled { background-color: #9CA3AF; cursor: not-allowed; border-color: #9CA3AF;}
@@ -60,7 +37,12 @@
 <body class="min-h-screen">
 
     <header class="bg-white shadow-md sticky top-0 z-40">
-        <!-- ... Konten Header Lengkap (Sama seperti halaman lain) ... -->
+        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <a href="semua-materi.html" class="font-medium text-slate-600 hover:text-blue-600">&larr; Kembali ke Daftar Materi</a>
+        </div>
     </header>
 
     <main class="container mx-auto px-6 py-12 md:py-16">
@@ -82,7 +64,6 @@
                         <h1 id="materiTitle" class="text-3xl md:text-4xl font-bold text-slate-800"></h1>
                         <p class="text-slate-500 mt-2">Level: <span id="materiLevel" class="font-medium text-blue-600"></span></p>
                     </div>
-                    <!-- Tombol Simpan bisa ditambahkan di sini jika diinginkan -->
                 </div>
                 <hr class="my-6">
                 <div id="materiBody" class="prose max-w-none">
@@ -103,22 +84,18 @@
           apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
           authDomain: "ec-materi.firebaseapp.com",
           projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app",
+          storageBucket: "ec-materi.firebasestorage.app", 
           messagingSenderId: "166687187100",
           appId: "1:166687187100:web:e073df281931524f660d59"
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Logika Header (Salin dari file lain yang lengkap) ---
-        // ... ...
-
-        // --- Logika Halaman Detail Materi ---
         const loadingStateDiv = document.getElementById('loadingState');
         const errorStateDiv = document.getElementById('errorState');
         const materiDetailContent = document.getElementById('materiDetailContent');
@@ -127,32 +104,29 @@
         const materiLevel = document.getElementById('materiLevel');
         const materiBody = document.getElementById('materiBody');
         const completeButton = document.getElementById('completeButton');
+        let currentMateriData = null;
 
         async function loadMateri(user, materiId) {
             try {
-                // 1. Ambil data materi dari collection 'materials'
                 const materiDocRef = doc(db, "materials", materiId);
                 const materiDocSnap = await getDoc(materiDocRef);
 
                 if (!materiDocSnap.exists()) {
                     throw new Error("Dokumen materi tidak ditemukan.");
                 }
-                const materiData = materiDocSnap.data();
+                currentMateriData = materiDocSnap.data();
 
-                // 2. Ambil status penyelesaian materi dari subcollection pengguna
                 const completionDocRef = doc(db, "users", user.uid, "completedMaterials", materiId);
                 const completionDocSnap = await getDoc(completionDocRef);
                 const isCompleted = completionDocSnap.exists();
 
-                // 3. Tampilkan konten
-                document.title = `${materiData.title} - ExtraCourse`;
-                materiImage.src = materiData.imageUrl;
-                materiImage.alt = `Gambar untuk ${materiData.title}`;
-                materiTitle.textContent = materiData.title;
-                materiLevel.textContent = materiData.level;
-                materiBody.innerHTML = materiData.content; // Render HTML dari Firestore
+                document.title = `${currentMateriData.title} - ExtraCourse`;
+                materiImage.src = currentMateriData.imageUrl;
+                materiImage.alt = `Gambar untuk ${currentMateriData.title}`;
+                materiTitle.textContent = currentMateriData.title;
+                materiLevel.textContent = currentMateriData.level;
+                materiBody.innerHTML = currentMateriData.content; 
 
-                // 4. Atur status tombol "Selesai"
                 if (isCompleted) {
                     completeButton.disabled = true;
                     completeButton.textContent = "Sudah Selesai";
@@ -173,32 +147,46 @@
             }
         }
         
-        // Event listener untuk tombol "Selesai"
         completeButton.addEventListener('click', async () => {
             const user = auth.currentUser;
             const materiId = new URLSearchParams(window.location.search).get('id');
-            if (!user || !materiId) return;
+            if (!user || !materiId || !currentMateriData) return;
 
             completeButton.disabled = true;
             completeButton.textContent = "Menyimpan...";
 
             const completionDocRef = doc(db, "users", user.uid, "completedMaterials", materiId);
             const userDocRef = doc(db, "users", user.uid);
+            // **BARU**: Referensi ke collection notifikasi
+            const notificationsRef = collection(db, "users", user.uid, "notifications");
             
             try {
-                // Tandai materi ini sebagai selesai untuk pengguna
-                await setDoc(completionDocRef, { completedAt: serverTimestamp() });
+                // Buat batch untuk menjalankan beberapa operasi sekaligus
+                const batch = writeBatch(db);
+
+                // 1. Tandai materi ini sebagai selesai
+                batch.set(completionDocRef, { completedAt: serverTimestamp() });
                 
-                // Update statistik total
-                await updateDoc(userDocRef, {
+                // 2. Update statistik total
+                batch.update(userDocRef, {
                     "stats.materialsCompleted": increment(1)
                 });
                 
-                console.log(`Materi "${materiId}" ditandai selesai.`);
+                // 3. **BARU**: Buat dokumen notifikasi
+                batch.set(doc(notificationsRef), {
+                    message: `Anda telah menyelesaikan materi "${currentMateriData.title}".`,
+                    link: window.location.href,
+                    timestamp: serverTimestamp(),
+                    isRead: false
+                });
+
+                // Jalankan semua operasi
+                await batch.commit();
+                
+                console.log(`Materi "${materiId}" ditandai selesai dan notifikasi dibuat.`);
                 completeButton.textContent = "Berhasil Disimpan!";
                 
-                // Tambahkan efek visual setelah berhasil
-                 setTimeout(() => {
+                setTimeout(() => {
                     completeButton.textContent = "Sudah Selesai";
                     completeButton.classList.remove('bg-green-600', 'hover:bg-green-700');
                     completeButton.classList.add('bg-slate-400', 'cursor-not-allowed');
@@ -213,7 +201,7 @@
         });
 
         onAuthStateChanged(auth, (user) => {
-            // updateHeaderUI(user);
+            // Kita tidak perlu logika header lengkap di sini karena lebih simpel
             if (user) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const materiId = urlParams.get('id');
