@@ -97,7 +97,7 @@
                 <div class="dashboard-card">
                     <h2 class="text-xl font-semibold text-slate-800 mb-4">Kelola Kuis</h2>
                      <div id="kuis-list-container" class="space-y-2">
-                         <p class="text-slate-400 text-sm">Fitur kelola kuis dalam pengembangan.</p>
+                         <p class="text-slate-400 text-sm">Memuat kuis...</p>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, orderBy, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, getDocs, doc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -139,22 +139,17 @@
                 const materiRef = collection(db, "materials");
                 const q = query(materiRef, orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
-
                 materiListContainer.innerHTML = '';
-
                 if (querySnapshot.empty) {
                     materiListContainer.innerHTML = '<p class="text-slate-500 text-sm">Belum ada materi yang dibuat.</p>';
                     return;
                 }
-
                 querySnapshot.forEach((doc) => {
                     const materi = doc.data();
                     const materiId = doc.id;
                     const date = materi.createdAt ? materi.createdAt.toDate().toLocaleDateString('id-ID') : 'N/A';
-                    
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'content-list-item';
-                    // **PERBAIKAN:** Mengubah href pada tombol Edit
                     itemDiv.innerHTML = `
                         <div>
                             <p class="font-semibold text-slate-700">${materi.title}</p>
@@ -173,54 +168,101 @@
             }
         }
         
+        // **BARU**: Fungsi untuk memuat dan menampilkan kuis
         async function loadQuizzes() {
-            kuisListContainer.innerHTML = '<p class="text-slate-500 text-sm">Fitur kelola kuis dalam pengembangan.</p>';
-        }
-
-        async function deleteMaterial(materiId) {
             try {
-                const materiDocRef = doc(db, "materials", materiId);
-                await deleteDoc(materiDocRef);
-                console.log(`Materi dengan ID: ${materiId} berhasil dihapus.`);
-                loadMaterials();
+                const quizzesRef = collection(db, "quizzes");
+                const q = query(quizzesRef, orderBy("title", "asc"));
+                const querySnapshot = await getDocs(q);
+                kuisListContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    kuisListContainer.innerHTML = '<p class="text-slate-500 text-sm">Belum ada kuis yang dibuat.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const kuis = doc.data();
+                    const kuisId = doc.id;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'content-list-item';
+                    itemDiv.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-slate-700">${kuis.title}</p>
+                            <p class="text-xs text-slate-500">${kuis.questionCount || 0} Pertanyaan</p>
+                        </div>
+                        <div class="space-x-4">
+                            <a href="#" class="action-link text-blue-600 hover:text-blue-800">Edit</a>
+                            <button data-id="${kuisId}" data-title="${kuis.title}" class="action-link text-red-600 hover:text-red-800 btn-delete-kuis">Hapus</button>
+                        </div>
+                    `;
+                    kuisListContainer.appendChild(itemDiv);
+                });
             } catch (error) {
-                console.error("Error menghapus materi:", error);
-                alert("Gagal menghapus materi. Silakan coba lagi.");
+                console.error("Gagal memuat kuis:", error);
+                kuisListContainer.innerHTML = '<p class="text-red-500 text-sm">Gagal memuat daftar kuis.</p>';
             }
         }
 
-        materiListContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('btn-delete-materi')) {
-                const button = event.target;
-                const materiId = button.dataset.id;
-                const materiTitle = button.dataset.title;
+        async function deleteMaterial(materiId) {
+            await deleteDoc(doc(db, "materials", materiId));
+            console.log(`Materi ${materiId} berhasil dihapus.`);
+            loadMaterials();
+        }
 
-                const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus materi "${materiTitle}"? Tindakan ini tidak dapat dibatalkan.`);
+        // **BARU**: Fungsi untuk menghapus kuis beserta subcollection-nya
+        async function deleteQuiz(kuisId) {
+            try {
+                const batch = writeBatch(db);
+                // 1. Hapus semua pertanyaan di subcollection
+                const questionsRef = collection(db, "quizzes", kuisId, "questions");
+                const questionsSnapshot = await getDocs(questionsRef);
+                questionsSnapshot.forEach((qDoc) => {
+                    batch.delete(qDoc.ref);
+                });
                 
-                if (isConfirmed) {
+                // 2. Hapus dokumen kuis utama
+                const quizDocRef = doc(db, "quizzes", kuisId);
+                batch.delete(quizDocRef);
+
+                // 3. Jalankan batch delete
+                await batch.commit();
+                console.log(`Kuis ${kuisId} dan semua pertanyaannya berhasil dihapus.`);
+                loadQuizzes(); // Muat ulang daftar setelah hapus
+            } catch (error) {
+                console.error("Error menghapus kuis:", error);
+                alert("Gagal menghapus kuis. Silakan coba lagi.");
+            }
+        }
+
+        // Event listener untuk tombol hapus
+        adminContentDiv.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.classList.contains('btn-delete-materi')) {
+                const materiId = target.dataset.id;
+                const materiTitle = target.dataset.title;
+                if (confirm(`Apakah Anda yakin ingin menghapus materi "${materiTitle}"?`)) {
                     deleteMaterial(materiId);
+                }
+            } else if (target.classList.contains('btn-delete-kuis')) {
+                const kuisId = target.dataset.id;
+                const kuisTitle = target.dataset.title;
+                if (confirm(`Apakah Anda yakin ingin menghapus kuis "${kuisTitle}" beserta SEMUA pertanyaannya?`)) {
+                    deleteQuiz(kuisId);
                 }
             }
         });
 
-        adminLogoutBtn.addEventListener('click', () => {
-            signOut(auth).catch(error => console.error("Logout error", error));
-        });
+        adminLogoutBtn.addEventListener('click', () => signOut(auth).catch(console.error));
 
         onAuthStateChanged(auth, (user) => {
             const adminUIDs = ["gvEFUGr2TEYRmknHdf4Vxx5l4Bj1"]; 
-
             if (user && adminUIDs.includes(user.uid)) {
                 loadingStateDiv.style.display = 'none';
                 adminContentDiv.classList.remove('hidden');
-
                 adminWelcomeEl.textContent = `Halo, ${user.displayName || user.email}!`;
                 adminWelcomeEl.classList.remove('hidden');
                 adminLogoutBtn.classList.remove('hidden');
-
                 loadMaterials();
                 loadQuizzes();
-                
             } else {
                 loadingStateDiv.innerHTML = `
                     <div class="text-center py-20 bg-white p-8 rounded-xl shadow-md">
