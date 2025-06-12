@@ -11,56 +11,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #F9FAFB; /* bg-slate-50 */
         }
-        .nav-link { position: relative; transition: color 0.3s ease; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: -4px; left: 50%; transform: translateX(-50%);
-            background-color: #2563EB; transition: width 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link:hover, .nav-link.active { color: #2563EB; }
         .logo-image { height: 70px; width: auto; }
-        .auth-button {
-            padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
-            transition: all 0.2s ease; display: inline-block; text-align: center;
-        }
-        .auth-button-primary { background-color: #2563EB; color: white; }
-        .auth-button-primary:hover { background-color: #1D4ED8; }
-        .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
-        .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
-        
-        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
-            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
-        }
-        #userPhotoDesktop, #userPhotoMobile {
-            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
-        }
-        .user-display-name {
-            font-weight: 500; color: #374151; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis; max-width: 100px; 
-        }
-        .caret-icon { width: 1rem; height: 1rem; color: #6B7280; transition: transform 0.2s ease-in-out; }
-        #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
-        #userDropdownMenuDesktop {
-            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
-            background-color: white; border-radius: 0.375rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
-        }
-        #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
-            display: block; width: 100%; padding: 0.5rem 1rem; 
-            font-size: 0.875rem; color: #374151; text-align: left;
-        }
-        #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
-            background-color: #EFF6FF; color: #2563EB;
-        }
-        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
-            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
-        }
-        .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
-        .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
-        .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-        
         #quiz-container { max-width: 800px; margin: auto; }
         .progress-bar-bg { background-color: #E5E7EB; }
         .progress-bar-fill { background-color: #2563EB; transition: width 0.3s ease-in-out; }
@@ -82,21 +33,6 @@
         }
         .action-button:hover { background-color: #1D4ED8; }
         .action-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
-
-        /* Gaya Spinner Baru */
-        .spinner {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -106,33 +42,11 @@
             <a href="index.html#home" class="flex items-center">
                 <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
-            <div class="hidden md:flex items-center space-x-2">
-                <div id="authLinksDesktop">
-                    <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
-                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a>
-                </div>
-                <div id="userInfoDesktopContainer" class="hidden relative"> 
-                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
-                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
-                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
-                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="userDropdownMenuDesktop" style="display: none;">
-                        <div class="dropdown-user-info">
-                            <p class="name" id="dropdownUserNameDesktop"></p>
-                            <p class="email" id="dropdownUserEmailDesktop"></p>
-                        </div>
-                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
-                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
-                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
-                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
-                        <hr class="border-slate-200 my-1">
-                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
-                    </div>
-                </div>
-            </div>
             <div class="md:hidden">
                 <a href="semua-kuis.html" class="font-medium text-slate-600 hover:text-blue-600">&larr; Keluar Kuis</a>
+            </div>
+             <div class="hidden md:block">
+                <a href="admin.html" class="font-medium text-slate-600 hover:text-blue-600">Kembali ke Dashboard Admin</a>
             </div>
         </div>
     </header>
@@ -154,7 +68,6 @@
                 </div>
             </div>
         </div>
-        <!-- Loading State yang Diperbarui -->
         <div id="loadingState" class="text-center py-20">
             <div class="spinner"></div>
             <p id="loadingText" class="text-slate-500 text-lg">Mempersiapkan kuis...</p>
@@ -165,12 +78,6 @@
             <a href="semua-kuis.html" class="auth-button auth-button-secondary">Kembali ke Daftar Kuis</a>
         </div>
     </main>
-    
-    <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-sm">&copy; <span id="currentYear"></span> ExtraCourse. All rights reserved.</p>
-        </div>
-    </footer>
 
     <script type="module">
         const firebaseConfig = {
@@ -182,19 +89,15 @@
           appId: "1:166687187100:web:e073df281931524f660d59"
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, collection, getDoc, getDocs, addDoc, serverTimestamp, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, collection, getDoc, getDocs, addDoc, serverTimestamp, updateDoc, increment, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- Logika Header Universal (Salin dari file lain yang sudah lengkap) ---
-        // ... ...
-
-        // --- Logika Halaman Kuis Player ---
+        // --- DOM Elements ---
         const loadingStateDiv = document.getElementById('loadingState');
-        const loadingText = document.getElementById('loadingText');
         const errorStateDiv = document.getElementById('errorState');
         const quizContainer = document.getElementById('quiz-container');
         const quizTitleEl = document.getElementById('quizTitle');
@@ -241,9 +144,11 @@
             }
         }
 
+        // **FUNGSI FINISH QUIZ DIPERBARUI**
         async function finishQuiz() {
             nextButton.disabled = true;
             nextButton.textContent = "Menyimpan hasil...";
+            
             let score = 0;
             currentQuizData.questions.forEach((q, index) => {
                 if (userAnswers[index] === q.correctAnswer) {
@@ -256,26 +161,47 @@
             try {
                 const user = auth.currentUser;
                 const kuisId = new URLSearchParams(window.location.search).get('id');
-                const quizHistoryRef = collection(db, "users", user.uid, "quizHistory");
-                const docRef = await addDoc(quizHistoryRef, {
+
+                // Siapkan Batch Write untuk menjalankan semua operasi sekaligus
+                const batch = writeBatch(db);
+
+                // 1. Simpan riwayat kuis
+                const historyCollectionRef = collection(db, "users", user.uid, "quizHistory");
+                const newHistoryRef = doc(historyCollectionRef); // Buat referensi dokumen baru
+                batch.set(newHistoryRef, {
                     kuisId: kuisId,
                     title: currentQuizData.title,
                     score: finalScore,
                     passingScore: currentQuizData.passingScore,
                     completedAt: serverTimestamp()
                 });
-                console.log("Riwayat kuis berhasil disimpan dengan ID:", docRef.id);
                 
+                // 2. Update statistik pengguna
                 const userDocRef = doc(db, "users", user.uid);
-                await updateDoc(userDocRef, {
+                batch.update(userDocRef, {
                     "stats.quizzesCompleted": increment(1),
                     "stats.xpPoints": increment(xpGained)
                 });
-                console.log(`Statistik pengguna diperbarui: +1 kuis, +${xpGained} XP`);
-                window.location.href = `hasil-kuis.html?attemptId=${docRef.id}`;
+                
+                // 3. Buat dokumen notifikasi baru
+                const notificationsRef = collection(db, "users", user.uid, "notifications");
+                const newNotifRef = doc(notificationsRef); // Buat referensi dokumen baru
+                batch.set(newNotifRef, {
+                    message: `Selamat! Anda telah menyelesaikan "${currentQuizData.title}" dengan skor ${finalScore}.`,
+                    link: `hasil-kuis.html?attemptId=${newHistoryRef.id}`,
+                    isRead: false,
+                    timestamp: serverTimestamp()
+                });
+
+                // Jalankan semua operasi tulis
+                await batch.commit();
+
+                console.log("Riwayat, statistik, dan notifikasi berhasil disimpan.");
+                window.location.href = `hasil-kuis.html?attemptId=${newHistoryRef.id}`;
+
             } catch (error) {
-                console.error("Gagal menyimpan riwayat kuis atau update statistik:", error);
-                alert("Gagal menyimpan hasil kuis Anda. Anda akan diarahkan ke halaman utama.");
+                console.error("Gagal menyimpan hasil kuis:", error);
+                alert("Gagal menyimpan hasil kuis Anda. Anda akan diarahkan kembali.");
                 window.location.href = 'semua-kuis.html';
             }
         }
@@ -292,7 +218,6 @@
             }
         });
 
-        // **DIPERBARUI**: initQuiz sekarang menampilkan judul lebih awal
         async function initQuiz() {
             const urlParams = new URLSearchParams(window.location.search);
             const kuisId = urlParams.get('id');
@@ -300,7 +225,6 @@
             if (!kuisId) {
                 loadingStateDiv.style.display = 'none';
                 errorStateDiv.classList.remove('hidden');
-                console.error("Tidak ada ID kuis di URL.");
                 return;
             }
 
@@ -308,13 +232,9 @@
                 const quizDocRef = doc(db, "quizzes", kuisId);
                 const quizDocSnap = await getDoc(quizDocRef);
 
-                if (!quizDocSnap.exists()) {
-                    throw new Error("Dokumen kuis tidak ditemukan.");
-                }
+                if (!quizDocSnap.exists()) throw new Error("Dokumen kuis tidak ditemukan.");
                 
                 const quizData = quizDocSnap.data();
-                
-                // PERBARUI UI LOADING SEBELUM MENGAMBIL PERTANYAAN
                 loadingText.textContent = `Mempersiapkan Kuis: ${quizData.title}...`;
 
                 const questionsColRef = collection(db, "quizzes", kuisId, "questions");
@@ -324,14 +244,11 @@
                     questions.push(doc.data());
                 });
 
-                if (questions.length === 0) {
-                    throw new Error("Kuis ini tidak memiliki pertanyaan.");
-                }
+                if (questions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
 
                 currentQuizData = { ...quizData, questions: questions };
                 document.title = `Mengerjakan: ${currentQuizData.title}`; 
                 quizTitleEl.textContent = currentQuizData.title;
-                
                 loadingStateDiv.style.display = 'none';
                 quizContainer.classList.remove('hidden');
                 showQuestion(currentQuestionIndex);
@@ -344,12 +261,12 @@
         }
 
         onAuthStateChanged(auth, (user) => {
-            // updateHeaderUI(user); // Pastikan ini disalin dari file lain
+            // updateHeaderUI(user);
             if (user) {
                 initQuiz(); 
             } else {
                 alert("Anda harus login untuk mengerjakan kuis.");
-                window.location.href = `login-page.html?redirect=${window.location.pathname}${window.location.search}`;
+                window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
             }
         });
     </script>
