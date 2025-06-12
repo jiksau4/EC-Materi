@@ -493,7 +493,7 @@
         async function handleSaveMateriClick(event) {
             const button = event.target.closest('.save-materi-btn');
             if (!button || !auth.currentUser) {
-                if(!auth.currentUser) alert("Anda harus login untuk menyimpan materi!");
+                if(!auth.currentUser) alert("Anda harus login untuk mengakses materi!");
                 return;
             }
             const card = button.closest('.preview-card');
