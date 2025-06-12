@@ -13,10 +13,10 @@
         }
         .logo-image { height: 70px; width: auto; }
         .materi-hero-image {
-            height: 24rem;
+            height: 24rem; /* 384px */
             width: 100%;
             object-fit: cover;
-            border-radius: 0.75rem;
+            border-radius: 0.75rem; /* rounded-xl */
         }
         .prose h2 { margin-top: 2em; margin-bottom: 1em; font-size: 1.5em; font-weight: 600; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5em;}
         .prose p { line-height: 1.75; margin-bottom: 1.25em; }
@@ -90,12 +90,14 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        // **PERBAIKAN:** Menambahkan writeBatch ke dalam daftar impor
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp, collection, addDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- DOM Elements ---
         const loadingStateDiv = document.getElementById('loadingState');
         const errorStateDiv = document.getElementById('errorState');
         const materiDetailContent = document.getElementById('materiDetailContent');
@@ -157,30 +159,19 @@
 
             const completionDocRef = doc(db, "users", user.uid, "completedMaterials", materiId);
             const userDocRef = doc(db, "users", user.uid);
-            // **BARU**: Referensi ke collection notifikasi
             const notificationsRef = collection(db, "users", user.uid, "notifications");
             
             try {
-                // Buat batch untuk menjalankan beberapa operasi sekaligus
-                const batch = writeBatch(db);
+                const batch = writeBatch(db); // Sekarang fungsi ini sudah didefinisikan
 
-                // 1. Tandai materi ini sebagai selesai
                 batch.set(completionDocRef, { completedAt: serverTimestamp() });
-                
-                // 2. Update statistik total
-                batch.update(userDocRef, {
-                    "stats.materialsCompleted": increment(1)
-                });
-                
-                // 3. **BARU**: Buat dokumen notifikasi
+                batch.update(userDocRef, { "stats.materialsCompleted": increment(1) });
                 batch.set(doc(notificationsRef), {
                     message: `Anda telah menyelesaikan materi "${currentMateriData.title}".`,
                     link: window.location.href,
                     timestamp: serverTimestamp(),
                     isRead: false
                 });
-
-                // Jalankan semua operasi
                 await batch.commit();
                 
                 console.log(`Materi "${materiId}" ditandai selesai dan notifikasi dibuat.`);
@@ -201,7 +192,6 @@
         });
 
         onAuthStateChanged(auth, (user) => {
-            // Kita tidak perlu logika header lengkap di sini karena lebih simpel
             if (user) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const materiId = urlParams.get('id');
