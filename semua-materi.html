@@ -266,7 +266,7 @@
                              <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
                         </div>
                     `;
-                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).catch(console.error));
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).then(() => window.location.href = 'login-page.html').catch(console.error));
                 }
             } else { 
                 if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
@@ -292,7 +292,9 @@
         }
         
         if (logoutButtonDropdownDesktop) {
-            logoutButtonDropdownDesktop.addEventListener('click', () => signOut(auth).catch(console.error));
+            logoutButtonDropdownDesktop.addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = 'login-page.html'; }).catch(console.error);
+            });
         }
 
         if (mobileMenuButton) {
@@ -301,15 +303,14 @@
         
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
-
+        
         // --- Logika Halaman Ini ---
-        const loadingStateDiv = document.getElementById('loadingState');
         const allMateriCardsContainer = document.getElementById('allMateriCardsContainer');
         const loginPromptAllMateri = document.getElementById('loginPromptAllMateri');
         const freeContentCountMateriSpan = document.getElementById('freeContentCountMateri');
         const totalContentCountMateriSpan = document.getElementById('totalContentCountMateri');
         const pageSubtitle = document.getElementById('pageSubtitle');
-        const freeMateriPageCount = 4;
+        const freeMateriPageCount = 4; // **PERBAIKAN:** Jumlah materi gratis diatur ke 4
         let savedMateriForCurrentUser = [];
         
         async function loadAndRenderMaterials() {
@@ -356,6 +357,7 @@
         function updateContentUI(user) {
             const allMateriCards = allMateriCardsContainer ? Array.from(allMateriCardsContainer.children) : [];
             if (totalContentCountMateriSpan) totalContentCountMateriSpan.textContent = allMateriCards.length;
+            
             if (user) {
                 allMateriCards.forEach(card => {
                     card.classList.remove('content-locked');
