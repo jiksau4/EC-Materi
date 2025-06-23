@@ -24,6 +24,7 @@
         }
         .auth-button-primary { background-color: #2563EB; color: white; }
         .auth-button-primary:hover { background-color: #1D4ED8; }
+        .auth-button-primary:disabled { background-color: #9CA3AF; cursor: not-allowed; }
         .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
         .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
         
@@ -207,13 +208,12 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, limit, doc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -298,15 +298,15 @@
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
-        // --- Logika Halaman Ini ---
         const loadingStateDiv = document.getElementById('loadingState');
         const mainContentDiv = document.getElementById('main-content');
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const searchResultsContainer = document.getElementById('search-results-container');
         let currentUser = null;
+        let currentUserFriendships = new Map();
 
-        function renderSearchResults(users) {
+        async function renderSearchResults(users) {
             searchResultsContainer.innerHTML = ''; 
             if (users.length === 0) {
                 searchResultsContainer.innerHTML = `<p class="text-center text-slate-500">Pengguna tidak ditemukan.</p>`;
@@ -317,6 +317,18 @@
                 const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName)}&background=random&size=48&color=fff&font-size=0.5`;
                 const userCard = document.createElement('div');
                 userCard.className = 'user-card';
+
+                const friendshipStatus = currentUserFriendships.get(user.id);
+                let buttonHTML = `<button data-uid="${user.id}" class="friend-action-btn auth-button auth-button-primary text-sm">Tambah Teman</button>`;
+                
+                if (friendshipStatus === 'friends') {
+                    buttonHTML = `<button class="auth-button bg-green-100 text-green-800 text-sm cursor-default" disabled>Teman</button>`;
+                } else if (friendshipStatus === 'pending_sent') {
+                    buttonHTML = `<button class="auth-button bg-slate-200 text-slate-600 text-sm cursor-default" disabled>Permintaan Terkirim</button>`;
+                } else if (friendshipStatus === 'pending_received') {
+                    buttonHTML = `<button data-uid="${user.id}" class="friend-action-btn auth-button bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-sm">Terima Permintaan</button>`;
+                }
+
                 userCard.innerHTML = `
                     <div class="flex items-center">
                         <img src="${photoURL}" alt="Foto profil ${user.displayName}">
@@ -325,8 +337,8 @@
                             <p class="text-sm text-slate-500">@${user.username}</p>
                         </div>
                     </div>
-                    <div>
-                        <button class="auth-button auth-button-primary text-sm">Tambah Teman</button>
+                    <div id="button-container-${user.id}">
+                        ${buttonHTML}
                     </div>
                 `;
                 searchResultsContainer.appendChild(userCard);
@@ -342,31 +354,61 @@
             
             try {
                 const usersRef = collection(db, "users");
-                const q = query(
-                    usersRef, 
-                    where("username", "==", searchTerm),
-                    where("__name__", "!=", currentUser.uid),
-                    limit(10)
-                );
-
+                const q = query(usersRef, where("username", "==", searchTerm), where("__name__", "!=", currentUser.uid), limit(10));
                 const querySnapshot = await getDocs(q);
                 const users = [];
                 querySnapshot.forEach((doc) => {
-                    users.push(doc.data());
+                    users.push({ id: doc.id, ...doc.data() });
                 });
-
                 renderSearchResults(users);
-
             } catch (error) {
                 console.error("Error searching for users:", error);
-                searchResultsContainer.innerHTML = `<p class="text-center text-red-500">Terjadi kesalahan saat mencari.</p>`;
             }
         });
 
-        onAuthStateChanged(auth, (user) => {
+        async function sendFriendRequest(targetUid) {
+            const batch = writeBatch(db);
+            
+            const senderRef = doc(db, "users", currentUser.uid, "friends", targetUid);
+            batch.set(senderRef, { status: "pending_sent" });
+
+            const receiverRef = doc(db, "users", targetUid, "friends", currentUser.uid);
+            batch.set(receiverRef, { status: "pending_received" });
+
+            await batch.commit();
+        }
+
+        searchResultsContainer.addEventListener('click', async (event) => {
+            const button = event.target.closest('.friend-action-btn');
+            if (!button) return;
+
+            const targetUid = button.dataset.uid;
+            button.disabled = true;
+            button.textContent = 'Memproses...';
+
+            try {
+                await sendFriendRequest(targetUid);
+                const buttonContainer = document.getElementById(`button-container-${targetUid}`);
+                buttonContainer.innerHTML = `<button class="auth-button bg-slate-200 text-slate-600 text-sm cursor-default" disabled>Permintaan Terkirim</button>`;
+                currentUserFriendships.set(targetUid, 'pending_sent');
+            } catch (error) {
+                console.error("Gagal mengirim permintaan pertemanan:", error);
+                button.disabled = false;
+                button.textContent = 'Tambah Teman';
+                alert('Gagal mengirim permintaan. Coba lagi.');
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
             updateHeaderUI(user);
             if (user) {
                 currentUser = user;
+                const friendsRef = collection(db, "users", user.uid, "friends");
+                const snapshot = await getDocs(friendsRef);
+                snapshot.forEach(doc => {
+                    currentUserFriendships.set(doc.id, doc.data().status);
+                });
+
                 loadingStateDiv.style.display = 'none';
                 mainContentDiv.classList.remove('hidden');
             } else {
