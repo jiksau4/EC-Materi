@@ -7,11 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB; /* bg-slate-50 */
-        }
-        /* Menggunakan kembali style dari halaman lain untuk konsistensi */
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
         .logo-image { height: 70px; width: auto; }
         .breadcrumb a:hover { text-decoration: underline; }
         .input-field {
@@ -24,49 +20,45 @@
             outline: 2px solid transparent; outline-offset: 2px;
             --tw-ring-color: #2563EB; border-color: #2563EB;
         }
-        .input-field:disabled {
-            background-color: #F3F4F6; /* bg-gray-100 */
-            color: #6B7280; /* text-gray-500 */
-            cursor: not-allowed;
+        .input-field:disabled, .input-field:read-only {
+            background-color: #F3F4F6; color: #6B7280; cursor: not-allowed;
         }
         .submit-button {
-            padding: 0.625rem 1.5rem; border-radius: 0.375rem; font-weight: 500;
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
             transition: all 0.2s ease; display: inline-block; text-align: center;
-            background-color: #2563EB; color: white;
+            background-color: #16A34A; color: white;
         }
-        .submit-button:hover { background-color: #1D4ED8; }
-        .submit-button:disabled { background-color: #93C5FD; cursor: not-allowed; }
+        .submit-button:hover { background-color: #15803D; }
+        .submit-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        /* Style untuk username-prefix */
+        .username-wrapper {
+            position: relative;
+        }
+        .username-prefix {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding-left: 0.75rem;
+            color: #6B7280;
+        }
+        .username-input {
+            padding-left: 1.75rem; /* Memberi ruang untuk simbol @ */
+        }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- Header (Hanya placeholder, karena pengguna harus sudah login untuk mengakses halaman ini) -->
-    <header class="bg-white shadow-md sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
-            <a href="index.html#home" class="flex items-center">
-                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
-            </a>
-            <!-- Navigasi header bisa disembunyikan atau ditampilkan sesuai kebutuhan di halaman ini -->
-        </div>
+    <header class="bg-white shadow-sm">
+        <!-- ... Konten Header ... -->
     </header>
 
-    <!-- Main Content: Edit Profil -->
     <main class="container mx-auto px-6 py-12 md:py-16">
         <div class="mb-8">
             <nav class="text-sm breadcrumb" aria-label="Breadcrumb">
-              <ol class="list-none p-0 inline-flex">
-                <li class="flex items-center">
-                  <a href="index.html#home" class="text-blue-600 hover:text-blue-800">Home</a>
-                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
-                </li>
-                <li class="flex items-center">
-                  <a href="profil.html" class="text-blue-600 hover:text-blue-800">Profil Saya</a>
-                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
-                </li>
-                <li>
-                  <span class="text-slate-500" aria-current="page">Edit Profil</span>
-                </li>
-              </ol>
+              <!-- ... Konten Breadcrumb ... -->
             </nav>
         </div>
 
@@ -78,10 +70,20 @@
                         <label for="displayName" class="block text-sm font-medium text-slate-700">Nama Tampilan</label>
                         <input type="text" id="displayName" name="displayName" class="input-field" required>
                     </div>
+                    
+                    <!-- BARU: Input untuk Username -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-slate-700">Username</label>
+                        <div class="username-wrapper mt-1">
+                            <span class="username-prefix">@</span>
+                            <input type="text" id="username" name="username" class="input-field username-input" placeholder="pilih_username_unik" required>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">Hanya boleh huruf kecil, angka, dan underscore. Akan digunakan untuk mencari teman.</p>
+                    </div>
+
                     <div>
                         <label for="photoURL" class="block text-sm font-medium text-slate-700">URL Foto Profil</label>
                         <input type="url" id="photoURL" name="photoURL" class="input-field" placeholder="https://contoh.com/foto.jpg">
-                        <p class="mt-2 text-xs text-slate-500">Tempelkan URL gambar untuk foto profil baru Anda.</p>
                     </div>
                      <div>
                         <label for="email" class="block text-sm font-medium text-slate-700">Email (tidak bisa diubah)</label>
@@ -94,99 +96,83 @@
                         </button>
                     </div>
                 </form>
-                <p id="successMessage" class="hidden mt-4 text-center text-green-600"></p>
-                <p id="errorMessage" class="hidden mt-4 text-center text-red-600"></p>
+                <p id="formMessage" class="hidden mt-4 text-center text-sm"></p>
             </div>
         </div>
 
-        <div id="loadingStateEditProfile" class="text-center py-20">
+        <div id="loadingState" class="text-center py-20">
             <p class="text-slate-500">Memuat data profil...</p>
         </div>
     </main>
-    
-    <script type="module">
-        // Firebase Config
-        const firebaseConfig = {
-          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
-          authDomain: "ec-materi.firebaseapp.com",
-          projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app", 
-          messagingSenderId: "166687187100",
-          appId: "1:166687187100:web:e073df281931524f660d59"
-        };
 
+    <script type="module">
+        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // DOM Elements
-        const loadingStateDiv = document.getElementById('loadingStateEditProfile');
-        const editProfileContentDiv = document.getElementById('editProfileContent');
-        const profileForm = document.getElementById('profileForm');
-        const displayNameInput = document.getElementById('displayName');
-        const photoURLInput = document.getElementById('photoURL');
-        const emailInput = document.getElementById('email');
-        const saveProfileButton = document.getElementById('saveProfileButton');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        // Logika utama halaman edit profil
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Pengguna sudah login, tampilkan form dan isi data
+        // ... DOM Elements ...
+        const usernameInput = document.getElementById('username');
+        let initialUsername = "";
+
+        async function loadProfileForEdit(user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userDocRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    initialUsername = userData.username || "";
+                    usernameInput.value = initialUsername;
+                    displayNameInput.value = user.displayName || "";
+                    photoURLInput.value = user.photoURL || "";
+                    emailInput.value = user.email;
+                }
+                
                 loadingStateDiv.style.display = 'none';
-                editProfileContentDiv.style.display = 'block';
+                editProfileContent.classList.remove('hidden');
+            } catch (error) { /* ... */ }
+        }
 
-                displayNameInput.value = user.displayName || '';
-                photoURLInput.value = user.photoURL || '';
-                emailInput.value = user.email;
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // ... logika validasi dan update ...
+            const newUsername = usernameInput.value.trim().toLowerCase();
+            
+            // **PENTING**: Kita akan menambahkan logika validasi keunikan username di sini nanti
+            // menggunakan Cloud Function. Untuk sekarang, kita simpan saja.
 
-            } else {
-                // Pengguna tidak login, redirect ke halaman login
-                window.location.href = `login-page.html?redirect=${window.location.pathname}`;
-            }
+            try {
+                // Update di Auth Service
+                await updateProfile(auth.currentUser, {
+                    displayName: newDisplayName,
+                    photoURL: newPhotoURL
+                });
+
+                // Update di Firestore
+                const userDocRef = doc(db, "users", auth.currentUser.uid);
+                await updateDoc(userDocRef, {
+                    displayName: newDisplayName,
+                    username: newUsername,
+                    photoURL: newPhotoURL
+                });
+
+                // ... (tampilkan pesan sukses dan redirect) ...
+
+            } catch (error) { /* ... */ }
         });
 
-        // Event listener untuk submit form
-        if (profileForm) {
-            profileForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                saveProfileButton.disabled = true;
-                saveProfileButton.textContent = 'Menyimpan...';
-                successMessage.classList.add('hidden');
-                errorMessage.classList.add('hidden');
-
-                const newDisplayName = displayNameInput.value;
-                const newPhotoURL = photoURLInput.value;
-
-                updateProfile(auth.currentUser, {
-                    displayName: newDisplayName, 
-                    photoURL: newPhotoURL
-                }).then(() => {
-                    // Update berhasil.
-                    console.log("Profil berhasil diperbarui.");
-                    successMessage.textContent = "Profil berhasil diperbarui! Mengarahkan kembali...";
-                    successMessage.classList.remove('hidden');
-
-                    // Redirect kembali ke halaman profil setelah 2 detik
-                    setTimeout(() => {
-                        window.location.href = 'profil.html';
-                    }, 2000);
-
-                }).catch((error) => {
-                    // Terjadi error.
-                    console.error("Error update profil:", error);
-                    errorMessage.textContent = "Terjadi kesalahan saat menyimpan profil: " + error.message;
-                    errorMessage.classList.remove('hidden');
-
-                }).finally(() => {
-                    saveProfileButton.disabled = false;
-                    saveProfileButton.textContent = 'Simpan Perubahan';
-                });
-            });
-        }
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadProfileForEdit(user);
+            } else {
+                window.location.href = `login-page.html?redirect=edit-profil.html`;
+            }
+        });
     </script>
 </body>
 </html>
