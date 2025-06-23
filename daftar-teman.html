@@ -53,12 +53,6 @@
         #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
             background-color: #EFF6FF; color: #2563EB;
         }
-        #userDropdownMenuDesktop .dropdown-item-active {
-            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
-        }
-        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
-            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
-        }
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
         .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
@@ -222,7 +216,7 @@
             </form>
         </div>
     </div>
-
+    
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-3 gap-8 mb-8">
@@ -245,7 +239,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc, addDoc, serverTimestamp, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -348,6 +342,7 @@
         const cancelDuelBtn = document.getElementById('cancel-duel-btn');
         const sendInviteBtn = document.getElementById('send-invite-btn');
         let opponentData = null;
+        let duelListenerUnsubscribe = null;
 
         async function renderFriends(friends) {
             friendsContainer.innerHTML = '';
@@ -402,8 +397,27 @@
         }
         
         function closeDuelModal() {
+            if (duelListenerUnsubscribe) {
+                duelListenerUnsubscribe();
+                duelListenerUnsubscribe = null;
+            }
             opponentData = null;
             duelModal.classList.add('hidden');
+            // Reset modal content
+            duelModal.querySelector('.modal-content').innerHTML = `
+                <h2 class="text-2xl font-bold text-slate-800">Ajak <span id="opponent-name" class="text-blue-600"></span> Duel</h2>
+                <p class="text-slate-500 mt-2">Pilih kuis yang ingin dimainkan bersama.</p>
+                <form id="duel-form">
+                    <div id="quiz-selection-list" class="quiz-selection-list"></div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancel-duel-btn" class="auth-button auth-button-secondary">Batal</button>
+                        <button type="submit" id="send-invite-btn" class="auth-button auth-button-primary" disabled>Kirim Undangan</button>
+                    </div>
+                </form>
+            `;
+            // Re-assign and re-attach listeners
+            document.getElementById('cancel-duel-btn').addEventListener('click', closeDuelModal);
+            document.getElementById('duel-form').addEventListener('submit', handleDuelFormSubmit);
         }
         cancelDuelBtn.addEventListener('click', closeDuelModal);
         
@@ -446,7 +460,7 @@
             }
         });
 
-        duelForm.addEventListener('submit', async (e) => {
+        async function handleDuelFormSubmit(e) {
             e.preventDefault();
             const selectedQuizInput = document.querySelector('input[name="quiz"]:checked');
             if (!selectedQuizInput) {
@@ -456,22 +470,18 @@
             
             const kuisId = selectedQuizInput.value;
             const kuisTitle = selectedQuizInput.parentElement.textContent.trim();
-            sendInviteBtn.disabled = true;
-            sendInviteBtn.textContent = "Mengirim...";
+            const sendBtn = document.getElementById('send-invite-btn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = "Mengirim...";
             
             try {
                 const batch = writeBatch(db);
-                const duelsRef = collection(db, "duels");
-                const newDuelRef = doc(duelsRef);
+                const newDuelRef = doc(collection(db, "duels"));
                 batch.set(newDuelRef, {
-                    status: "pending",
-                    quizId: kuisId,
-                    quizTitle: kuisTitle,
+                    status: "pending", quizId: kuisId, quizTitle: kuisTitle,
                     createdAt: serverTimestamp(),
-                    challengerId: currentUser.uid,
-                    challengerName: currentUser.displayName || currentUser.email.split('@')[0],
-                    opponentId: opponentData.id,
-                    opponentName: opponentData.displayName,
+                    challengerId: currentUser.uid, challengerName: currentUser.displayName || currentUser.email.split('@')[0],
+                    opponentId: opponentData.id, opponentName: opponentData.displayName,
                     players: {
                         [currentUser.uid]: { score: 0, currentQuestion: 0, answers: [] },
                         [opponentData.id]: { score: 0, currentQuestion: 0, answers: [] }
@@ -488,17 +498,40 @@
                 
                 await batch.commit();
                 
-                alert(`Undangan duel untuk "${opponentData.displayName}" telah terkirim!`);
-                closeDuelModal();
+                listenForDuelStatus(newDuelRef.id);
+                
+                duelModal.querySelector('.modal-content').innerHTML = `<div class="text-center"><p class="font-semibold">Undangan terkirim!</p><p class="text-sm text-slate-500 mt-2">Menunggu respons dari ${opponentData.displayName}...</p><button type="button" id="cancel-waiting-btn" class="auth-button auth-button-secondary mt-4">Batal</button></div>`;
+                document.getElementById('cancel-waiting-btn').addEventListener('click', closeDuelModal);
 
             } catch (error) {
                 console.error("Gagal mengirim undangan duel:", error);
                 alert("Gagal mengirim undangan. Coba lagi.");
-            } finally {
-                sendInviteBtn.disabled = false;
-                sendInviteBtn.textContent = "Kirim Undangan";
+                sendBtn.disabled = false;
+                sendBtn.textContent = "Kirim Undangan";
             }
-        });
+        }
+        duelForm.addEventListener('submit', handleDuelFormSubmit);
+
+        function listenForDuelStatus(duelId) {
+            const duelDocRef = doc(db, "duels", duelId);
+            
+            duelListenerUnsubscribe = onSnapshot(duelDocRef, (docSnap) => {
+                if (!docSnap.exists()) {
+                     if (duelListenerUnsubscribe) duelListenerUnsubscribe();
+                    return;
+                };
+
+                const duelData = docSnap.data();
+                if (duelData.status === 'active') {
+                    if(duelListenerUnsubscribe) duelListenerUnsubscribe();
+                    window.location.href = `duel-player.html?duelId=${duelId}`;
+                } else if (duelData.status === 'declined') {
+                    if(duelListenerUnsubscribe) duelListenerUnsubscribe();
+                    alert(`${duelData.opponentName} menolak tantangan duel.`);
+                    closeDuelModal();
+                }
+            });
+        }
 
         onAuthStateChanged(auth, async (user) => {
             updateHeaderUI(user);
