@@ -79,7 +79,51 @@
 <body class="min-h-screen">
 
     <header class="bg-white shadow-md sticky top-0 z-40">
-        <!-- Header lengkap akan disalin di sini -->
+        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
+                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
+                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
+                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
+                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
+            </nav>
+            <div class="hidden md:flex items-center space-x-2">
+                <div id="authLinksDesktop">
+                    <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
+                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a>
+                </div>
+                <div id="userInfoDesktopContainer" class="hidden relative"> 
+                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
+                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
+                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
+                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="userDropdownMenuDesktop">
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
+            <!-- Konten diisi oleh JavaScript -->
+        </div>
     </header>
 
     <main class="container mx-auto px-6 py-12 md:py-16">
@@ -124,17 +168,94 @@
           appId: "1:166687187100:web:e073df281931524f660d59"
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- Logika Header Universal akan disalin di sini ---
-        // ...
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authLinksDesktop = document.getElementById('authLinksDesktop');
+        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
+        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
+        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
+        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
+        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
+        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
+        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
+        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
 
-        // --- Logika Halaman Ini ---
+        function updateHeaderUI(user) {
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            if (user) { 
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).then(() => window.location.href = 'login-page.html').catch(console.error));
+                }
+            } else { 
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
+        
+        if (userInfoDesktopTrigger) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', () => { if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = 'login-page.html'; }).catch(console.error);
+            });
+        }
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
+        }
+
         const loadingStateDiv = document.getElementById('loadingState');
         const mainContentDiv = document.getElementById('main-content');
         const requestsContainer = document.getElementById('requests-container');
@@ -192,7 +313,13 @@
             if (!card) return;
 
             const targetUid = target.dataset.uid;
-            if (!targetUid) return;
+            if (!targetUid) {
+                const button = target.closest('button');
+                if (button) {
+                    targetUid = button.dataset.uid;
+                }
+            }
+            if(!targetUid) return;
 
             card.style.opacity = '0.5';
             card.querySelectorAll('button').forEach(b => b.disabled = true);
@@ -216,7 +343,7 @@
         });
 
         onAuthStateChanged(auth, async (user) => {
-            // updateHeaderUI(user);
+            updateHeaderUI(user);
             if (user) {
                 currentUser = user;
                 try {
