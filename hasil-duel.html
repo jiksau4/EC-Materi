@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Duel - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* gray-900 */
+            color: white;
+        }
+        .result-card {
+            background-color: #1F2937; /* gray-800 */
+            border: 1px solid #374151; /* gray-700 */
+            border-radius: 1rem; /* rounded-2xl */
+            padding: 2rem;
+            max-width: 700px;
+            margin: auto;
+        }
+        .player-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 9999px;
+            border: 4px solid #4B5563; /* gray-600 */
+            object-fit: cover;
+            background-color: #4B5563;
+        }
+        .winner .player-avatar {
+            border-color: #FBBF24; /* amber-400 */
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
+        }
+        .winner-tag {
+            background-color: #FBBF24;
+            color: #78350F; /* amber-900 */
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        .final-score {
+            font-size: 3rem; /* text-5xl */
+            font-weight: 800; /* extrabold */
+        }
+        .xp-breakdown {
+            background-color: #374151; /* gray-700 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        .action-button {
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+        }
+        .rematch-button { background-color: #2563EB; color: white; }
+        .rematch-button:hover { background-color: #1D4ED8; }
+        .back-button { background-color: transparent; color: #9CA3AF; border: 1px solid #4B5563; }
+        .back-button:hover { background-color: #374151; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-gray-900 shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-center items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="h-12 w-auto" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-400">Menghitung hasil duel...</p>
+        </div>
+        
+        <div id="errorState" class="hidden text-center py-20 bg-gray-800 p-8 rounded-xl">
+             <h2 id="errorTitle" class="text-2xl font-semibold text-red-500">Gagal Memuat Hasil</h2>
+            <p id="errorMessage" class="text-slate-400 mt-2 mb-6">Tidak dapat menemukan hasil duel.</p>
+            <a href="index.html" class="action-button !bg-blue-600 hover:!bg-blue-700">Kembali ke Home</a>
+        </div>
+
+        <div id="resultContent" class="hidden result-card">
+            <h1 id="resultTitle" class="text-4xl font-bold text-center mb-2"></h1>
+            <p id="resultSubtitle" class="text-center text-amber-400 mb-8"></p>
+            
+            <div class="flex items-center justify-around">
+                <div id="p1-container" class="text-center flex flex-col items-center">
+                    <img id="p1-avatar" src="https://placehold.co/100x100/4B5563/FFFFFF?text=P1" class="player-avatar mx-auto">
+                    <p id="p1-name" class="mt-2 font-bold text-lg"></p>
+                    <p id="p1-score" class="final-score"></p>
+                    <span id="p1-winner-tag" class="winner-tag hidden">Pemenang</span>
+                </div>
+                <div class="text-4xl font-bold text-slate-500">VS</div>
+                <div id="p2-container" class="text-center flex flex-col items-center">
+                    <img id="p2-avatar" src="https://placehold.co/100x100/4B5563/FFFFFF?text=P2" class="player-avatar mx-auto">
+                    <p id="p2-name" class="mt-2 font-bold text-lg"></p>
+                    <p id="p2-score" class="final-score"></p>
+                    <span id="p2-winner-tag" class="winner-tag hidden">Pemenang</span>
+                </div>
+            </div>
+
+            <div id="xp-breakdown" class="xp-breakdown hidden">
+                <h3 class="font-semibold text-center mb-3">Perolehan XP Anda</h3>
+                <div class="flex justify-around text-center">
+                    <div>
+                        <p class="text-xs text-slate-400">Partisipasi</p>
+                        <p class="font-bold text-lg">+25</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">Bonus Skor</p>
+                        <p id="xp-from-score" class="font-bold text-lg">+0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">Bonus Menang</p>
+                        <p id="xp-from-win" class="font-bold text-lg">+0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a id="rematch-btn" href="#" class="action-button rematch-button w-full sm:w-auto">Ajak Tanding Ulang</a>
+                <a href="daftar-teman.html" class="action-button back-button w-full sm:w-auto">Cari Lawan Lain</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const loadingStateDiv = document.getElementById('loadingState');
+        const errorStateDiv = document.getElementById('errorState');
+        const resultContentDiv = document.getElementById('resultContent');
+        const resultTitleEl = document.getElementById('resultTitle');
+        const resultSubtitleEl = document.getElementById('resultSubtitle');
+        const rematchBtn = document.getElementById('rematch-btn');
+        let duelDataGlobal = null;
+
+        function showError(title, message) {
+            const errorTitleEl = document.getElementById('errorTitle');
+            const errorMessageEl = document.getElementById('errorMessage');
+            loadingStateDiv.style.display = 'none';
+            resultContentDiv.classList.add('hidden');
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorStateDiv.classList.remove('hidden');
+        }
+
+        async function renderResults(user, duelData) {
+            duelDataGlobal = duelData;
+            const p1Container = document.getElementById('p1-container');
+            const p2Container = document.getElementById('p2-container');
+            const p1Avatar = document.getElementById('p1-avatar');
+            const p2Avatar = document.getElementById('p2-avatar');
+            const p1Name = document.getElementById('p1-name');
+            const p2Name = document.getElementById('p2-name');
+            const p1Score = document.getElementById('p1-score');
+            const p2Score = document.getElementById('p2-score');
+            const p1WinnerTag = document.getElementById('p1-winner-tag');
+            const p2WinnerTag = document.getElementById('p2-winner-tag');
+            const xpFromScoreEl = document.getElementById('xp-from-score');
+            const xpFromWinEl = document.getElementById('xp-from-win');
+            
+            const p1Id = duelData.challengerId;
+            const p2Id = duelData.opponentId;
+            const p1Data = duelData.players[p1Id];
+            const p2Data = duelData.players[opponentId];
+
+            p1Name.textContent = duelData.challengerName;
+            p2Name.textContent = duelData.opponentName;
+            p1Score.textContent = p1Data.score;
+            p2Score.textContent = p2Data.score;
+
+            try {
+                const p1Doc = await getDoc(doc(db, "users", p1Id));
+                const p2Doc = await getDoc(doc(db, "users", p2Id));
+                if (p1Doc.exists()) p1Avatar.src = p1Doc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(p1Doc.data().displayName)}`;
+                if (p2Doc.exists()) p2Avatar.src = p2Doc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(p2Doc.data().displayName)}`;
+            } catch(e) { console.error("Gagal memuat foto profil", e); }
+            
+            const myScore = (user.uid === p1Id) ? p1Data.score : p2Data.score;
+            xpFromScoreEl.textContent = `+${Math.floor(myScore / 2)}`;
+
+            if (p1Data.score > p2Data.score) {
+                resultTitleEl.textContent = `${duelData.challengerName} Menang!`;
+                p1Container.classList.add('winner');
+                p1WinnerTag.classList.remove('hidden');
+                if (user.uid === p1Id) {
+                    resultSubtitleEl.textContent = "Kemenangan yang Luar Biasa!";
+                    xpFromWinEl.textContent = "+50";
+                }
+            } else if (p2Data.score > p1Data.score) {
+                resultTitleEl.textContent = `${duelData.opponentName} Menang!`;
+                p2Container.classList.add('winner');
+                p2WinnerTag.classList.remove('hidden');
+                if (user.uid === p2Id) {
+                    resultSubtitleEl.textContent = "Kemenangan yang Luar Biasa!";
+                    xpFromWinEl.textContent = "+50";
+                }
+            } else {
+                resultTitleEl.textContent = "Hasil Seri!";
+                resultSubtitleEl.textContent = "Pertarungan yang hebat!";
+            }
+            
+            document.getElementById('xp-breakdown').classList.remove('hidden');
+            loadingStateDiv.style.display = 'none';
+            resultContentDiv.classList.remove('hidden');
+        }
+
+        rematchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Untuk rematch, cara termudah adalah mengarahkan kembali ke daftar teman
+            // agar bisa mengirim undangan baru.
+            if (duelDataGlobal) {
+                alert("Fitur Rematch akan mengarahkan Anda kembali ke daftar teman untuk mengirim undangan baru.");
+                window.location.href = 'daftar-teman.html';
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const duelId = urlParams.get('duelId') || urlParams.get('attemptId');
+
+                if (!duelId) {
+                    showError("Link Tidak Valid", "ID duel tidak ditemukan.");
+                    return;
+                }
+
+                try {
+                    const duelDocRef = doc(db, "duels", duelId);
+                    const duelDocSnap = await getDoc(duelDocRef);
+
+                    if (!duelDocSnap.exists()) {
+                        showError("Hasil Tidak Ditemukan", "Hasil duel ini tidak dapat ditemukan.");
+                        return;
+                    }
+                    
+                    renderResults(user, duelDocSnap.data());
+
+                } catch (error) {
+                    console.error("Gagal memuat hasil:", error);
+                    showError("Terjadi Kesalahan", "Tidak dapat memuat hasil duel.");
+                }
+            } else {
+                window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
+            }
+        });
+    </script>
+</body>
+</html>
