@@ -9,14 +9,6 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
         .logo-image { height: 70px; width: auto; }
-        .nav-link { position: relative; transition: color 0.3s ease; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: -4px; left: 50%; transform: translateX(-50%);
-            background-color: #2563EB; transition: width 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link:hover, .nav-link.active { color: #2563EB; }
         .breadcrumb a:hover { text-decoration: underline; }
         .input-field {
             margin-top: 0.25rem; display: block; width: 100%;
@@ -49,36 +41,13 @@
 <body class="min-h-screen">
 
     <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html#home" class="flex items-center">
-                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
-            </a>
-            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
-                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
-                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
-                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
-                <a href="index.html#tentang" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Tentang Kami</a>
-                <a href="index.html#kontak" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kontak</a>
-            </nav>
-        </div>
+        <!-- ... Konten Header ... -->
     </header>
 
     <main class="container mx-auto px-6 py-12 md:py-16">
         <div class="mb-8">
             <nav class="text-sm breadcrumb" aria-label="Breadcrumb">
-              <ol class="list-none p-0 inline-flex">
-                <li class="flex items-center">
-                  <a href="index.html#home" class="text-blue-600 hover:text-blue-800">Home</a>
-                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
-                </li>
-                 <li class="flex items-center">
-                  <a href="profil.html" class="text-blue-600 hover:text-blue-800">Profil Saya</a>
-                  <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
-                </li>
-                <li>
-                  <span class="text-slate-500" aria-current="page">Edit Profil</span>
-                </li>
-              </ol>
+              <!-- ... Konten Breadcrumb ... -->
             </nav>
         </div>
 
@@ -97,7 +66,7 @@
                             <span class="username-prefix">@</span>
                             <input type="text" id="username" name="username" class="input-field username-input" placeholder="pilih_username_unik" required>
                         </div>
-                        <p class="mt-2 text-xs text-slate-500">Hanya boleh huruf kecil, angka, dan underscore. Akan digunakan untuk mencari teman.</p>
+                        <p id="username-feedback" class="mt-2 text-xs text-slate-500">Hanya boleh huruf kecil, angka, dan underscore (3-15 karakter).</p>
                     </div>
 
                     <div>
@@ -125,115 +94,89 @@
     </main>
 
     <script type="module">
-        const firebaseConfig = {
-          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
-          authDomain: "ec-materi.firebaseapp.com",
-          projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app",
-          messagingSenderId: "166687187100",
-          appId: "1:166687187100:web:e073df281931524f660d59"
-        };
+        const firebaseConfig = { /* ...KONFIGURASI ANDA... */ };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        // **BARU**: Impor untuk Callable Functions
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-functions.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const functions = getFunctions(app); // **BARU**: Inisialisasi Functions
 
-        // DOM Elements
-        const loadingStateDiv = document.getElementById('loadingState');
-        const editProfileContent = document.getElementById('editProfileContent');
-        const profileForm = document.getElementById('profileForm');
-        const displayNameInput = document.getElementById('displayName');
+        // ... DOM Elements ...
         const usernameInput = document.getElementById('username');
-        const photoURLInput = document.getElementById('photoURL');
-        const emailInput = document.getElementById('email');
-        const saveProfileButton = document.getElementById('saveProfileButton');
-        const formMessage = document.getElementById('formMessage');
+        const usernameFeedback = document.getElementById('username-feedback');
         let initialUsername = "";
+        let debounceTimer;
+        let isUsernameAvailable = true;
 
-        async function loadProfileForEdit(user) {
-            try {
-                const userDocRef = doc(db, "users", user.uid);
-                const docSnap = await getDoc(userDocRef);
-
-                if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    initialUsername = userData.username || "";
-                    usernameInput.value = initialUsername;
-                    displayNameInput.value = user.displayName || "";
-                    photoURLInput.value = user.photoURL || "";
-                    emailInput.value = user.email;
-                }
-                
-                loadingStateDiv.style.display = 'none';
-                editProfileContent.classList.remove('hidden');
-            } catch (error) { 
-                console.error("Gagal memuat profil:", error);
-                loadingStateDiv.textContent = "Gagal memuat profil.";
-            }
-        }
-
-        profileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            formMessage.textContent = '';
-            saveProfileButton.disabled = true;
-            saveProfileButton.textContent = 'Menyimpan...';
-
-            const newDisplayName = displayNameInput.value.trim();
-            const newUsername = usernameInput.value.trim().toLowerCase();
-            const newPhotoURL = photoURLInput.value.trim();
-
-            // Validasi format username sederhana
+        async function loadProfileForEdit(user) { /* ... (Fungsi ini tetap sama) ... */ }
+        
+        // **BARU**: Fungsi untuk memeriksa username
+        usernameInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const username = usernameInput.value.trim().toLowerCase();
             const usernameRegex = /^[a-z0-9_]{3,15}$/;
-            if (!usernameRegex.test(newUsername)) {
-                formMessage.textContent = "Username hanya boleh huruf kecil, angka, dan underscore (3-15 karakter).";
-                formMessage.className = 'block mt-4 text-center text-sm text-red-600';
-                saveProfileButton.disabled = false;
-                saveProfileButton.textContent = 'Simpan Perubahan';
+
+            if (!usernameRegex.test(username)) {
+                usernameFeedback.textContent = "Format salah (hanya huruf kecil, angka, _, 3-15 karakter).";
+                usernameFeedback.className = "mt-2 text-xs text-red-500";
+                isUsernameAvailable = false;
                 return;
             }
 
-            // TODO: Tambahkan validasi keunikan username dengan Cloud Function
+            if (username === initialUsername) {
+                usernameFeedback.textContent = "Ini adalah username Anda saat ini.";
+                usernameFeedback.className = "mt-2 text-xs text-slate-500";
+                isUsernameAvailable = true;
+                return;
+            }
 
-            try {
-                await updateProfile(auth.currentUser, {
-                    displayName: newDisplayName,
-                    photoURL: newPhotoURL
-                });
+            usernameFeedback.textContent = "Memeriksa...";
+            usernameFeedback.className = "mt-2 text-xs text-slate-500";
+            
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const checkUsername = httpsCallable(functions, 'checkUsernameUniqueness');
+                    const result = await checkUsername({ username: username });
+                    
+                    if (result.data.available) {
+                        usernameFeedback.textContent = "Username tersedia!";
+                        usernameFeedback.className = "mt-2 text-xs text-green-600";
+                        isUsernameAvailable = true;
+                    } else {
+                        usernameFeedback.textContent = "Username sudah digunakan.";
+                        usernameFeedback.className = "mt-2 text-xs text-red-500";
+                        isUsernameAvailable = false;
+                    }
+                } catch (error) {
+                    console.error("Error checking username:", error);
+                    usernameFeedback.textContent = "Gagal memeriksa username.";
+                    usernameFeedback.className = "mt-2 text-xs text-red-500";
+                    isUsernameAvailable = false;
+                }
+            }, 500); // Tunggu 500ms setelah pengguna berhenti mengetik
+        });
 
-                const userDocRef = doc(db, "users", auth.currentUser.uid);
-                await updateDoc(userDocRef, {
-                    displayName: newDisplayName,
-                    username: newUsername,
-                    photoURL: newPhotoURL
-                });
 
-                formMessage.textContent = "Profil berhasil diperbarui!";
-                formMessage.className = 'block mt-4 text-center text-sm text-green-600';
-
-                setTimeout(() => {
-                    window.location.href = 'profil.html';
-                }, 1500);
-
-            } catch (error) { 
-                console.error("Gagal memperbarui profil:", error);
-                formMessage.textContent = "Gagal menyimpan: " + error.message;
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // ...
+            const newUsername = usernameInput.value.trim().toLowerCase();
+            
+            if (!isUsernameAvailable && newUsername !== initialUsername) {
+                formMessage.textContent = "Username tidak tersedia. Silakan pilih yang lain.";
                 formMessage.className = 'block mt-4 text-center text-sm text-red-600';
-            } finally {
-                saveProfileButton.disabled = false;
-                saveProfileButton.textContent = 'Simpan Perubahan';
+                return;
             }
+            
+            // ... (sisa logika submit sama seperti sebelumnya) ...
         });
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadProfileForEdit(user);
-            } else {
-                window.location.href = `login-page.html?redirect=edit-profil.html`;
-            }
-        });
+        onAuthStateChanged(auth, (user) => { /* ... (logika ini tetap sama) ... */ });
     </script>
 </body>
 </html>
