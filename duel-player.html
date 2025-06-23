@@ -115,7 +115,8 @@
             </div>
         </div>
         <div id="loadingState" class="text-center py-20">
-            <p class="text-slate-400">Menghubungkan ke ruang duel...</p>
+            <div class="spinner"></div>
+            <p id="loadingText" class="text-slate-500 text-lg">Menghubungkan ke ruang duel...</p>
         </div>
         <div id="errorState" class="hidden text-center py-20 bg-gray-800 p-8 rounded-xl shadow-md">
             <h2 id="errorTitle" class="text-2xl font-semibold text-red-500">Gagal Memuat Duel</h2>
@@ -125,7 +126,6 @@
     </main>
 
     <script type="module">
-        // **PERBAIKAN:** Mengisi firebaseConfig dengan data yang benar
         const firebaseConfig = {
           apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
           authDomain: "ec-materi.firebaseapp.com",
@@ -160,7 +160,6 @@
         const optionsContainerEl = document.getElementById('optionsContainer');
         const waitingIndicator = document.getElementById('waiting-indicator');
 
-        // Elemen Player Info
         const challengerNameEl = document.getElementById('challenger-name');
         const challengerAvatarEl = document.getElementById('challenger-avatar');
         const challengerScoreEl = document.getElementById('challenger-score');
@@ -170,7 +169,7 @@
         const opponentScoreEl = document.getElementById('opponent-score');
         const opponentStatusEl = document.getElementById('opponent-status');
 
-        function showError(title, message) { 
+        function showError(title, message) {
             loadingStateDiv.style.display = 'none';
             quizContainer.classList.add('hidden');
             errorTitleEl.textContent = title;
@@ -178,23 +177,24 @@
             errorStateDiv.classList.remove('hidden');
         }
 
-        async function renderPlayerInfo(duelData) { 
-            const challengerDoc = await getDoc(doc(db, "users", duelData.challengerId));
-            const opponentDoc = await getDoc(doc(db, "users", duelData.opponentId));
+        async function renderPlayerInfo(duelData) {
+            const challengerId = duelData.challengerId;
+            const opponentId = duelData.opponentId;
+
+            challengerNameEl.textContent = duelData.challengerName;
+            opponentNameEl.textContent = duelData.opponentName;
             
-            if (!challengerDoc.exists() || !opponentDoc.exists()) {
-                showError("Error", "Data pemain tidak ditemukan.");
-                return;
+            challengerScoreEl.textContent = duelData.players[challengerId]?.score || 0;
+            opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
+            
+            try {
+                const challengerDoc = await getDoc(doc(db, "users", challengerId));
+                const opponentDoc = await getDoc(doc(db, "users", opponentId));
+                if (challengerDoc.exists()) challengerAvatarEl.src = challengerDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(challengerDoc.data().displayName)}`;
+                if (opponentDoc.exists()) opponentAvatarEl.src = opponentDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(opponentDoc.data().displayName)}`;
+            } catch(e) {
+                console.error("Gagal memuat foto profil pemain:", e);
             }
-
-            const challengerData = challengerDoc.data();
-            const opponentData = opponentDoc.data();
-
-            challengerNameEl.textContent = challengerData.displayName;
-            challengerAvatarEl.src = challengerData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(challengerData.displayName)}`;
-            
-            opponentNameEl.textContent = opponentData.displayName;
-            opponentAvatarEl.src = opponentData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(opponentData.displayName)}`;
         }
 
         async function submitAnswer(answer) {
@@ -203,7 +203,7 @@
             const currentQuestion = allQuestions[currentQuestionIndex];
             const isCorrect = answer === currentQuestion.correctAnswer;
             
-            const scoreUpdate = isCorrect ? increment(10) : 0; // Skor per jawaban benar
+            const scoreUpdate = isCorrect ? 10 : 0; 
             const playerPath = `players.${currentUser.uid}`;
 
             const duelDocRef = doc(db, "duels", duelId);
@@ -221,62 +221,73 @@
             const opponentData = duelData.players[opponentId];
             
             const currentQuestionIndex = myData.currentQuestion;
+            if(currentQuestionIndex >= allQuestions.length) {
+                if (unsubscribeDuel) unsubscribeDuel();
+                // TODO: Arahkan ke halaman hasil duel
+                showError("Duel Selesai!", "Halaman hasil duel akan segera dibuat.");
+                return;
+            }
+
             const question = allQuestions[currentQuestionIndex];
             
             progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
             progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
             questionTextEl.textContent = question.questionText;
 
-            optionsContainerEl.innerHTML = '';
-            question.options.forEach(optionText => {
-                const button = document.createElement('button');
-                button.className = 'option-btn';
-                button.textContent = optionText;
-                button.onclick = () => {
-                    document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
-                    button.classList.add('selected');
-                    submitAnswer(optionText);
-                };
-                optionsContainerEl.appendChild(button);
-            });
+            const myAnswer = myData.answers?.[currentQuestionIndex];
+            const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
 
-            // Update status & skor UI
-            challengerScoreEl.textContent = duelData.players[duelData.challengerId].score;
-            opponentScoreEl.textContent = duelData.players[duelData.opponentId].score;
+            challengerScoreEl.textContent = duelData.players[duelData.challengerId]?.score || 0;
+            opponentScoreEl.textContent = duelData.players[opponentData.id]?.score || 0;
 
-            const myAnswer = myData.answers ? myData.answers[currentQuestionIndex] : null;
-            const opponentAnswer = opponentData.answers ? opponentData.answers[currentQuestionIndex] : null;
+            if (myAnswer) {
+                waitingIndicator.classList.add('hidden');
+                optionsContainerEl.innerHTML = '';
+                question.options.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = optionText;
+                    button.disabled = true;
+                    if(optionText === myAnswer) button.classList.add('selected');
+                    optionsContainerEl.appendChild(button);
+                });
 
-            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myAnswer, opponentAnswer);
-            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myAnswer, opponentAnswer);
+                if(!opponentAnswer) {
+                    waitingIndicator.classList.remove('hidden');
+                }
+            } else {
+                waitingIndicator.classList.add('hidden');
+                optionsContainerEl.innerHTML = '';
+                question.options.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = optionText;
+                    button.onclick = () => submitAnswer(optionText);
+                    optionsContainerEl.appendChild(button);
+                });
+            }
+
+            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myAnswer, opponentAnswer, currentQuestionIndex);
+            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myAnswer, opponentAnswer, currentQuestionIndex);
             
-            waitingIndicator.classList.toggle('hidden', !!myAnswer);
-
             if (myAnswer && opponentAnswer) {
-                // Keduanya sudah menjawab
                 waitingIndicator.classList.add('hidden');
                 revealAnswers(question.correctAnswer);
                 setTimeout(() => {
-                    const nextQuestionIndex = currentQuestionIndex + 1;
-                    if (nextQuestionIndex >= allQuestions.length) {
-                        // TODO: Duel selesai
-                        showError("Duel Selesai!", "Halaman hasil duel sedang dalam pengembangan.");
-                    } else {
-                        // Hanya satu pemain (misal, penantang) yang bertanggung jawab update question index
-                        if (currentUser.uid === duelData.challengerId) {
-                            updateDoc(doc(db, "duels", duelId), {
-                                [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
-                                [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
-                            });
-                        }
+                    if (currentUser.uid === duelData.challengerId) {
+                        const nextQuestionIndex = currentQuestionIndex + 1;
+                        updateDoc(doc(db, "duels", duelId), {
+                            [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
+                            [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
+                        });
                     }
-                }, 2500);
+                }, 2500); 
             }
         }
         
-        function updatePlayerStatusIndicator(statusEl, playerId, myAnswer, opponentAnswer) {
+        function updatePlayerStatusIndicator(statusEl, playerId, myAnswer, opponentAnswer, qIndex) {
             const playerData = currentQuizData.players[playerId];
-            if (playerData.answers && playerData.answers[playerData.currentQuestion]) {
+            if (playerData.answers && playerData.answers[qIndex]) {
                 statusEl.classList.remove('waiting-opponent-indicator');
                 statusEl.classList.add('opponent-answered-indicator');
             } else {
@@ -284,7 +295,7 @@
                 statusEl.classList.add('waiting-opponent-indicator');
             }
         }
-
+        
         function revealAnswers(correctAnswer) {
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.disabled = true;
@@ -332,14 +343,13 @@
                     return;
                 }
             }
-            
             renderQuestion(currentQuizData);
         }
 
         onAuthStateChanged(auth, (user) => {
+            // updateHeaderUI(user); // Header di halaman ini lebih simpel, tidak perlu update dinamis
             if (user) {
                 currentUser = user;
-                // updateHeaderUI(user);
                 const urlParams = new URLSearchParams(window.location.search);
                 duelId = urlParams.get('duelId');
                 if (!duelId) {
@@ -356,7 +366,6 @@
                 window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
             }
         });
-
     </script>
 </body>
 </html>
