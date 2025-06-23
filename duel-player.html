@@ -180,6 +180,7 @@
             challengerNameEl.textContent = duelData.challengerName;
             opponentNameEl.textContent = duelData.opponentName;
             
+            // **PERBAIKAN**: Menggunakan `|| 0` untuk mencegah NaN jika field belum ada
             challengerScoreEl.textContent = duelData.players[challengerId]?.score || 0;
             opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
             
@@ -232,6 +233,7 @@
             const myAnswer = myData.answers?.[currentQuestionIndex];
             const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
 
+            // **PERBAIKAN UTAMA**: Memastikan kedua skor selalu diperbarui dengan data terbaru.
             challengerScoreEl.textContent = duelData.players[duelData.challengerId]?.score || 0;
             opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
 
@@ -281,7 +283,7 @@
         }
         
         function updatePlayerStatusIndicator(statusEl, playerId, myData, opponentData, qIndex) {
-            const playerData = (currentUser.uid === playerId) ? myData : opponentData;
+            const playerData = (playerId === currentUser.uid) ? myData : opponentData;
             if (playerData.answers && playerData.answers[qIndex]) {
                 statusEl.classList.remove('waiting-opponent-indicator');
                 statusEl.classList.add('opponent-answered-indicator');
@@ -311,6 +313,7 @@
             const questionsColRef = collection(db, "quizzes", kuisId, "questions");
             const questionsSnapshot = await getDocs(questionsColRef);
             
+            allQuestions = []; // Kosongkan array pertanyaan sebelum mengisi
             questionsSnapshot.forEach(doc => allQuestions.push(doc.data()));
             if (allQuestions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
 
@@ -344,7 +347,6 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                // updateHeaderUI(user);
                 const urlParams = new URLSearchParams(window.location.search);
                 duelId = urlParams.get('duelId');
                 if (!duelId) {
