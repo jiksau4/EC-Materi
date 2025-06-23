@@ -8,8 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #111827; color: white; }
-        .logo-image { height: 70px; width: auto; }
-        
         .player-card {
             display: flex;
             align-items: center;
@@ -39,7 +37,6 @@
             display: flex; align-items: center; justify-content: center;
             border-radius: 9999px;
         }
-
         #quiz-container { max-width: 800px; margin: auto; }
         .progress-bar-bg { background-color: #374151; }
         .progress-bar-fill { background-color: #3B82F6; transition: width 0.3s ease-in-out; }
@@ -58,7 +55,6 @@
         .option-btn.correct { border-color: #10B981; background-color: #059669; }
         .option-btn.wrong { border-color: #EF4444; background-color: #B91C1C; }
         .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        
         .player-status-indicator {
             height: 12px; width: 12px; border-radius: 9999px;
             transition: background-color 0.3s;
@@ -236,7 +232,6 @@
             const myAnswer = myData.answers?.[currentQuestionIndex];
             const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
 
-            // **PERBAIKAN:** Menggunakan variabel yang benar untuk menampilkan skor
             challengerScoreEl.textContent = duelData.players[duelData.challengerId]?.score || 0;
             opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
 
@@ -347,9 +342,9 @@
         }
 
         onAuthStateChanged(auth, (user) => {
-            // updateHeaderUI(user);
             if (user) {
                 currentUser = user;
+                // updateHeaderUI(user);
                 const urlParams = new URLSearchParams(window.location.search);
                 duelId = urlParams.get('duelId');
                 if (!duelId) {
