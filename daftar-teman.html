@@ -28,12 +28,8 @@
         .auth-button-secondary { background-color: transparent; color: #4B5563; border: 1px solid #D1D5DB; }
         .auth-button-secondary:hover { background-color: #F9FAFB; }
         
-        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
-            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
-        }
-        #userPhotoDesktop, #userPhotoMobile {
-            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
-        }
+        #userInfoDesktopTrigger { cursor: pointer; }
+        #userPhotoDesktop { width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; }
         .user-display-name {
             font-weight: 500; color: #374151; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100px;
@@ -52,12 +48,6 @@
         }
         #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
             background-color: #EFF6FF; color: #2563EB;
-        }
-        #userDropdownMenuDesktop .dropdown-item-active {
-            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
-        }
-        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
-            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
         }
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
@@ -83,6 +73,43 @@
             height: 48px;
             border-radius: 9999px;
             margin-right: 1rem;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        .quiz-selection-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .quiz-selection-item {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+        }
+        .quiz-selection-item:hover {
+            background-color: #F3F4F6;
+        }
+        .quiz-selection-item input[type="radio"] {
+            margin-right: 0.75rem;
         }
     </style>
 </head>
@@ -112,16 +139,7 @@
                         <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div id="userDropdownMenuDesktop">
-                        <div class="dropdown-user-info">
-                            <p class="name" id="dropdownUserNameDesktop"></p>
-                            <p class="email" id="dropdownUserEmailDesktop"></p>
-                        </div>
-                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
-                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
-                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
-                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
-                        <hr class="border-slate-200 my-1">
-                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                        <!-- Konten dropdown diisi oleh JS -->
                     </div>
                 </div>
             </div>
@@ -168,6 +186,23 @@
             <p class="text-slate-500">Memuat daftar teman...</p>
         </div>
     </main>
+    
+    <div id="duel-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-slate-800">Ajak <span id="opponent-name" class="text-blue-600"></span> Duel</h2>
+            <p class="text-slate-500 mt-2">Pilih kuis yang ingin dimainkan bersama.</p>
+            
+            <form id="duel-form">
+                <div id="quiz-selection-list" class="quiz-selection-list">
+                    <p class="p-4 text-center text-sm text-slate-400">Memuat daftar kuis...</p>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-duel-btn" class="auth-button auth-button-secondary">Batal</button>
+                    <button type="submit" id="send-invite-btn" class="auth-button auth-button-primary" disabled>Kirim Undangan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
         <div class="container mx-auto px-6">
@@ -191,12 +226,13 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc, addDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
+        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -286,6 +322,14 @@
         const friendsContainer = document.getElementById('friends-container');
         const emptyStateDiv = document.getElementById('emptyState');
         let currentUser = null;
+        
+        const duelModal = document.getElementById('duel-modal');
+        const duelForm = document.getElementById('duel-form');
+        const opponentNameSpan = document.getElementById('opponent-name');
+        const quizSelectionList = document.getElementById('quiz-selection-list');
+        const cancelDuelBtn = document.getElementById('cancel-duel-btn');
+        const sendInviteBtn = document.getElementById('send-invite-btn');
+        let opponentData = null;
 
         async function renderFriends(friends) {
             friendsContainer.innerHTML = '';
@@ -317,6 +361,34 @@
             }
         }
         
+        async function openDuelModal(friend) {
+            opponentData = friend;
+            opponentNameSpan.textContent = friend.displayName;
+            quizSelectionList.innerHTML = `<p class="p-4 text-center text-sm text-slate-400">Memuat daftar kuis...</p>`;
+            sendInviteBtn.disabled = true;
+            duelModal.classList.remove('hidden');
+            const quizzesRef = collection(db, "quizzes");
+            const q = query(quizzesRef, orderBy("title", "asc"));
+            const querySnapshot = await getDocs(q);
+            
+            quizSelectionList.innerHTML = '';
+            querySnapshot.forEach(doc => {
+                const quizId = doc.id;
+                const quizData = doc.data();
+                const label = document.createElement('label');
+                label.className = 'quiz-selection-item';
+                label.innerHTML = `<input type="radio" name="quiz" value="${quizId}" required> ${quizData.title}`;
+                quizSelectionList.appendChild(label);
+            });
+            quizSelectionList.addEventListener('change', () => { sendInviteBtn.disabled = false; });
+        }
+        
+        function closeDuelModal() {
+            opponentData = null;
+            duelModal.classList.add('hidden');
+        }
+        cancelDuelBtn.addEventListener('click', closeDuelModal);
+        
         async function removeFriend(friendUid) {
             const batch = writeBatch(db);
             const currentUserFriendRef = doc(db, "users", currentUser.uid, "friends", friendUid);
@@ -329,13 +401,11 @@
         friendsContainer.addEventListener('click', async (event) => {
             const button = event.target.closest('button');
             if (!button) return;
-
             const friendUid = button.dataset.uid;
             
             if (button.classList.contains('action-btn-remove')) {
                 const card = document.getElementById(`friend-${friendUid}`);
                 const friendName = card.querySelector('.font-bold').textContent;
-
                 if (confirm(`Apakah Anda yakin ingin menghapus ${friendName} dari daftar teman?`)) {
                     card.style.opacity = '0.5';
                     try {
@@ -351,7 +421,50 @@
                     }
                 }
             } else if (button.classList.contains('action-btn-duel')) {
-                alert(`Fitur "Ajak Duel" untuk ${friendUid} belum diimplementasikan.`);
+                const friendDoc = await getDoc(doc(db, "users", friendUid));
+                if (friendDoc.exists()) {
+                    openDuelModal({id: friendDoc.id, ...friendDoc.data()});
+                }
+            }
+        });
+
+        duelForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const selectedQuizInput = document.querySelector('input[name="quiz"]:checked');
+            if (!selectedQuizInput) {
+                alert("Pilih kuis terlebih dahulu!");
+                return;
+            }
+            
+            const kuisId = selectedQuizInput.value;
+            sendInviteBtn.disabled = true;
+            sendInviteBtn.textContent = "Mengirim...";
+            
+            try {
+                const duelsRef = collection(db, "duels");
+                await addDoc(duelsRef, {
+                    status: "pending",
+                    quizId: kuisId,
+                    createdAt: serverTimestamp(),
+                    challengerId: currentUser.uid,
+                    challengerName: currentUser.displayName || currentUser.email.split('@')[0],
+                    opponentId: opponentData.id,
+                    opponentName: opponentData.displayName,
+                    players: {
+                        [currentUser.uid]: { score: 0, currentQuestion: 0, answers: [] },
+                        [opponentData.id]: { score: 0, currentQuestion: 0, answers: [] }
+                    }
+                });
+                
+                alert(`Undangan duel untuk "${opponentData.displayName}" telah terkirim!`);
+                closeDuelModal();
+
+            } catch (error) {
+                console.error("Gagal mengirim undangan duel:", error);
+                alert("Gagal mengirim undangan. Coba lagi.");
+            } finally {
+                sendInviteBtn.disabled = false;
+                sendInviteBtn.textContent = "Kirim Undangan";
             }
         });
 
