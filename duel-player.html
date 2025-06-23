@@ -19,14 +19,14 @@
         .player-card.challenger { flex-direction: row; }
         .player-card.opponent { flex-direction: row-reverse; text-align: right; }
         .player-card img {
-            width: 56px; /* w-14 */
-            height: 56px; /* h-14 */
+            width: 56px;
+            height: 56px;
             border-radius: 9999px;
-            border: 3px solid #374151; /* gray-700 */
+            border: 3px solid #374151;
         }
         .player-card .score {
-            font-size: 1.875rem; /* text-3xl */
-            font-weight: 800; /* extrabold */
+            font-size: 1.875rem;
+            font-weight: 800;
         }
         .vs-circle {
             width: 64px; height: 64px;
@@ -54,16 +54,16 @@
             border-color: #2563EB; background-color: #1E3A8A;
             color: white; box-shadow: 0 0 0 2px #3B82F6;
         }
+        .option-btn.correct { border-color: #10B981; background-color: #059669; }
+        .option-btn.wrong { border-color: #EF4444; background-color: #B91C1C; }
         .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
-
-        /* Status Jawaban Lawan */
-        .opponent-answered-indicator {
-            background-color: #10B981; /* green-500 */
-            border-color: #059669;
+        
+        .player-status-indicator {
+            height: 12px; width: 12px; border-radius: 9999px;
+            transition: background-color 0.3s;
         }
-        .waiting-opponent-indicator {
-            background-color: #4B5563; /* gray-600 */
-        }
+        .waiting-opponent-indicator { background-color: #6B7280; }
+        .opponent-answered-indicator { background-color: #10B981; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -71,22 +71,24 @@
     <header class="bg-gray-900 shadow-md sticky top-0 z-40">
         <div class="container mx-auto px-6 py-2">
             <div class="flex justify-between items-center">
-                <!-- Player 1 (Challenger) -->
                 <div id="challenger-info" class="player-card challenger">
                     <img id="challenger-avatar" src="https://placehold.co/56x56/374151/FFFFFF?text=?">
                     <div>
-                        <p id="challenger-name" class="font-bold"></p>
+                        <div class="flex items-center gap-2">
+                             <div id="challenger-status" class="player-status-indicator waiting-opponent-indicator"></div>
+                             <p id="challenger-name" class="font-bold"></p>
+                        </div>
                         <p id="challenger-score" class="score">0</p>
                     </div>
                 </div>
-
                 <div class="vs-circle">VS</div>
-                
-                <!-- Player 2 (Opponent) -->
                 <div id="opponent-info" class="player-card opponent">
                     <img id="opponent-avatar" src="https://placehold.co/56x56/374151/FFFFFF?text=?">
                     <div>
-                        <p id="opponent-name" class="font-bold"></p>
+                         <div class="flex items-center gap-2 justify-end">
+                             <p id="opponent-name" class="font-bold"></p>
+                             <div id="opponent-status" class="player-status-indicator waiting-opponent-indicator"></div>
+                        </div>
                         <p id="opponent-score" class="score">0</p>
                     </div>
                 </div>
@@ -131,27 +133,81 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- DOM Elements ---
-        // ... (semua elemen dari main content dan header kuis)
         let currentUser = null;
         let duelId = null;
         let unsubscribeDuel = null;
         let allQuestions = [];
+        let currentQuizData = {};
         
-        function showError(title, message) { /* ... */ }
+        const loadingStateDiv = document.getElementById('loadingState');
+        const errorStateDiv = document.getElementById('errorState');
+        // ... (dan semua elemen DOM lainnya)
 
+        function showError(title, message) { /* ... */ }
         function renderPlayerInfo(duelData, playersData) { /* ... */ }
 
-        function renderQuestion(duelData) { /* ... */ }
+        async function submitAnswer(answer) {
+            const currentQuestionIndex = duelData.players[currentUser.uid].currentQuestion;
+            const currentQuestion = allQuestions[currentQuestionIndex];
+            const isCorrect = answer === currentQuestion.correctAnswer;
+            
+            const scoreUpdate = isCorrect ? increment(10) : 0;
+            const playerPath = `players.${currentUser.uid}`;
 
-        async function submitAnswer(answer) { /* ... */ }
-        
-        async function loadQuizData(kuisId) {
-            // ... (Mengambil data kuis dan pertanyaan dari Firestore)
+            const duelDocRef = doc(db, "duels", duelId);
+            await updateDoc(duelDocRef, {
+                [`${playerPath}.answers.${currentQuestionIndex}`]: answer,
+                [`${playerPath}.score`]: increment(scoreUpdate)
+            });
         }
 
-        function handleDuelUpdate(duelDocSnap) {
-            // ... (Logika utama yang berjalan setiap kali ada update di duel)
+        function renderQuestion(duelData) {
+            const myData = duelData.players[currentUser.uid];
+            const opponentId = currentUser.uid === duelData.challengerId ? duelData.opponentId : duelData.challengerId;
+            const opponentData = duelData.players[opponentId];
+
+            const currentQuestionIndex = myData.currentQuestion;
+
+            // Logika untuk menampilkan pertanyaan, opsi, dan status
+            // ...
+
+            if (myData.answers[currentQuestionIndex] && opponentData.answers[currentQuestionIndex]) {
+                // Keduanya sudah menjawab, lanjut ke soal berikutnya setelah delay
+                setTimeout(() => {
+                    const nextQuestionIndex = currentQuestionIndex + 1;
+                    if (nextQuestionIndex >= allQuestions.length) {
+                        // Duel selesai
+                        // ...
+                    } else {
+                        updateDoc(doc(db, "duels", duelId), {
+                            [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
+                            [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
+                        });
+                    }
+                }, 2000); // Delay 2 detik
+            }
+        }
+
+        async function loadQuizData(kuisId) {
+            // ... (Fungsi untuk mengambil data kuis dan pertanyaan)
+        }
+
+        async function handleDuelUpdate(duelDocSnap) {
+            if (!duelDocSnap.exists()) {
+                showError("Duel Dibatalkan", "Sesi duel ini telah dibatalkan atau tidak ada lagi.");
+                if (unsubscribeDuel) unsubscribeDuel();
+                return;
+            }
+
+            const duelData = duelDocSnap.data();
+
+            if (allQuestions.length === 0) {
+                await loadQuizData(duelData.quizId);
+            }
+            
+            // Render UI berdasarkan data duel terbaru
+            renderPlayerInfo(duelData);
+            renderQuestion(duelData);
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -173,6 +229,7 @@
                 window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
             }
         });
+
     </script>
 </body>
 </html>
