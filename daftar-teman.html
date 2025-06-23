@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permintaan Pertemanan - ExtraCourse</title>
+    <title>Daftar Teman - ExtraCourse</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -56,8 +56,15 @@
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
         .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-        
-        .request-card {
+        #mobileUserMenuLinksContainer a {
+            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
+            padding-bottom: 0.75rem; display: block; color: #4B5563;
+        }
+        #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
+            background-color: #EFF6FF; color: #2563EB;
+        }
+
+        .friend-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -68,7 +75,11 @@
             box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
-        .request-card img {
+        .friend-card:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .friend-card img {
             width: 48px;
             height: 48px;
             border-radius: 9999px;
@@ -136,27 +147,39 @@
                       <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
                     </li>
                     <li>
-                      <span class="text-slate-500" aria-current="page">Permintaan Pertemanan</span>
+                      <span class="text-slate-500" aria-current="page">Daftar Teman</span>
                     </li>
                   </ol>
                 </nav>
             </div>
             
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Permintaan Pertemanan</h1>
-            <p class="text-slate-500 mb-6">Terima atau tolak permintaan pertemanan dari pengguna lain.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Daftar Teman</h1>
+            <p class="text-slate-500 mb-6">Berikut adalah daftar teman Anda. Ajak mereka untuk duel kuis!</p>
 
-            <div id="requests-container" class="mt-8 space-y-4">
-                <!-- Hasil permintaan akan ditampilkan di sini -->
+            <div id="friends-container" class="mt-8 space-y-4">
+                <!-- Hasil akan ditampilkan di sini -->
             </div>
              <div id="emptyState" class="hidden text-center py-10 bg-white rounded-lg shadow">
-                <p class="text-slate-500">Tidak ada permintaan pertemanan saat ini.</p>
+                <p class="text-slate-500">Anda belum memiliki teman.</p>
+                <a href="cari-teman.html" class="auth-button auth-button-primary mt-4">Cari Teman Baru</a>
             </div>
         </div>
 
         <div id="loadingState" class="text-center py-20">
-            <p class="text-slate-500">Memuat permintaan...</p>
+            <p class="text-slate-500">Memuat daftar teman...</p>
         </div>
     </main>
+    
+    <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div><h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3><p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p><p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3><ul class="space-y-2 text-sm"><li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li><li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li><li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li><li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li><li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li><li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li></ul></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3><p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p><p class="text-sm mb-2">Email: Jiksau04@gmail.com</p><p class="text-sm mb-4">Telepon: 081334629983</p><h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3><div class="flex space-x-4"><a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg><span>Instagram</span></a></div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script type="module">
         const firebaseConfig = {
@@ -169,7 +192,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -255,120 +278,72 @@
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
         }
+        
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
         const loadingStateDiv = document.getElementById('loadingState');
         const mainContentDiv = document.getElementById('main-content');
-        const requestsContainer = document.getElementById('requests-container');
+        const friendsContainer = document.getElementById('friends-container');
         const emptyStateDiv = document.getElementById('emptyState');
         let currentUser = null;
 
-        async function renderRequests(requests) {
-            requestsContainer.innerHTML = '';
-            if (requests.length === 0) {
+        async function renderFriends(friends) {
+            friendsContainer.innerHTML = '';
+            if (friends.length === 0) {
                 emptyStateDiv.classList.remove('hidden');
                 return;
             }
             emptyStateDiv.classList.add('hidden');
 
-            for (const request of requests) {
-                const photoURL = request.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(request.displayName)}&background=random&size=48&color=fff&font-size=0.5`;
-                const requestCard = document.createElement('div');
-                requestCard.className = 'request-card';
-                requestCard.id = `request-${request.id}`;
-                requestCard.innerHTML = `
+            for (const friend of friends) {
+                const photoURL = friend.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.displayName)}&background=random&size=48&color=fff&font-size=0.5`;
+                const friendCard = document.createElement('div');
+                friendCard.className = 'friend-card';
+                friendCard.id = `friend-${friend.id}`;
+                friendCard.innerHTML = `
                     <div class="flex items-center">
-                        <img src="${photoURL}" alt="Foto profil ${request.displayName}">
+                        <img src="${photoURL}" alt="Foto profil ${friend.displayName}">
                         <div>
-                            <p class="font-bold text-slate-800">${request.displayName}</p>
-                            <p class="text-sm text-slate-500">@${request.username}</p>
+                            <p class="font-bold text-slate-800">${friend.displayName}</p>
+                            <p class="text-sm text-slate-500">@${friend.username}</p>
                         </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <button data-uid="${request.id}" class="action-btn-decline auth-button auth-button-secondary text-sm">Tolak</button>
-                        <button data-uid="${request.id}" class="action-btn-accept auth-button auth-button-primary text-sm">Terima</button>
+                    <div>
+                        <button data-uid="${friend.id}" class="action-btn-duel auth-button auth-button-primary text-sm">Ajak Duel</button>
                     </div>
                 `;
-                requestsContainer.appendChild(requestCard);
+                friendsContainer.appendChild(friendCard);
             }
         }
-        
-        async function handleFriendAction(targetUid, action) {
-            const batch = writeBatch(db);
-            const currentUserRef = doc(db, "users", currentUser.uid, "friends", targetUid);
-            const targetUserRef = doc(db, "users", targetUid, "friends", currentUser.uid);
-
-            if (action === 'accept') {
-                batch.update(currentUserRef, { status: "friends" });
-                batch.update(targetUserRef, { status: "friends" });
-            } else { // decline
-                batch.delete(currentUserRef);
-                batch.delete(targetUserRef);
-            }
-            await batch.commit();
-        }
-
-        requestsContainer.addEventListener('click', async (event) => {
-            const target = event.target;
-            const card = target.closest('.request-card');
-            if (!card) return;
-
-            const targetUid = target.dataset.uid;
-            if (!targetUid) {
-                const button = target.closest('button');
-                if (button) {
-                    targetUid = button.dataset.uid;
-                }
-            }
-            if(!targetUid) return;
-
-            card.style.opacity = '0.5';
-            card.querySelectorAll('button').forEach(b => b.disabled = true);
-            
-            try {
-                if (target.classList.contains('action-btn-accept')) {
-                    await handleFriendAction(targetUid, 'accept');
-                } else if (target.classList.contains('action-btn-decline')) {
-                    await handleFriendAction(targetUid, 'decline');
-                }
-                card.remove();
-                 if (requestsContainer.childElementCount === 0) {
-                    emptyStateDiv.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error("Gagal memproses permintaan:", error);
-                alert('Gagal memproses permintaan. Coba lagi.');
-                card.style.opacity = '1';
-                card.querySelectorAll('button').forEach(b => b.disabled = false);
-            }
-        });
 
         onAuthStateChanged(auth, async (user) => {
             updateHeaderUI(user);
             if (user) {
                 currentUser = user;
                 try {
-                    const requestsRef = collection(db, "users", user.uid, "friends");
-                    const q = query(requestsRef, where("status", "==", "pending_received"));
+                    const friendsRef = collection(db, "users", user.uid, "friends");
+                    const q = query(friendsRef, where("status", "==", "friends"));
                     const querySnapshot = await getDocs(q);
                     
-                    const requests = [];
+                    const friends = [];
                     for (const friendDoc of querySnapshot.docs) {
-                        const senderId = friendDoc.id;
-                        const senderDocSnap = await getDoc(doc(db, "users", senderId));
-                        if (senderDocSnap.exists()) {
-                            requests.push({ id: senderId, ...senderDocSnap.data() });
+                        const friendId = friendDoc.id;
+                        const friendDataSnap = await getDoc(doc(db, "users", friendId));
+                        if (friendDataSnap.exists()) {
+                            friends.push({ id: friendId, ...friendDataSnap.data() });
                         }
                     }
-                    renderRequests(requests);
+                    renderFriends(friends);
 
                 } catch (error) {
-                    console.error("Gagal memuat permintaan pertemanan:", error);
+                    console.error("Gagal memuat daftar teman:", error);
                 } finally {
                     loadingStateDiv.style.display = 'none';
                     mainContentDiv.classList.remove('hidden');
                 }
             } else {
-                window.location.href = `login-page.html?redirect=permintaan-teman.html`;
+                window.location.href = `login-page.html?redirect=daftar-teman.html`;
             }
         });
     </script>
