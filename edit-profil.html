@@ -45,11 +45,11 @@
             <a href="index.html#home" class="flex items-center">
                 <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
-             <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
-                <a href="index.html#home" class="text-slate-600 hover:text-blue-600 font-medium">Home</a>
-                <a href="semua-materi.html" class="text-slate-600 hover:text-blue-600 font-medium">Materi</a>
-                <a href="semua-kuis.html" class="text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
-                <a href="profil.html" class="text-slate-600 hover:text-blue-600 font-medium">Profil Saya</a>
+            <nav class="hidden md:flex space-x-4 lg:space-x-6 items-center">
+                <a href="index.html#home" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="semua-materi.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Materi</a>
+                <a href="semua-kuis.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Kuis</a>
+                <a href="profil.html" class="nav-link text-slate-600 hover:text-blue-600 font-medium">Profil Saya</a>
             </nav>
         </div>
     </header>
@@ -126,7 +126,8 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        // **PERBAIKAN:** Menambahkan setDoc ke dalam daftar impor
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-functions.js";
 
         const app = initializeApp(firebaseConfig);
@@ -162,7 +163,6 @@
                     photoURLInput.value = user.photoURL || "";
                     emailInput.value = user.email;
                 } else {
-                    // Fallback jika dokumen user belum ada
                     displayNameInput.value = user.displayName || "";
                     photoURLInput.value = user.photoURL || "";
                     emailInput.value = user.email;
@@ -170,7 +170,7 @@
                 
                 loadingStateDiv.style.display = 'none';
                 editProfileContent.classList.remove('hidden');
-            } catch (error) {
+            } catch (error) { 
                 console.error("Gagal memuat profil:", error);
                 loadingStateDiv.textContent = "Gagal memuat profil.";
             }
@@ -221,6 +221,7 @@
             }, 500);
         });
 
+
         profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             formMessage.textContent = '';
@@ -244,6 +245,8 @@
                 });
 
                 const userDocRef = doc(db, "users", auth.currentUser.uid);
+                // **PERBAIKAN:** Menggunakan setDoc dengan merge:true agar lebih aman.
+                // Ini akan membuat dokumen jika belum ada, atau memperbarui jika sudah ada.
                 await setDoc(userDocRef, {
                     displayName: newDisplayName,
                     username: newUsername,
@@ -252,15 +255,17 @@
 
                 formMessage.textContent = "Profil berhasil diperbarui!";
                 formMessage.className = 'block mt-4 text-center text-sm text-green-600';
+                formMessage.classList.remove('hidden');
 
                 setTimeout(() => {
                     window.location.href = 'profil.html';
                 }, 1500);
 
-            } catch (error) {
+            } catch (error) { 
                 console.error("Gagal memperbarui profil:", error);
                 formMessage.textContent = "Gagal menyimpan: " + error.message;
                 formMessage.className = 'block mt-4 text-center text-sm text-red-600';
+                formMessage.classList.remove('hidden');
             } finally {
                 saveProfileButton.disabled = false;
                 saveProfileButton.textContent = 'Simpan Perubahan';
