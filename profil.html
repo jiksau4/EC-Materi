@@ -84,6 +84,7 @@
         .placeholder-card {
             background-color: white; border-radius: 0.75rem; padding: 2rem;
             text-align: center; border: 1px solid #e5e7eb;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         .notification-item {
             display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0;
@@ -176,7 +177,15 @@
                     <p class="font-bold">Username Belum Diatur</p>
                     <p class="text-sm">Buat username unik agar bisa menambahkan teman dan berpartisipasi dalam duel kuis!</p>
                 </div>
-                <a href="edit-profil.html" class="auth-button auth-button-secondary mt-6 inline-block">Edit Profil</a>
+
+                <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <a href="edit-profil.html" class="auth-button auth-button-secondary text-sm">Edit Profil</a>
+                    <a href="cari-teman.html" class="auth-button auth-button-secondary text-sm">Cari Teman</a>
+                    <a href="permintaan-teman.html" class="auth-button auth-button-secondary text-sm relative">
+                        Permintaan Pertemanan
+                    </a>
+                    <a href="daftar-teman.html" class="auth-button auth-button-secondary text-sm">Daftar Teman</a>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -223,6 +232,11 @@
                          <p class="text-slate-500">Lihat posisi Anda di antara pengguna lain.</p>
                          <a href="leaderboard.html" class="auth-button auth-button-primary mt-4">Lihat Leaderboard</a>
                     </div>
+                     <div class="placeholder-card border-2 border-red-500">
+                         <h2 class="text-2xl font-bold text-red-600 mb-4">Battlefield</h2>
+                         <p class="text-slate-500">Ajak temanmu untuk duel kuis 1 vs 1!</p>
+                         <a href="daftar-teman.html" class="auth-button auth-button-primary mt-4 bg-red-600 hover:bg-red-700">Ajak Teman Duel</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -260,7 +274,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -341,8 +354,7 @@
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
         }
-
-        // --- Logika Halaman Profil ---
+        
         const loadingStateDiv = document.getElementById('loadingState');
         const profileContentDiv = document.getElementById('profileContent');
         const profileAvatar = document.getElementById('profileAvatar');
