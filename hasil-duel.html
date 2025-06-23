@@ -78,7 +78,7 @@
             <p class="text-slate-400">Menghitung hasil duel...</p>
         </div>
         
-        <div id="errorState" class="hidden text-center py-20 bg-gray-800 p-8 rounded-xl">
+        <div id="errorState" class="hidden text-center py-20 bg-gray-800 p-8 rounded-xl shadow-md">
              <h2 id="errorTitle" class="text-2xl font-semibold text-red-500">Gagal Memuat Hasil</h2>
             <p id="errorMessage" class="text-slate-400 mt-2 mb-6">Tidak dapat menemukan hasil duel.</p>
             <a href="index.html" class="action-button !bg-blue-600 hover:!bg-blue-700">Kembali ke Home</a>
@@ -180,9 +180,11 @@
             const xpFromWinEl = document.getElementById('xp-from-win');
             
             const p1Id = duelData.challengerId;
-            const p2Id = duelData.opponentId;
+            // **PERBAIKAN:** Mendefinisikan opponentId
+            const p2Id = duelData.opponentId; 
+            
             const p1Data = duelData.players[p1Id];
-            const p2Data = duelData.players[opponentId];
+            const p2Data = duelData.players[p2Id];
 
             p1Name.textContent = duelData.challengerName;
             p2Name.textContent = duelData.opponentName;
@@ -227,8 +229,6 @@
 
         rematchBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Untuk rematch, cara termudah adalah mengarahkan kembali ke daftar teman
-            // agar bisa mengirim undangan baru.
             if (duelDataGlobal) {
                 alert("Fitur Rematch akan mengarahkan Anda kembali ke daftar teman untuk mengirim undangan baru.");
                 window.location.href = 'daftar-teman.html';
@@ -255,7 +255,6 @@
                     }
                     
                     renderResults(user, duelDocSnap.data());
-
                 } catch (error) {
                     console.error("Gagal memuat hasil:", error);
                     showError("Terjadi Kesalahan", "Tidak dapat memuat hasil duel.");
