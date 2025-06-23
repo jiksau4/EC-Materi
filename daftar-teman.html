@@ -53,17 +53,16 @@
         #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
             background-color: #EFF6FF; color: #2563EB;
         }
+        #userDropdownMenuDesktop .dropdown-item-active {
+            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
+        }
+        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
+            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
+        }
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
         .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-        #mobileUserMenuLinksContainer a {
-            padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 0.75rem;
-            padding-bottom: 0.75rem; display: block; color: #4B5563;
-        }
-        #mobileUserMenuLinksContainer a:hover, #mobileUserMenuLinksContainer a.active {
-            background-color: #EFF6FF; color: #2563EB;
-        }
-
+        
         .friend-card {
             display: flex;
             align-items: center;
@@ -143,7 +142,7 @@
                 <nav class="text-sm breadcrumb" aria-label="Breadcrumb">
                   <ol class="list-none p-0 inline-flex">
                     <li class="flex items-center">
-                      <a href="profil.html" class="text-blue-600 hover:text-blue-800">Profil Saya</a>
+                      <a href="index.html#home" class="text-blue-600 hover:text-blue-800">Home</a>
                       <svg class="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
                     </li>
                     <li>
@@ -169,7 +168,7 @@
             <p class="text-slate-500">Memuat daftar teman...</p>
         </div>
     </main>
-    
+
     <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-3 gap-8 mb-8">
@@ -192,7 +191,7 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, doc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -309,13 +308,52 @@
                             <p class="text-sm text-slate-500">@${friend.username}</p>
                         </div>
                     </div>
-                    <div>
+                    <div class="flex items-center space-x-3">
+                        <button data-uid="${friend.id}" class="action-btn-remove auth-button auth-button-secondary text-sm !text-red-600 !border-red-300 hover:!bg-red-50">Hapus</button>
                         <button data-uid="${friend.id}" class="action-btn-duel auth-button auth-button-primary text-sm">Ajak Duel</button>
                     </div>
                 `;
                 friendsContainer.appendChild(friendCard);
             }
         }
+        
+        async function removeFriend(friendUid) {
+            const batch = writeBatch(db);
+            const currentUserFriendRef = doc(db, "users", currentUser.uid, "friends", friendUid);
+            batch.delete(currentUserFriendRef);
+            const friendUserRef = doc(db, "users", friendUid, "friends", currentUser.uid);
+            batch.delete(friendUserRef);
+            await batch.commit();
+        }
+
+        friendsContainer.addEventListener('click', async (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            const friendUid = button.dataset.uid;
+            
+            if (button.classList.contains('action-btn-remove')) {
+                const card = document.getElementById(`friend-${friendUid}`);
+                const friendName = card.querySelector('.font-bold').textContent;
+
+                if (confirm(`Apakah Anda yakin ingin menghapus ${friendName} dari daftar teman?`)) {
+                    card.style.opacity = '0.5';
+                    try {
+                        await removeFriend(friendUid);
+                        card.remove();
+                        if (friendsContainer.childElementCount === 0) {
+                            emptyStateDiv.classList.remove('hidden');
+                        }
+                    } catch(error) {
+                        console.error("Gagal menghapus teman:", error);
+                        alert('Gagal menghapus teman, coba lagi.');
+                        card.style.opacity = '1';
+                    }
+                }
+            } else if (button.classList.contains('action-btn-duel')) {
+                alert(`Fitur "Ajak Duel" untuk ${friendUid} belum diimplementasikan.`);
+            }
+        });
 
         onAuthStateChanged(auth, async (user) => {
             updateHeaderUI(user);
@@ -346,6 +384,7 @@
                 window.location.href = `login-page.html?redirect=daftar-teman.html`;
             }
         });
+
     </script>
 </body>
 </html>
