@@ -23,6 +23,7 @@
             height: 56px;
             border-radius: 9999px;
             border: 3px solid #374151;
+            background-color: #374151;
         }
         .player-card .score {
             font-size: 1.875rem;
@@ -124,7 +125,15 @@
     </main>
 
     <script type="module">
-        const firebaseConfig = { /* ...KONFIGURASI ANDA... */ };
+        // **PERBAIKAN:** Mengisi firebaseConfig dengan data yang benar
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -141,17 +150,60 @@
         
         const loadingStateDiv = document.getElementById('loadingState');
         const errorStateDiv = document.getElementById('errorState');
-        // ... (dan semua elemen DOM lainnya)
+        const errorTitleEl = document.getElementById('errorTitle');
+        const errorMessageEl = document.getElementById('errorMessage');
+        const quizContainer = document.getElementById('quiz-container');
+        const quizTitleEl = document.getElementById('quizTitle');
+        const progressIndicatorEl = document.getElementById('progressIndicator');
+        const progressBarEl = document.getElementById('progressBar');
+        const questionTextEl = document.getElementById('questionText');
+        const optionsContainerEl = document.getElementById('optionsContainer');
+        const waitingIndicator = document.getElementById('waiting-indicator');
 
-        function showError(title, message) { /* ... */ }
-        function renderPlayerInfo(duelData, playersData) { /* ... */ }
+        // Elemen Player Info
+        const challengerNameEl = document.getElementById('challenger-name');
+        const challengerAvatarEl = document.getElementById('challenger-avatar');
+        const challengerScoreEl = document.getElementById('challenger-score');
+        const challengerStatusEl = document.getElementById('challenger-status');
+        const opponentNameEl = document.getElementById('opponent-name');
+        const opponentAvatarEl = document.getElementById('opponent-avatar');
+        const opponentScoreEl = document.getElementById('opponent-score');
+        const opponentStatusEl = document.getElementById('opponent-status');
+
+        function showError(title, message) { 
+            loadingStateDiv.style.display = 'none';
+            quizContainer.classList.add('hidden');
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorStateDiv.classList.remove('hidden');
+        }
+
+        async function renderPlayerInfo(duelData) { 
+            const challengerDoc = await getDoc(doc(db, "users", duelData.challengerId));
+            const opponentDoc = await getDoc(doc(db, "users", duelData.opponentId));
+            
+            if (!challengerDoc.exists() || !opponentDoc.exists()) {
+                showError("Error", "Data pemain tidak ditemukan.");
+                return;
+            }
+
+            const challengerData = challengerDoc.data();
+            const opponentData = opponentDoc.data();
+
+            challengerNameEl.textContent = challengerData.displayName;
+            challengerAvatarEl.src = challengerData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(challengerData.displayName)}`;
+            
+            opponentNameEl.textContent = opponentData.displayName;
+            opponentAvatarEl.src = opponentData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(opponentData.displayName)}`;
+        }
 
         async function submitAnswer(answer) {
-            const currentQuestionIndex = duelData.players[currentUser.uid].currentQuestion;
+            const myData = currentQuizData.players[currentUser.uid];
+            const currentQuestionIndex = myData.currentQuestion;
             const currentQuestion = allQuestions[currentQuestionIndex];
             const isCorrect = answer === currentQuestion.correctAnswer;
             
-            const scoreUpdate = isCorrect ? increment(10) : 0;
+            const scoreUpdate = isCorrect ? increment(10) : 0; // Skor per jawaban benar
             const playerPath = `players.${currentUser.uid}`;
 
             const duelDocRef = doc(db, "duels", duelId);
@@ -162,34 +214,101 @@
         }
 
         function renderQuestion(duelData) {
+            if (allQuestions.length === 0) return;
+
             const myData = duelData.players[currentUser.uid];
             const opponentId = currentUser.uid === duelData.challengerId ? duelData.opponentId : duelData.challengerId;
             const opponentData = duelData.players[opponentId];
-
+            
             const currentQuestionIndex = myData.currentQuestion;
+            const question = allQuestions[currentQuestionIndex];
+            
+            progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
+            questionTextEl.textContent = question.questionText;
 
-            // Logika untuk menampilkan pertanyaan, opsi, dan status
-            // ...
+            optionsContainerEl.innerHTML = '';
+            question.options.forEach(optionText => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = optionText;
+                button.onclick = () => {
+                    document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+                    button.classList.add('selected');
+                    submitAnswer(optionText);
+                };
+                optionsContainerEl.appendChild(button);
+            });
 
-            if (myData.answers[currentQuestionIndex] && opponentData.answers[currentQuestionIndex]) {
-                // Keduanya sudah menjawab, lanjut ke soal berikutnya setelah delay
+            // Update status & skor UI
+            challengerScoreEl.textContent = duelData.players[duelData.challengerId].score;
+            opponentScoreEl.textContent = duelData.players[duelData.opponentId].score;
+
+            const myAnswer = myData.answers ? myData.answers[currentQuestionIndex] : null;
+            const opponentAnswer = opponentData.answers ? opponentData.answers[currentQuestionIndex] : null;
+
+            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myAnswer, opponentAnswer);
+            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myAnswer, opponentAnswer);
+            
+            waitingIndicator.classList.toggle('hidden', !!myAnswer);
+
+            if (myAnswer && opponentAnswer) {
+                // Keduanya sudah menjawab
+                waitingIndicator.classList.add('hidden');
+                revealAnswers(question.correctAnswer);
                 setTimeout(() => {
                     const nextQuestionIndex = currentQuestionIndex + 1;
                     if (nextQuestionIndex >= allQuestions.length) {
-                        // Duel selesai
-                        // ...
+                        // TODO: Duel selesai
+                        showError("Duel Selesai!", "Halaman hasil duel sedang dalam pengembangan.");
                     } else {
-                        updateDoc(doc(db, "duels", duelId), {
-                            [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
-                            [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
-                        });
+                        // Hanya satu pemain (misal, penantang) yang bertanggung jawab update question index
+                        if (currentUser.uid === duelData.challengerId) {
+                            updateDoc(doc(db, "duels", duelId), {
+                                [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
+                                [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
+                            });
+                        }
                     }
-                }, 2000); // Delay 2 detik
+                }, 2500);
+            }
+        }
+        
+        function updatePlayerStatusIndicator(statusEl, playerId, myAnswer, opponentAnswer) {
+            const playerData = currentQuizData.players[playerId];
+            if (playerData.answers && playerData.answers[playerData.currentQuestion]) {
+                statusEl.classList.remove('waiting-opponent-indicator');
+                statusEl.classList.add('opponent-answered-indicator');
+            } else {
+                statusEl.classList.remove('opponent-answered-indicator');
+                statusEl.classList.add('waiting-opponent-indicator');
             }
         }
 
+        function revealAnswers(correctAnswer) {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.classList.contains('selected')) {
+                    btn.classList.add('wrong');
+                }
+            });
+        }
+
         async function loadQuizData(kuisId) {
-            // ... (Fungsi untuk mengambil data kuis dan pertanyaan)
+            const quizDocRef = doc(db, "quizzes", kuisId);
+            const quizDocSnap = await getDoc(quizDocRef);
+            if (!quizDocSnap.exists()) throw new Error("Dokumen kuis tidak ditemukan.");
+            
+            const quizData = quizDocSnap.data();
+            const questionsColRef = collection(db, "quizzes", kuisId, "questions");
+            const questionsSnapshot = await getDocs(questionsColRef);
+            
+            questionsSnapshot.forEach(doc => allQuestions.push(doc.data()));
+            if (allQuestions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
+
+            return quizData;
         }
 
         async function handleDuelUpdate(duelDocSnap) {
@@ -199,20 +318,28 @@
                 return;
             }
 
-            const duelData = duelDocSnap.data();
-
-            if (allQuestions.length === 0) {
-                await loadQuizData(duelData.quizId);
+            currentQuizData = duelDocSnap.data();
+            
+            if (allQuestions.length === 0 && currentQuizData.quizId) {
+                try {
+                    const quizInfo = await loadQuizData(currentQuizData.quizId);
+                    quizTitleEl.textContent = quizInfo.title;
+                    await renderPlayerInfo(currentQuizData);
+                    loadingStateDiv.style.display = 'none';
+                    quizContainer.classList.remove('hidden');
+                } catch(error) {
+                    showError("Gagal Memuat Kuis", error.message);
+                    return;
+                }
             }
             
-            // Render UI berdasarkan data duel terbaru
-            renderPlayerInfo(duelData);
-            renderQuestion(duelData);
+            renderQuestion(currentQuizData);
         }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
+                // updateHeaderUI(user);
                 const urlParams = new URLSearchParams(window.location.search);
                 duelId = urlParams.get('duelId');
                 if (!duelId) {
