@@ -166,7 +166,13 @@
         const otherPlayerScoreEl = document.getElementById('other-player-score');
         const otherPlayerStatusEl = document.getElementById('other-player-status');
 
-        function showError(title, message) { /* ... */ }
+        function showError(title, message) {
+            loadingStateDiv.style.display = 'none';
+            quizContainer.classList.add('hidden');
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorStateDiv.classList.remove('hidden');
+        }
 
         async function renderPlayerInfo(duelData) {
             const isCurrentUserChallenger = currentUser.uid === duelData.challengerId;
@@ -199,7 +205,6 @@
             });
         }
         
-        // **FUNGSI BARU**: Menghitung XP
         function calculateXP(score, isWinner) {
             const participationXP = 25;
             const scoreBonus = Math.floor(score / 2);
@@ -207,7 +212,6 @@
             return participationXP + scoreBonus + winBonus;
         }
 
-        // **DIPERBARUI**: Fungsi untuk menyelesaikan duel
         async function finishDuel(duelData) {
             if (isFinishing) return;
             isFinishing = true;
@@ -266,29 +270,148 @@
                 }
                 return;
             }
-            // ... (sisa logika renderQuestion sama)
+
+            const question = allQuestions[currentQuestionIndex];
+            
+            progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
+            questionTextEl.textContent = question.questionText;
+
+            const myAnswer = myData.answers?.[currentQuestionIndex];
+            const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
+            
+            myPlayerScoreEl.textContent = myData.score || 0;
+            otherPlayerScoreEl.textContent = opponentData.score || 0;
+
+            if (myAnswer) {
+                waitingIndicator.classList.add('hidden');
+                optionsContainerEl.innerHTML = '';
+                question.options.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = optionText;
+                    button.disabled = true;
+                    if(optionText === myAnswer) button.classList.add('selected');
+                    optionsContainerEl.appendChild(button);
+                });
+
+                if(!opponentAnswer) {
+                    waitingIndicator.classList.remove('hidden');
+                }
+            } else {
+                waitingIndicator.classList.add('hidden');
+                optionsContainerEl.innerHTML = '';
+                question.options.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = optionText;
+                    button.onclick = () => submitAnswer(optionText);
+                    optionsContainerEl.appendChild(button);
+                });
+            }
+
+            updatePlayerStatusIndicator(myPlayerStatusEl, myData, currentQuestionIndex);
+            updatePlayerStatusIndicator(otherPlayerStatusEl, opponentData, currentQuestionIndex);
+            
+            if (myAnswer && opponentAnswer) {
+                waitingIndicator.classList.add('hidden');
+                revealAnswers(question.correctAnswer);
+                setTimeout(() => {
+                    if (currentUser.uid === duelData.challengerId) {
+                        const nextQuestionIndex = currentQuestionIndex + 1;
+                        updateDoc(doc(db, "duels", duelId), {
+                            [`players.${myId}.currentQuestion`]: nextQuestionIndex,
+                            [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
+                        });
+                    }
+                }, 2500); 
+            }
         }
         
-        // ... (sisa fungsi helper lainnya)
+        function updatePlayerStatusIndicator(statusEl, playerData, qIndex) {
+             if (playerData.answers && playerData.answers[qIndex]) {
+                statusEl.classList.remove('waiting-opponent-indicator');
+                statusEl.classList.add('opponent-answered-indicator');
+            } else {
+                statusEl.classList.remove('opponent-answered-indicator');
+                statusEl.classList.add('waiting-opponent-indicator');
+            }
+        }
+        
+        function revealAnswers(correctAnswer) {
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.classList.contains('selected')) {
+                    btn.classList.add('wrong');
+                }
+            });
+        }
+
+        async function loadQuizData(kuisId) {
+            const quizDocRef = doc(db, "quizzes", kuisId);
+            const quizDocSnap = await getDoc(quizDocRef);
+            if (!quizDocSnap.exists()) throw new Error("Dokumen kuis tidak ditemukan.");
+            
+            const quizData = quizDocSnap.data();
+            const questionsColRef = collection(db, "quizzes", kuisId, "questions");
+            const questionsSnapshot = await getDocs(questionsColRef);
+            
+            allQuestions = [];
+            questionsSnapshot.forEach(doc => allQuestions.push(doc.data()));
+            if (allQuestions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
+
+            return quizData;
+        }
 
         async function handleDuelUpdate(duelDocSnap) {
-            if (!duelDocSnap.exists()) { /* ... */ }
+            if (!duelDocSnap.exists()) {
+                showError("Duel Dibatalkan", "Sesi duel ini telah dibatalkan atau tidak ada lagi.");
+                if (unsubscribeDuel) unsubscribeDuel();
+                return;
+            }
+
             currentQuizData = duelDocSnap.data();
             
             if (currentQuizData.status === 'completed') {
                 if (unsubscribeDuel) unsubscribeDuel();
-                if (!isFinishing) { // Mencegah redirect ganda
+                if (!isFinishing) {
                     window.location.href = `hasil-duel.html?duelId=${duelId}`;
                 }
                 return;
             }
-            // ... (sisa logika handleDuelUpdate) ...
+
+            if (allQuestions.length === 0 && currentQuizData.quizId) {
+                try {
+                    const quizInfo = await loadQuizData(currentQuizData.quizId);
+                    quizTitleEl.textContent = quizInfo.title;
+                    await renderPlayerInfo(currentQuizData);
+                    loadingStateDiv.style.display = 'none';
+                    quizContainer.classList.remove('hidden');
+                } catch(error) {
+                    showError("Gagal Memuat Kuis", error.message);
+                    return;
+                }
+            }
+            renderQuestion(currentQuizData);
         }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                // ... (sisa logika onAuthStateChanged) ...
+                const urlParams = new URLSearchParams(window.location.search);
+                duelId = urlParams.get('duelId');
+                if (!duelId) {
+                    showError("ID Duel Hilang", "Tidak ada ID duel yang ditemukan di URL.");
+                    return;
+                }
+
+                const duelDocRef = doc(db, "duels", duelId);
+                unsubscribeDuel = onSnapshot(duelDocRef, handleDuelUpdate, (error) => {
+                    console.error("Gagal mendengarkan update duel:", error);
+                    showError("Koneksi Gagal", "Gagal terhubung ke sesi duel.");
+                });
             } else {
                 window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
             }
