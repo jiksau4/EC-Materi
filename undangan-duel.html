@@ -9,6 +9,14 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
         .logo-image { height: 70px; width: auto; }
+        .nav-link { position: relative; transition: color 0.3s ease; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            background-color: #2563EB; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link:hover, .nav-link.active { color: #2563EB; }
         .auth-button {
             padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
             transition: all 0.2s ease; display: inline-block; text-align: center;
@@ -19,23 +27,85 @@
         .auth-button-secondary:hover { background-color: #FECACA; }
         .auth-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
         
+        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
+        }
+        #userPhotoDesktop, #userPhotoMobile {
+            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
+        }
+        .user-display-name {
+            font-weight: 500; color: #374151; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; max-width: 100px;
+        }
+        .caret-icon { width: 1rem; height: 1rem; color: #6B7280; transition: transform 0.2s ease-in-out; }
+        #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
+        #userDropdownMenuDesktop {
+            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
+            background-color: white; border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
+        }
+        #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
+            display: block; width: 100%; padding: 0.5rem 1rem; 
+            font-size: 0.875rem; color: #374151; text-align: left;
+        }
+        #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
+            background-color: #EFF6FF; color: #2563EB;
+        }
+        .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
+        .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
+        .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
+        
         .challenger-avatar {
             width: 80px;
             height: 80px;
             border-radius: 9999px;
             object-fit: cover;
             border: 4px solid white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-3 sm:py-4 flex justify-between items-center">
             <a href="index.html#home" class="flex items-center">
                 <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
             </a>
+            <div class="hidden md:flex items-center space-x-2">
+                <div id="authLinksDesktop">
+                    <a href="login-page.html" class="auth-button auth-button-secondary text-sm">Login</a>
+                    <a href="registrasi.html" class="auth-button auth-button-primary text-sm ml-2">Daftar</a>
+                </div>
+                <div id="userInfoDesktopContainer" class="hidden relative"> 
+                    <button id="userInfoDesktopTrigger" class="flex items-center focus:outline-none p-1 rounded-md hover:bg-slate-100">
+                        <img id="userPhotoDesktop" src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=U" alt="Foto Pengguna">
+                        <span id="userDisplayNameDesktop" class="user-display-name ml-2"></span>
+                        <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="userDropdownMenuDesktop">
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg pb-3">
+            <!-- Konten diisi oleh JavaScript -->
         </div>
     </header>
 
@@ -68,16 +138,105 @@
     </main>
 
     <script type="module">
-        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        const firebaseConfig = {
+          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+          authDomain: "ec-materi.firebaseapp.com",
+          projectId: "ec-materi",
+          storageBucket: "ec-materi.firebasestorage.app",
+          messagingSenderId: "166687187100",
+          appId: "1:166687187100:web:e073df281931524f660d59"
+        };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // DOM Elements
+        // --- Logika Header Universal ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authLinksDesktop = document.getElementById('authLinksDesktop');
+        const userInfoDesktopContainer = document.getElementById('userInfoDesktopContainer'); 
+        const userInfoDesktopTrigger = document.getElementById('userInfoDesktopTrigger');
+        const userPhotoDesktop = document.getElementById('userPhotoDesktop');
+        const userDisplayNameDesktop = document.getElementById('userDisplayNameDesktop');
+        const userDropdownMenuDesktop = document.getElementById('userDropdownMenuDesktop');
+        const dropdownUserNameDesktop = document.getElementById('dropdownUserNameDesktop');
+        const dropdownUserEmailDesktop = document.getElementById('dropdownUserEmailDesktop');
+        const logoutButtonDropdownDesktop = document.getElementById('logoutButtonDropdownDesktop');
+
+        function updateHeaderUI(user) {
+            if(mobileMenu) mobileMenu.innerHTML = ''; 
+            if (user) { 
+                if (authLinksDesktop) authLinksDesktop.classList.add('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.remove('hidden');
+                
+                const displayName = user.displayName || user.email.split('@')[0];
+                const email = user.email;
+                const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&size=32&color=fff&font-size=0.5`;
+                
+                if (userPhotoDesktop) userPhotoDesktop.src = photoURL;
+                if (userDisplayNameDesktop) userDisplayNameDesktop.textContent = displayName;
+                if (dropdownUserNameDesktop) dropdownUserNameDesktop.textContent = displayName;
+                if (dropdownUserEmailDesktop) dropdownUserEmailDesktop.textContent = email;
+
+                if(mobileMenu) {
+                    mobileMenu.innerHTML = `
+                        <div class="px-6 py-3 border-b border-slate-200 flex items-center gap-3">
+                            <img src="${photoURL}" alt="Foto Pengguna" class="w-8 h-8 rounded-full object-cover">
+                            <span class="user-display-name !max-w-full">${displayName}</span>
+                        </div>
+                        <a href="profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Pengaturan Akun</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <hr class="border-slate-200 mx-6 my-1">
+                        <div class="px-6 mt-2">
+                             <button id="logoutButtonMobile" class="block text-center auth-button auth-button-secondary w-full !border-red-500 !text-red-600 hover:!bg-red-50">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logoutButtonMobile').addEventListener('click', () => signOut(auth).then(() => window.location.href = 'login-page.html').catch(console.error));
+                }
+            } else { 
+                if (authLinksDesktop) authLinksDesktop.classList.remove('hidden');
+                if (userInfoDesktopContainer) userInfoDesktopContainer.classList.add('hidden');
+                
+                if(mobileMenu) {
+                     mobileMenu.innerHTML = `
+                        <a href="index.html#home" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Home</a>
+                        <a href="semua-materi.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Materi</a>
+                        <a href="semua-kuis.html" class="block px-6 py-3 text-slate-600 hover:bg-blue-50 hover:text-blue-600">Kuis</a>
+                        <div class="px-6 mt-2 space-y-2">
+                            <a href="login-page.html" class="block text-center auth-button auth-button-secondary w-full">Login</a>
+                            <a href="registrasi.html" class="block text-center auth-button auth-button-primary w-full">Daftar</a>
+                        </div>
+                     `;
+                }
+            }
+        }
+        
+        if (userInfoDesktopTrigger) {
+            userInfoDesktopTrigger.addEventListener('click', (e) => { e.stopPropagation(); if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = userDropdownMenuDesktop.style.display === 'block' ? 'none' : 'block'; });
+            document.addEventListener('click', () => { if(userDropdownMenuDesktop) userDropdownMenuDesktop.style.display = 'none'; });
+        }
+        
+        if (logoutButtonDropdownDesktop) {
+            logoutButtonDropdownDesktop.addEventListener('click', () => {
+                signOut(auth).then(() => { window.location.href = 'login-page.html'; }).catch(console.error);
+            });
+        }
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); });
+        }
+
+        // --- Logika Halaman Ini ---
         const loadingStateDiv = document.getElementById('loadingState');
         const mainContentDiv = document.getElementById('main-content');
         const errorStateDiv = document.getElementById('errorState');
@@ -103,7 +262,6 @@
             try {
                 if (action === 'accept') {
                     await updateDoc(duelDocRef, { status: "active" });
-                    // Arahkan ke ruang duel
                     window.location.href = `duel-player.html?duelId=${duelDocRef.id}`;
                 } else { // decline
                     await updateDoc(duelDocRef, { status: "declined" });
@@ -117,6 +275,7 @@
         }
 
         onAuthStateChanged(auth, async (user) => {
+            updateHeaderUI(user);
             if (user) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const duelId = urlParams.get('duelId');
@@ -137,7 +296,6 @@
 
                     const duelData = duelDocSnap.data();
 
-                    // Validasi
                     if (duelData.opponentId !== user.uid) {
                         showError("Akses Ditolak", "Undangan ini bukan untuk Anda.");
                         return;
@@ -148,7 +306,6 @@
                         return;
                     }
                     
-                    // Tampilkan detail undangan
                     const challengerDoc = await getDoc(doc(db, "users", duelData.challengerId));
                     const challengerPhoto = challengerDoc.exists() ? challengerDoc.data().photoURL : null;
                     challengerAvatarEl.src = challengerPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(duelData.challengerName)}&background=random&size=80&color=fff&font-size=0.5`;
@@ -158,7 +315,6 @@
                     loadingStateDiv.style.display = 'none';
                     mainContentDiv.classList.remove('hidden');
 
-                    // Tambahkan event listener ke tombol
                     acceptBtn.onclick = () => handleDuelAction(duelDocRef, 'accept');
                     declineBtn.onclick = () => handleDuelAction(duelDocRef, 'decline');
 
