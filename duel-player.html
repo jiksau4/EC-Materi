@@ -223,7 +223,6 @@
             const currentQuestionIndex = myData.currentQuestion;
             if(currentQuestionIndex >= allQuestions.length) {
                 if (unsubscribeDuel) unsubscribeDuel();
-                // TODO: Arahkan ke halaman hasil duel
                 showError("Duel Selesai!", "Halaman hasil duel akan segera dibuat.");
                 return;
             }
@@ -237,8 +236,9 @@
             const myAnswer = myData.answers?.[currentQuestionIndex];
             const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
 
+            // **PERBAIKAN:** Menggunakan variabel yang benar untuk menampilkan skor
             challengerScoreEl.textContent = duelData.players[duelData.challengerId]?.score || 0;
-            opponentScoreEl.textContent = duelData.players[opponentData.id]?.score || 0;
+            opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
 
             if (myAnswer) {
                 waitingIndicator.classList.add('hidden');
@@ -267,8 +267,8 @@
                 });
             }
 
-            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myAnswer, opponentAnswer, currentQuestionIndex);
-            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myAnswer, opponentAnswer, currentQuestionIndex);
+            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myData, opponentData, currentQuestionIndex);
+            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myData, opponentData, currentQuestionIndex);
             
             if (myAnswer && opponentAnswer) {
                 waitingIndicator.classList.add('hidden');
@@ -285,8 +285,8 @@
             }
         }
         
-        function updatePlayerStatusIndicator(statusEl, playerId, myAnswer, opponentAnswer, qIndex) {
-            const playerData = currentQuizData.players[playerId];
+        function updatePlayerStatusIndicator(statusEl, playerId, myData, opponentData, qIndex) {
+            const playerData = (currentUser.uid === playerId) ? myData : opponentData;
             if (playerData.answers && playerData.answers[qIndex]) {
                 statusEl.classList.remove('waiting-opponent-indicator');
                 statusEl.classList.add('opponent-answered-indicator');
@@ -347,7 +347,7 @@
         }
 
         onAuthStateChanged(auth, (user) => {
-            // updateHeaderUI(user); // Header di halaman ini lebih simpel, tidak perlu update dinamis
+            // updateHeaderUI(user);
             if (user) {
                 currentUser = user;
                 const urlParams = new URLSearchParams(window.location.search);
