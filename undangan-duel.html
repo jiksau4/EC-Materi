@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Duel Kuis - ExtraCourse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
+        .logo-image { height: 70px; width: auto; }
+        .auth-button {
+            padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600;
+            transition: all 0.2s ease; display: inline-block; text-align: center;
+        }
+        .auth-button-primary { background-color: #16A34A; color: white; } /* Green for Accept */
+        .auth-button-primary:hover { background-color: #15803D; }
+        .auth-button-secondary { background-color: #FEE2E2; color: #B91C1C; } /* Red for Decline */
+        .auth-button-secondary:hover { background-color: #FECACA; }
+        .auth-button:disabled { background-color: #9CA3AF; cursor: not-allowed; }
+        
+        .challenger-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html#home" class="flex items-center">
+                <img src="Extra Course logo.png" alt="ExtraCourse Logo" class="logo-image" onerror="this.onerror=null; this.src='https://placehold.co/200x70/CCCCCC/000000?text=Logo+Error';">
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-16">
+        <div id="main-content" class="hidden max-w-xl mx-auto">
+             <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                <img id="challengerAvatar" src="https://placehold.co/80x80/CCCCCC/FFFFFF?text=?" alt="Foto Penantang" class="challenger-avatar mx-auto mb-4">
+                <h1 id="invitationMessage" class="text-2xl font-bold text-slate-800">
+                    <span class="text-blue-600">Nama Penantang</span> menantang Anda!
+                </h1>
+                <p class="text-slate-500 mt-2">Anda diajak untuk berduel dalam kuis:</p>
+                <p id="quizTitle" class="text-xl font-semibold text-slate-700 mt-1"></p>
+
+                <div id="actionButtons" class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button id="decline-btn" class="auth-button auth-button-secondary w-full sm:w-auto">Tolak</button>
+                    <button id="accept-btn" class="auth-button auth-button-primary w-full sm:w-auto">Terima & Mulai Duel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingState" class="text-center py-20">
+            <p class="text-slate-500">Memuat undangan...</p>
+        </div>
+
+        <div id="errorState" class="hidden text-center py-20 bg-white p-8 rounded-xl shadow-md">
+            <h2 id="errorTitle" class="text-2xl font-semibold text-red-700">Gagal Memuat Undangan</h2>
+            <p id="errorMessage" class="text-slate-500 mt-2 mb-6">Tidak dapat menemukan undangan duel yang valid.</p>
+            <a href="profil.html" class="auth-button auth-button-primary !bg-blue-600 hover:!bg-blue-700">Kembali ke Profil</a>
+        </div>
+    </main>
+
+    <script type="module">
+        const firebaseConfig = { /* ...KONFIGURASI FIREBASE ANDA... */ };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // DOM Elements
+        const loadingStateDiv = document.getElementById('loadingState');
+        const mainContentDiv = document.getElementById('main-content');
+        const errorStateDiv = document.getElementById('errorState');
+        const errorTitleEl = document.getElementById('errorTitle');
+        const errorMessageEl = document.getElementById('errorMessage');
+        const challengerAvatarEl = document.getElementById('challengerAvatar');
+        const invitationMessageEl = document.getElementById('invitationMessage');
+        const quizTitleEl = document.getElementById('quizTitle');
+        const actionButtonsDiv = document.getElementById('actionButtons');
+        const acceptBtn = document.getElementById('accept-btn');
+        const declineBtn = document.getElementById('decline-btn');
+
+        function showError(title, message) {
+            loadingStateDiv.style.display = 'none';
+            mainContentDiv.classList.add('hidden');
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorStateDiv.classList.remove('hidden');
+        }
+
+        async function handleDuelAction(duelDocRef, action) {
+            actionButtonsDiv.innerHTML = `<p class="text-slate-500">Memproses...</p>`;
+            try {
+                if (action === 'accept') {
+                    await updateDoc(duelDocRef, { status: "active" });
+                    // Arahkan ke ruang duel
+                    window.location.href = `duel-player.html?duelId=${duelDocRef.id}`;
+                } else { // decline
+                    await updateDoc(duelDocRef, { status: "declined" });
+                    showError("Undangan Ditolak", "Anda telah menolak undangan duel ini. Anda akan diarahkan kembali.");
+                    setTimeout(() => window.location.href = 'profil.html', 3000);
+                }
+            } catch (error) {
+                console.error("Gagal memproses aksi duel:", error);
+                showError("Terjadi Kesalahan", "Gagal memproses permintaan Anda. Silakan coba lagi.");
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const duelId = urlParams.get('duelId');
+
+                if (!duelId) {
+                    showError("Link Tidak Valid", "ID duel tidak ditemukan di URL.");
+                    return;
+                }
+
+                try {
+                    const duelDocRef = doc(db, "duels", duelId);
+                    const duelDocSnap = await getDoc(duelDocRef);
+
+                    if (!duelDocSnap.exists()) {
+                        showError("Undangan Tidak Ditemukan", "Undangan duel ini mungkin sudah tidak valid atau telah dibatalkan.");
+                        return;
+                    }
+
+                    const duelData = duelDocSnap.data();
+
+                    // Validasi
+                    if (duelData.opponentId !== user.uid) {
+                        showError("Akses Ditolak", "Undangan ini bukan untuk Anda.");
+                        return;
+                    }
+                    if (duelData.status !== 'pending') {
+                        showError("Undangan Kadaluarsa", `Undangan ini sudah ${duelData.status}.`);
+                        actionButtonsDiv.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Tampilkan detail undangan
+                    const challengerDoc = await getDoc(doc(db, "users", duelData.challengerId));
+                    const challengerPhoto = challengerDoc.exists() ? challengerDoc.data().photoURL : null;
+                    challengerAvatarEl.src = challengerPhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(duelData.challengerName)}&background=random&size=80&color=fff&font-size=0.5`;
+                    invitationMessageEl.innerHTML = `<span class="text-blue-600">${duelData.challengerName}</span> menantang Anda!`;
+                    quizTitleEl.textContent = duelData.quizTitle;
+
+                    loadingStateDiv.style.display = 'none';
+                    mainContentDiv.classList.remove('hidden');
+
+                    // Tambahkan event listener ke tombol
+                    acceptBtn.onclick = () => handleDuelAction(duelDocRef, 'accept');
+                    declineBtn.onclick = () => handleDuelAction(duelDocRef, 'decline');
+
+                } catch (error) {
+                    console.error("Error memuat undangan duel:", error);
+                    showError("Terjadi Kesalahan", "Tidak dapat memuat detail undangan. Coba lagi nanti.");
+                }
+
+            } else {
+                window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
+            }
+        });
+    </script>
+</body>
+</html>
