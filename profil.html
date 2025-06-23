@@ -171,6 +171,11 @@
                 <img id="profileAvatar" src="https://placehold.co/128x128/CCCCCC/FFFFFF?text=U" alt="Foto Profil" class="profile-avatar mx-auto -mt-16 md:-mt-20">
                 <h1 id="profileDisplayName" class="text-3xl font-bold text-slate-800 mt-4"></h1>
                 <p id="profileEmail" class="text-slate-500 mt-1"></p>
+                <p id="profileUsername" class="text-slate-600 mt-2 font-mono text-lg"></p>
+                <div id="username-prompt" class="hidden mt-4 bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 rounded-md">
+                    <p class="font-bold">Username Belum Diatur</p>
+                    <p class="text-sm">Buat username unik agar bisa menambahkan teman dan berpartisipasi dalam duel kuis!</p>
+                </div>
                 <a href="edit-profil.html" class="auth-button auth-button-secondary mt-6 inline-block">Edit Profil</a>
             </div>
             
@@ -226,6 +231,17 @@
             <p class="text-slate-500">Memeriksa status login...</p>
         </div>
     </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-16 mt-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div><h3 class="text-xl font-semibold text-white mb-4">ExtraCourse</h3><p class="text-sm mb-4">Platform belajar Bahasa Inggris online terpercaya untuk semua tingkatan. Belajar lebih mudah, kapan saja, di mana saja.</p><p class="text-sm">&copy; <span id="currentYear">2024</span> ExtraCourse. All rights reserved.</p></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Tautan Cepat</h3><ul class="space-y-2 text-sm"><li><a href="index.html#home" class="hover:text-blue-400 transition-colors">Home</a></li><li><a href="semua-materi.html" class="hover:text-blue-400 transition-colors">Materi Pembelajaran</a></li><li><a href="semua-kuis.html" class="hover:text-blue-400 transition-colors">Kuis Interaktif</a></li><li><a href="index.html#tentang" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li><li><a href="kebijakan-privasi.html" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a></li><li><a href="syarat-ketentuan.html" class="hover:text-blue-400 transition-colors">Syarat & Ketentuan</a></li></ul></div>
+                <div><h3 class="text-xl font-semibold text-white mb-4">Hubungi Kami</h3><p class="text-sm mb-2">Jl. Pangeran Puger V, Yogyakarta</p><p class="text-sm mb-2">Email: Jiksau04@gmail.com</p><p class="text-sm mb-4">Telepon: 081334629983</p><h3 class="text-xl font-semibold text-white mb-3 mt-6">Media Sosial</h3><div class="flex space-x-4"><a href="https://www.instagram.com/extracourse_temanbelajar/" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-blue-400 transition-colors flex items-center space-x-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.014a.828.828 0 01.516-.207c.376.03.73.197.976.473l.96 1.053c.105.116.228.215.364.296.34.204.736.315 1.14.326 1.498.038 2.753 1.013 3.167 2.446.07.247.17.482.293.703.256.456.593.868.994 1.216.738.636 1.17 1.551.988 2.504a3.603 3.603 0 01-1.004 1.832c-.33.36-.69.685-1.074.972-.36.27-.745.503-1.147.692-1.404.657-3.165.388-4.265-.6A9.03 9.03 0 0112 15.515c0-.155.007-.308.02-.46a4.493 4.493 0 01-.77-2.83c-.09-.988.305-1.944.988-2.642.348-.352.74-.655 1.158-.895.29-.168.598-.303.916-.404a.792.792 0 01.407-.044c.688.075 1.28.513 1.512 1.138.072.195.12.4.14.612.036.368-.03.736-.186 1.068a2.623 2.623 0 01-1.222 1.436c-.29.17-.598.305-.916.404a.792.792 0 01-.407.044 2.41 2.41 0 01-1.688-.683 3.972 3.972 0 01-1.122-2.162c-.09-.988.305-1.944.988-2.642a2.998 2.998 0 012.29-.968c.303 0 .598.054.878.16.29.107.56.25.802.428.28.203.528.444.732.716l.898 1.173c.256.332.693.468 1.09.334.396-.135.656-.507.656-.942V9.03c0-1.08-.648-2.034-1.62-2.428-.66-.266-1.37-.32-2.05-.166-.712.16-1.348.54-1.822 1.072l-.96 1.053c-.105.116-.228.215-.364.296a2.41 2.41 0 01-1.688-.683A3.972 3.972 0 017.1 9.03c0-1.08-.648-2.034 1.62-2.428.66-.266 1.37-.32-2.05-.166.36.08.696.212.996.39l1.064.635a.828.828 0 00.516-.207z" clip-rule="evenodd" /></svg><span>Instagram</span></a></div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script type="module">
         const firebaseConfig = {
@@ -332,6 +348,8 @@
         const profileAvatar = document.getElementById('profileAvatar');
         const profileDisplayName = document.getElementById('profileDisplayName');
         const profileEmail = document.getElementById('profileEmail');
+        const profileUsername = document.getElementById('profileUsername');
+        const usernamePrompt = document.getElementById('username-prompt');
         const materialsStatEl = document.getElementById('materialsStat');
         const quizzesStatEl = document.getElementById('quizzesStat');
         const xpStatEl = document.getElementById('xpStat');
@@ -409,15 +427,26 @@
             const userDocRef = doc(db, "users", user.uid);
             try {
                 const docSnap = await getDoc(userDocRef);
-                if (docSnap.exists() && docSnap.data().stats) {
-                    const stats = docSnap.data().stats;
-                    materialsStatEl.textContent = stats.materialsCompleted || 0;
-                    quizzesStatEl.textContent = stats.quizzesCompleted || 0;
-                    xpStatEl.textContent = stats.xpPoints || 0;
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    
+                    if (userData.username) {
+                        profileUsername.textContent = `@${userData.username}`;
+                        profileUsername.classList.remove('hidden');
+                        usernamePrompt.classList.add('hidden');
+                    } else {
+                        profileUsername.classList.add('hidden');
+                        usernamePrompt.classList.remove('hidden');
+                    }
+
+                    if (userData.stats) {
+                        const stats = userData.stats;
+                        materialsStatEl.textContent = stats.materialsCompleted || 0;
+                        quizzesStatEl.textContent = stats.quizzesCompleted || 0;
+                        xpStatEl.textContent = stats.xpPoints || 0;
+                    }
                 } else {
-                    materialsStatEl.textContent = 0;
-                    quizzesStatEl.textContent = 0;
-                    xpStatEl.textContent = 0;
+                    usernamePrompt.classList.remove('hidden');
                 }
             } catch (error) {
                 console.error("Gagal mengambil statistik pengguna:", error);
@@ -434,7 +463,7 @@
                 window.location.href = `login-page.html?redirect=${window.location.pathname}`;
             }
         });
-
+        
         const currentYearSpan = document.getElementById('currentYear');
         if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
     </script>
