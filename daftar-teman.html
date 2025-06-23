@@ -28,8 +28,12 @@
         .auth-button-secondary { background-color: transparent; color: #4B5563; border: 1px solid #D1D5DB; }
         .auth-button-secondary:hover { background-color: #F9FAFB; }
         
-        #userInfoDesktopTrigger { cursor: pointer; }
-        #userPhotoDesktop { width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; }
+        #userInfoDesktopTrigger, #mobileUserInfoContainer .flex.items-center {
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
+        }
+        #userPhotoDesktop, #userPhotoMobile {
+            width: 32px; height: 32px; border-radius: 9999px; object-fit: cover;
+        }
         .user-display-name {
             font-weight: 500; color: #374151; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100px;
@@ -48,6 +52,12 @@
         }
         #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
             background-color: #EFF6FF; color: #2563EB;
+        }
+        #userDropdownMenuDesktop .dropdown-item-active {
+            background-color: #EFF6FF; color: #2563EB; font-weight: 500;
+        }
+        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
+            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
         }
         .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
         .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
@@ -139,7 +149,16 @@
                         <svg class="caret-icon ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div id="userDropdownMenuDesktop">
-                        <!-- Konten dropdown diisi oleh JS -->
+                        <div class="dropdown-user-info">
+                            <p class="name" id="dropdownUserNameDesktop"></p>
+                            <p class="email" id="dropdownUserEmailDesktop"></p>
+                        </div>
+                        <a href="profil.html" class="dropdown-item">Profil Saya</a>
+                        <a href="materi-tersimpan.html" class="dropdown-item">Materi Tersimpan</a>
+                        <a href="riwayat-kuis.html" class="dropdown-item">Riwayat Kuis</a>
+                        <a href="edit-profil.html" class="dropdown-item">Pengaturan Akun</a>
+                        <hr class="border-slate-200 my-1">
+                        <button id="logoutButtonDropdownDesktop" class="dropdown-item !text-red-600">Logout</button>
                     </div>
                 </div>
             </div>
@@ -232,7 +251,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- Logika Header Universal ---
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         const authLinksDesktop = document.getElementById('authLinksDesktop');
@@ -437,14 +455,18 @@
             }
             
             const kuisId = selectedQuizInput.value;
+            const kuisTitle = selectedQuizInput.parentElement.textContent.trim();
             sendInviteBtn.disabled = true;
             sendInviteBtn.textContent = "Mengirim...";
             
             try {
+                const batch = writeBatch(db);
                 const duelsRef = collection(db, "duels");
-                await addDoc(duelsRef, {
+                const newDuelRef = doc(duelsRef);
+                batch.set(newDuelRef, {
                     status: "pending",
                     quizId: kuisId,
+                    quizTitle: kuisTitle,
                     createdAt: serverTimestamp(),
                     challengerId: currentUser.uid,
                     challengerName: currentUser.displayName || currentUser.email.split('@')[0],
@@ -455,6 +477,16 @@
                         [opponentData.id]: { score: 0, currentQuestion: 0, answers: [] }
                     }
                 });
+
+                const opponentNotifRef = doc(collection(db, "users", opponentData.id, "notifications"));
+                batch.set(opponentNotifRef, {
+                    message: `Anda ditantang duel **${kuisTitle}** oleh **${currentUser.displayName || currentUser.email.split('@')[0]}**!`,
+                    link: `undangan-duel.html?duelId=${newDuelRef.id}`,
+                    isRead: false,
+                    timestamp: serverTimestamp()
+                });
+                
+                await batch.commit();
                 
                 alert(`Undangan duel untuk "${opponentData.displayName}" telah terkirim!`);
                 closeDuelModal();
@@ -486,7 +518,6 @@
                         }
                     }
                     renderFriends(friends);
-
                 } catch (error) {
                     console.error("Gagal memuat daftar teman:", error);
                 } finally {
@@ -497,7 +528,6 @@
                 window.location.href = `login-page.html?redirect=daftar-teman.html`;
             }
         });
-
     </script>
 </body>
 </html>
