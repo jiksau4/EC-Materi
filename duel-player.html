@@ -1,368 +1,245 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duel Kuis Sedang Berlangsung - ExtraCourse</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #111827; color: white; }
-        .player-card {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.5rem;
-        }
-        .player-card.challenger { flex-direction: row; }
-        .player-card.opponent { flex-direction: row-reverse; text-align: right; }
-        .player-card img {
-            width: 56px;
-            height: 56px;
-            border-radius: 9999px;
-            border: 3px solid #374151;
-            background-color: #374151;
-        }
-        .player-card .score {
-            font-size: 1.875rem;
-            font-weight: 800;
-        }
-        .vs-circle {
-            width: 64px; height: 64px;
-            background-color: #374151;
-            border: 4px solid #4B5563;
-            color: #D1D5DB;
-            font-weight: 700;
-            font-size: 1.5rem;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 9999px;
-        }
-        #quiz-container { max-width: 800px; margin: auto; }
-        .progress-bar-bg { background-color: #374151; }
-        .progress-bar-fill { background-color: #3B82F6; transition: width 0.3s ease-in-out; }
-        .question-text { font-size: 1.5rem; font-weight: 600; color: #F9FAFB; margin-bottom: 2rem; }
-        .option-btn {
-            display: block; width: 100%; padding: 1rem; margin-bottom: 1rem;
-            text-align: left; font-weight: 500; border: 2px solid #4B5563;
-            border-radius: 0.5rem; transition: all 0.2s ease;
-            background-color: #1F2937;
-        }
-        .option-btn:not(:disabled):hover { border-color: #3B82F6; background-color: #374151; }
-        .option-btn.selected {
-            border-color: #2563EB; background-color: #1E3A8A;
-            color: white; box-shadow: 0 0 0 2px #3B82F6;
-        }
-        .option-btn.correct { border-color: #10B981; background-color: #059669; }
-        .option-btn.wrong { border-color: #EF4444; background-color: #B91C1C; }
-        .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        .player-status-indicator {
-            height: 12px; width: 12px; border-radius: 9999px;
-            transition: background-color 0.3s;
-        }
-        .waiting-opponent-indicator { background-color: #6B7280; }
-        .opponent-answered-indicator { background-color: #10B981; }
-    </style>
-</head>
-<body class="min-h-screen">
+<script type="module">
+    const firebaseConfig = {
+        apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
+        authDomain: "ec-materi.firebaseapp.com",
+        projectId: "ec-materi",
+        storageBucket: "ec-materi.firebasestorage.app",
+        messagingSenderId: "166687187100",
+        appId: "1:166687187100:web:e073df281931524f660d59"
+    };
 
-    <header class="bg-gray-900 shadow-md sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-2">
-            <div class="flex justify-between items-center">
-                <div id="challenger-info" class="player-card challenger">
-                    <img id="challenger-avatar" src="https://placehold.co/56x56/374151/FFFFFF?text=?">
-                    <div>
-                        <div class="flex items-center gap-2">
-                             <div id="challenger-status" class="player-status-indicator waiting-opponent-indicator"></div>
-                             <p id="challenger-name" class="font-bold"></p>
-                        </div>
-                        <p id="challenger-score" class="score">0</p>
-                    </div>
-                </div>
-                <div class="vs-circle">VS</div>
-                <div id="opponent-info" class="player-card opponent">
-                    <img id="opponent-avatar" src="https://placehold.co/56x56/374151/FFFFFF?text=?">
-                    <div>
-                         <div class="flex items-center gap-2 justify-end">
-                             <p id="opponent-name" class="font-bold"></p>
-                             <div id="opponent-status" class="player-status-indicator waiting-opponent-indicator"></div>
-                        </div>
-                        <p id="opponent-score" class="score">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    <main class="container mx-auto px-6 py-8 md:py-12">
-        <div id="quiz-container" class="hidden"> 
-            <div class="mb-8 text-center">
-                <h1 id="quizTitle" class="text-xl md:text-2xl font-bold text-slate-300 mb-2"></h1>
-                <p id="progressIndicator" class="text-slate-400"></p>
-                <div class="w-full h-2 rounded-full progress-bar-bg mt-2 max-w-lg mx-auto">
-                    <div id="progressBar" class="h-2 rounded-full progress-bar-fill" style="width: 0%;"></div>
-                </div>
-            </div>
-            <div class="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg">
-                <p id="questionText" class="question-text"></p>
-                <div id="optionsContainer"></div>
-                <div id="waiting-indicator" class="hidden text-center mt-6 text-amber-400">
-                    Menunggu lawan menjawab...
-                </div>
-            </div>
-        </div>
-        <div id="loadingState" class="text-center py-20">
-            <div class="spinner"></div>
-            <p id="loadingText" class="text-slate-500 text-lg">Menghubungkan ke ruang duel...</p>
-        </div>
-        <div id="errorState" class="hidden text-center py-20 bg-gray-800 p-8 rounded-xl shadow-md">
-            <h2 id="errorTitle" class="text-2xl font-semibold text-red-500">Gagal Memuat Duel</h2>
-            <p id="errorMessage" class="text-slate-400 mt-2 mb-6">Tidak dapat menemukan sesi duel yang valid.</p>
-            <a href="index.html" class="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Kembali ke Home</a>
-        </div>
-    </main>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    <script type="module">
-        const firebaseConfig = {
-          apiKey: "AIzaSyARLZcg_E2-H2UVD6qjc0Ls7m3Kkb-Uiyg",
-          authDomain: "ec-materi.firebaseapp.com",
-          projectId: "ec-materi",
-          storageBucket: "ec-materi.firebasestorage.app",
-          messagingSenderId: "166687187100",
-          appId: "1:166687187100:web:e073df281931524f660d59"
-        };
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    let currentUser = null;
+    let duelId = null;
+    let unsubscribeDuel = null;
+    let allQuestions = [];
+    let currentQuizData = {};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        let currentUser = null;
-        let duelId = null;
-        let unsubscribeDuel = null;
-        let allQuestions = [];
-        let currentQuizData = {};
-        
-        const loadingStateDiv = document.getElementById('loadingState');
-        const errorStateDiv = document.getElementById('errorState');
-        const errorTitleEl = document.getElementById('errorTitle');
-        const errorMessageEl = document.getElementById('errorMessage');
-        const quizContainer = document.getElementById('quiz-container');
-        const quizTitleEl = document.getElementById('quizTitle');
-        const progressIndicatorEl = document.getElementById('progressIndicator');
-        const progressBarEl = document.getElementById('progressBar');
-        const questionTextEl = document.getElementById('questionText');
-        const optionsContainerEl = document.getElementById('optionsContainer');
-        const waitingIndicator = document.getElementById('waiting-indicator');
+    const loadingStateDiv = document.getElementById('loadingState');
+    const errorStateDiv = document.getElementById('errorState');
+    const errorTitleEl = document.getElementById('errorTitle');
+    const errorMessageEl = document.getElementById('errorMessage');
+    const quizContainer = document.getElementById('quiz-container');
+    const quizTitleEl = document.getElementById('quizTitle');
+    const progressIndicatorEl = document.getElementById('progressIndicator');
+    const progressBarEl = document.getElementById('progressBar');
+    const questionTextEl = document.getElementById('questionText');
+    const optionsContainerEl = document.getElementById('optionsContainer');
+    const waitingIndicator = document.getElementById('waiting-indicator');
 
-        const challengerNameEl = document.getElementById('challenger-name');
-        const challengerAvatarEl = document.getElementById('challenger-avatar');
-        const challengerScoreEl = document.getElementById('challenger-score');
-        const challengerStatusEl = document.getElementById('challenger-status');
-        const opponentNameEl = document.getElementById('opponent-name');
-        const opponentAvatarEl = document.getElementById('opponent-avatar');
-        const opponentScoreEl = document.getElementById('opponent-score');
-        const opponentStatusEl = document.getElementById('opponent-status');
+    const challengerNameEl = document.getElementById('challenger-name');
+    const challengerAvatarEl = document.getElementById('challenger-avatar');
+    const challengerScoreEl = document.getElementById('challenger-score');
+    const challengerStatusEl = document.getElementById('challenger-status');
+    const opponentNameEl = document.getElementById('opponent-name');
+    const opponentAvatarEl = document.getElementById('opponent-avatar');
+    const opponentScoreEl = document.getElementById('opponent-score');
+    const opponentStatusEl = document.getElementById('opponent-status');
 
-        function showError(title, message) {
-            loadingStateDiv.style.display = 'none';
-            quizContainer.classList.add('hidden');
-            errorTitleEl.textContent = title;
-            errorMessageEl.textContent = message;
-            errorStateDiv.classList.remove('hidden');
+    function showError(title, message) {
+        loadingStateDiv.style.display = 'none';
+        quizContainer.classList.add('hidden');
+        errorTitleEl.textContent = title;
+        errorMessageEl.textContent = message;
+        errorStateDiv.classList.remove('hidden');
+    }
+
+    async function renderPlayerInfo(duelData) {
+        const challengerId = duelData.challengerId;
+        const opponentId = duelData.opponentId;
+        const isCurrentUserChallenger = currentUser.uid === challengerId;
+        const myId = currentUser.uid;
+        const otherId = isCurrentUserChallenger ? opponentId : challengerId;
+
+        challengerNameEl.textContent = isCurrentUserChallenger ? duelData.challengerName : duelData.opponentName;
+        opponentNameEl.textContent = isCurrentUserChallenger ? duelData.opponentName : duelData.challengerName;
+
+        challengerScoreEl.textContent = duelData.players[myId]?.score || 0;
+        opponentScoreEl.textContent = duelData.players[otherId]?.score || 0;
+
+        try {
+            const myDoc = await getDoc(doc(db, "users", myId));
+            const otherDoc = await getDoc(doc(db, "users", otherId));
+            if (myDoc.exists()) challengerAvatarEl.src = myDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(myDoc.data().displayName)}`;
+            if (otherDoc.exists()) opponentAvatarEl.src = otherDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(otherDoc.data().displayName)}`;
+        } catch(e) {
+            console.error("Gagal memuat foto profil pemain:", e);
+        }
+    }
+
+    async function submitAnswer(answer) {
+        const myData = currentQuizData.players[currentUser.uid];
+        const currentQuestionIndex = myData.currentQuestion;
+        const currentQuestion = allQuestions[currentQuestionIndex];
+        const isCorrect = answer === currentQuestion.correctAnswer;
+
+        const scoreUpdate = isCorrect ? 10 : 0; 
+        const playerPath = `players.${currentUser.uid}`;
+
+        const duelDocRef = doc(db, "duels", duelId);
+        await updateDoc(duelDocRef, {
+            [`${playerPath}.answers.${currentQuestionIndex}`]: answer,
+            [`${playerPath}.score`]: increment(scoreUpdate)
+        });
+    }
+
+    function renderQuestion(duelData) {
+        if (allQuestions.length === 0) return;
+
+        const myId = currentUser.uid;
+        const isCurrentUserChallenger = duelData.challengerId === myId;
+        const otherId = isCurrentUserChallenger ? duelData.opponentId : duelData.challengerId;
+
+        const myData = duelData.players[myId];
+        const opponentData = duelData.players[otherId];
+        const currentQuestionIndex = myData.currentQuestion;
+
+        if(currentQuestionIndex >= allQuestions.length) {
+            if (unsubscribeDuel) unsubscribeDuel();
+            showError("Duel Selesai!", "Halaman hasil duel akan segera dibuat.");
+            return;
         }
 
-        async function renderPlayerInfo(duelData) {
-            const challengerId = duelData.challengerId;
-            const opponentId = duelData.opponentId;
+        const question = allQuestions[currentQuestionIndex];
+        progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
+        progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
+        questionTextEl.textContent = question.questionText;
 
-            challengerNameEl.textContent = duelData.challengerName;
-            opponentNameEl.textContent = duelData.opponentName;
-            
-            // **PERBAIKAN**: Menggunakan `|| 0` untuk mencegah NaN jika field belum ada
-            challengerScoreEl.textContent = duelData.players[challengerId]?.score || 0;
-            opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
-            
-            try {
-                const challengerDoc = await getDoc(doc(db, "users", challengerId));
-                const opponentDoc = await getDoc(doc(db, "users", opponentId));
-                if (challengerDoc.exists()) challengerAvatarEl.src = challengerDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(challengerDoc.data().displayName)}`;
-                if (opponentDoc.exists()) opponentAvatarEl.src = opponentDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(opponentDoc.data().displayName)}`;
-            } catch(e) {
-                console.error("Gagal memuat foto profil pemain:", e);
+        const myAnswer = myData.answers?.[currentQuestionIndex];
+        const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
+
+        challengerScoreEl.textContent = duelData.players[myId]?.score || 0;
+        opponentScoreEl.textContent = duelData.players[otherId]?.score || 0;
+
+        if (myAnswer) {
+            waitingIndicator.classList.add('hidden');
+            optionsContainerEl.innerHTML = '';
+            question.options.forEach(optionText => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = optionText;
+                button.disabled = true;
+                if(optionText === myAnswer) button.classList.add('selected');
+                optionsContainerEl.appendChild(button);
+            });
+
+            if(!opponentAnswer) {
+                waitingIndicator.classList.remove('hidden');
             }
-        }
-
-        async function submitAnswer(answer) {
-            const myData = currentQuizData.players[currentUser.uid];
-            const currentQuestionIndex = myData.currentQuestion;
-            const currentQuestion = allQuestions[currentQuestionIndex];
-            const isCorrect = answer === currentQuestion.correctAnswer;
-            
-            const scoreUpdate = isCorrect ? 10 : 0; 
-            const playerPath = `players.${currentUser.uid}`;
-
-            const duelDocRef = doc(db, "duels", duelId);
-            await updateDoc(duelDocRef, {
-                [`${playerPath}.answers.${currentQuestionIndex}`]: answer,
-                [`${playerPath}.score`]: increment(scoreUpdate)
+        } else {
+            waitingIndicator.classList.add('hidden');
+            optionsContainerEl.innerHTML = '';
+            question.options.forEach(optionText => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = optionText;
+                button.onclick = () => submitAnswer(optionText);
+                optionsContainerEl.appendChild(button);
             });
         }
 
-        function renderQuestion(duelData) {
-            if (allQuestions.length === 0) return;
+        updatePlayerStatusIndicator(challengerStatusEl, isCurrentUserChallenger ? myData : opponentData, currentQuestionIndex);
+        updatePlayerStatusIndicator(opponentStatusEl, isCurrentUserChallenger ? opponentData : myData, currentQuestionIndex);
 
-            const myData = duelData.players[currentUser.uid];
-            const opponentId = currentUser.uid === duelData.challengerId ? duelData.opponentId : duelData.challengerId;
-            const opponentData = duelData.players[opponentId];
-            
-            const currentQuestionIndex = myData.currentQuestion;
-            if(currentQuestionIndex >= allQuestions.length) {
-                if (unsubscribeDuel) unsubscribeDuel();
-                showError("Duel Selesai!", "Halaman hasil duel akan segera dibuat.");
-                return;
-            }
-
-            const question = allQuestions[currentQuestionIndex];
-            
-            progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
-            progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
-            questionTextEl.textContent = question.questionText;
-
-            const myAnswer = myData.answers?.[currentQuestionIndex];
-            const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
-
-            // **PERBAIKAN UTAMA**: Memastikan kedua skor selalu diperbarui dengan data terbaru.
-            challengerScoreEl.textContent = duelData.players[duelData.challengerId]?.score || 0;
-            opponentScoreEl.textContent = duelData.players[opponentId]?.score || 0;
-
-            if (myAnswer) {
-                waitingIndicator.classList.add('hidden');
-                optionsContainerEl.innerHTML = '';
-                question.options.forEach(optionText => {
-                    const button = document.createElement('button');
-                    button.className = 'option-btn';
-                    button.textContent = optionText;
-                    button.disabled = true;
-                    if(optionText === myAnswer) button.classList.add('selected');
-                    optionsContainerEl.appendChild(button);
-                });
-
-                if(!opponentAnswer) {
-                    waitingIndicator.classList.remove('hidden');
+        if (myAnswer && opponentAnswer) {
+            waitingIndicator.classList.add('hidden');
+            revealAnswers(question.correctAnswer);
+            setTimeout(() => {
+                if (isCurrentUserChallenger) {
+                    const nextQuestionIndex = currentQuestionIndex + 1;
+                    updateDoc(doc(db, "duels", duelId), {
+                        [`players.${myId}.currentQuestion`]: nextQuestionIndex,
+                        [`players.${otherId}.currentQuestion`]: nextQuestionIndex,
+                    });
                 }
-            } else {
-                waitingIndicator.classList.add('hidden');
-                optionsContainerEl.innerHTML = '';
-                question.options.forEach(optionText => {
-                    const button = document.createElement('button');
-                    button.className = 'option-btn';
-                    button.textContent = optionText;
-                    button.onclick = () => submitAnswer(optionText);
-                    optionsContainerEl.appendChild(button);
-                });
-            }
-
-            updatePlayerStatusIndicator(challengerStatusEl, duelData.challengerId, myData, opponentData, currentQuestionIndex);
-            updatePlayerStatusIndicator(opponentStatusEl, duelData.opponentId, myData, opponentData, currentQuestionIndex);
-            
-            if (myAnswer && opponentAnswer) {
-                waitingIndicator.classList.add('hidden');
-                revealAnswers(question.correctAnswer);
-                setTimeout(() => {
-                    if (currentUser.uid === duelData.challengerId) {
-                        const nextQuestionIndex = currentQuestionIndex + 1;
-                        updateDoc(doc(db, "duels", duelId), {
-                            [`players.${currentUser.uid}.currentQuestion`]: nextQuestionIndex,
-                            [`players.${opponentId}.currentQuestion`]: nextQuestionIndex,
-                        });
-                    }
-                }, 2500); 
-            }
+            }, 2500);
         }
-        
-        function updatePlayerStatusIndicator(statusEl, playerId, myData, opponentData, qIndex) {
-            const playerData = (playerId === currentUser.uid) ? myData : opponentData;
-            if (playerData.answers && playerData.answers[qIndex]) {
-                statusEl.classList.remove('waiting-opponent-indicator');
-                statusEl.classList.add('opponent-answered-indicator');
-            } else {
-                statusEl.classList.remove('opponent-answered-indicator');
-                statusEl.classList.add('waiting-opponent-indicator');
-            }
+    }
+
+    function updatePlayerStatusIndicator(statusEl, playerData, qIndex) {
+        if (playerData.answers && playerData.answers[qIndex]) {
+            statusEl.classList.remove('waiting-opponent-indicator');
+            statusEl.classList.add('opponent-answered-indicator');
+        } else {
+            statusEl.classList.remove('opponent-answered-indicator');
+            statusEl.classList.add('waiting-opponent-indicator');
         }
-        
-        function revealAnswers(correctAnswer) {
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent === correctAnswer) {
-                    btn.classList.add('correct');
-                } else if (btn.classList.contains('selected')) {
-                    btn.classList.add('wrong');
-                }
-            });
-        }
+    }
 
-        async function loadQuizData(kuisId) {
-            const quizDocRef = doc(db, "quizzes", kuisId);
-            const quizDocSnap = await getDoc(quizDocRef);
-            if (!quizDocSnap.exists()) throw new Error("Dokumen kuis tidak ditemukan.");
-            
-            const quizData = quizDocSnap.data();
-            const questionsColRef = collection(db, "quizzes", kuisId, "questions");
-            const questionsSnapshot = await getDocs(questionsColRef);
-            
-            allQuestions = []; // Kosongkan array pertanyaan sebelum mengisi
-            questionsSnapshot.forEach(doc => allQuestions.push(doc.data()));
-            if (allQuestions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
-
-            return quizData;
-        }
-
-        async function handleDuelUpdate(duelDocSnap) {
-            if (!duelDocSnap.exists()) {
-                showError("Duel Dibatalkan", "Sesi duel ini telah dibatalkan atau tidak ada lagi.");
-                if (unsubscribeDuel) unsubscribeDuel();
-                return;
-            }
-
-            currentQuizData = duelDocSnap.data();
-            
-            if (allQuestions.length === 0 && currentQuizData.quizId) {
-                try {
-                    const quizInfo = await loadQuizData(currentQuizData.quizId);
-                    quizTitleEl.textContent = quizInfo.title;
-                    await renderPlayerInfo(currentQuizData);
-                    loadingStateDiv.style.display = 'none';
-                    quizContainer.classList.remove('hidden');
-                } catch(error) {
-                    showError("Gagal Memuat Kuis", error.message);
-                    return;
-                }
-            }
-            renderQuestion(currentQuizData);
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                const urlParams = new URLSearchParams(window.location.search);
-                duelId = urlParams.get('duelId');
-                if (!duelId) {
-                    showError("ID Duel Hilang", "Tidak ada ID duel yang ditemukan di URL.");
-                    return;
-                }
-
-                const duelDocRef = doc(db, "duels", duelId);
-                unsubscribeDuel = onSnapshot(duelDocRef, handleDuelUpdate, (error) => {
-                    console.error("Gagal mendengarkan update duel:", error);
-                    showError("Koneksi Gagal", "Gagal terhubung ke sesi duel.");
-                });
-            } else {
-                window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
+    function revealAnswers(correctAnswer) {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === correctAnswer) {
+                btn.classList.add('correct');
+            } else if (btn.classList.contains('selected')) {
+                btn.classList.add('wrong');
             }
         });
-    </script>
-</body>
-</html>
+    }
+
+    async function loadQuizData(kuisId) {
+        const quizDocRef = doc(db, "quizzes", kuisId);
+        const quizDocSnap = await getDoc(quizDocRef);
+        if (!quizDocSnap.exists()) throw new Error("Dokumen kuis tidak ditemukan.");
+        
+        const quizData = quizDocSnap.data();
+        const questionsColRef = collection(db, "quizzes", kuisId, "questions");
+        const questionsSnapshot = await getDocs(questionsColRef);
+
+        allQuestions = [];
+        questionsSnapshot.forEach(doc => allQuestions.push(doc.data()));
+        if (allQuestions.length === 0) throw new Error("Kuis ini tidak memiliki pertanyaan.");
+
+        return quizData;
+    }
+
+    async function handleDuelUpdate(duelDocSnap) {
+        if (!duelDocSnap.exists()) {
+            showError("Duel Dibatalkan", "Sesi duel ini telah dibatalkan atau tidak ada lagi.");
+            if (unsubscribeDuel) unsubscribeDuel();
+            return;
+        }
+
+        currentQuizData = duelDocSnap.data();
+        if (allQuestions.length === 0 && currentQuizData.quizId) {
+            try {
+                const quizInfo = await loadQuizData(currentQuizData.quizId);
+                quizTitleEl.textContent = quizInfo.title;
+                await renderPlayerInfo(currentQuizData);
+                loadingStateDiv.style.display = 'none';
+                quizContainer.classList.remove('hidden');
+            } catch (error) {
+                showError("Gagal Memuat Kuis", error.message);
+                return;
+            }
+        }
+        renderQuestion(currentQuizData);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            const urlParams = new URLSearchParams(window.location.search);
+            duelId = urlParams.get('duelId');
+            if (!duelId) {
+                showError("ID Duel Hilang", "Tidak ada ID duel yang ditemukan di URL.");
+                return;
+            }
+
+            const duelDocRef = doc(db, "duels", duelId);
+            unsubscribeDuel = onSnapshot(duelDocRef, handleDuelUpdate, (error) => {
+                console.error("Gagal mendengarkan update duel:", error);
+                showError("Koneksi Gagal", "Gagal terhubung ke sesi duel.");
+            });
+        } else {
+            window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
+        }
+    });
+</script>
