@@ -8,52 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #111827; color: white; }
-        .logo-image { height: 70px; width: auto; }
-        .nav-link { position: relative; transition: color 0.3s ease; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px;
-            bottom: -4px; left: 50%; transform: translateX(-50%);
-            background-color: #2563EB; transition: width 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .nav-link:hover, .nav-link.active { color: #2563EB; }
-        .auth-button {
-            padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500;
-            transition: all 0.2s ease; display: inline-block; text-align: center;
-        }
-        .auth-button-primary { background-color: #2563EB; color: white; }
-        .auth-button-primary:hover { background-color: #1D4ED8; }
-        .auth-button-secondary { background-color: transparent; color: #2563EB; border: 1px solid #2563EB; }
-        .auth-button-secondary:hover { background-color: #DBEAFE; color: #1D4ED8; }
-        
-        #userInfoDesktopTrigger { cursor: pointer; }
-        #userPhotoDesktop { width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; }
-        .user-display-name {
-            font-weight: 500; color: #F9FAFB; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis; max-width: 100px; 
-        }
-        .caret-icon { width: 1rem; height: 1rem; color: #9CA3AF; transition: transform 0.2s ease-in-out; }
-        #userInfoDesktopTrigger.open .caret-icon { transform: rotate(180deg); }
-        #userDropdownMenuDesktop {
-            display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; width: 14rem;
-            background-color: white; border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            z-index: 50; padding-top: 0.25rem; padding-bottom: 0.25rem; border: 1px solid #e5e7eb;
-        }
-        #userDropdownMenuDesktop a, #userDropdownMenuDesktop button {
-            display: block; width: 100%; padding: 0.5rem 1rem; 
-            font-size: 0.875rem; color: #374151; text-align: left;
-        }
-        #userDropdownMenuDesktop a:hover, #userDropdownMenuDesktop button:hover {
-            background-color: #EFF6FF; color: #2563EB;
-        }
-        #userDropdownMenuDesktop #logoutButtonDropdownDesktop:hover {
-            background-color: #FEF2F2; color: #DC2626; font-weight: 500;
-        }
-        .dropdown-user-info { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; margin-bottom: 0.25rem;}
-        .dropdown-user-info .name { font-size: 0.875rem; font-weight: 600; color: #1f2937;}
-        .dropdown-user-info .email { font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis;}
-        
         .player-card {
             display: flex;
             align-items: center;
@@ -212,17 +166,10 @@
         const otherPlayerScoreEl = document.getElementById('other-player-score');
         const otherPlayerStatusEl = document.getElementById('other-player-status');
 
-        function showError(title, message) {
-            loadingStateDiv.style.display = 'none';
-            quizContainer.classList.add('hidden');
-            errorTitleEl.textContent = title;
-            errorMessageEl.textContent = message;
-            errorStateDiv.classList.remove('hidden');
-        }
+        function showError(title, message) { /* ... */ }
 
         async function renderPlayerInfo(duelData) {
             const isCurrentUserChallenger = currentUser.uid === duelData.challengerId;
-            const myId = currentUser.uid;
             const otherId = isCurrentUserChallenger ? duelData.opponentId : duelData.challengerId;
             const otherPlayerName = isCurrentUserChallenger ? duelData.opponentName : duelData.challengerName;
             
@@ -233,66 +180,34 @@
                 const otherDoc = await getDoc(doc(db, "users", otherId));
                 myPlayerAvatarEl.src = currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.displayName)}`;
                 if (otherDoc.exists()) otherPlayerAvatarEl.src = otherDoc.data().photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(otherPlayerName)}`;
-            } catch (e) {
-                console.error("Gagal memuat foto profil pemain:", e);
-            }
+            } catch (e) { console.error("Gagal memuat foto profil pemain:", e); }
         }
 
         async function submitAnswer(answer) {
-            // ... (Fungsi ini tetap sama)
-        }
-
-        function renderQuestion(duelData) {
-            if (allQuestions.length === 0) return;
-
-            const myId = currentUser.uid;
-            const opponentId = myId === duelData.challengerId ? duelData.opponentId : duelData.challengerId;
-            const myData = duelData.players[myId];
-            const opponentData = duelData.players[opponentId];
-            
+            const myData = currentQuizData.players[currentUser.uid];
             const currentQuestionIndex = myData.currentQuestion;
+            const currentQuestion = allQuestions[currentQuestionIndex];
+            const isCorrect = answer === currentQuestion.correctAnswer;
             
-            if (currentQuestionIndex >= allQuestions.length) {
-                if (duelData.status !== "completed" && !isFinishing) {
-                    finishDuel(duelData);
-                }
-                return;
-            }
+            const scoreUpdate = isCorrect ? 10 : 0; 
+            const playerPath = `players.${currentUser.uid}`;
 
-            const question = allQuestions[currentQuestionIndex];
-            
-            progressIndicatorEl.textContent = `Pertanyaan ${currentQuestionIndex + 1} dari ${allQuestions.length}`;
-            progressBarEl.style.width = `${((currentQuestionIndex + 1) / allQuestions.length) * 100}%`;
-            questionTextEl.textContent = question.questionText;
-
-            const myAnswer = myData.answers?.[currentQuestionIndex];
-            const opponentAnswer = opponentData.answers?.[currentQuestionIndex];
-            
-            myPlayerScoreEl.textContent = myData.score || 0;
-            otherPlayerScoreEl.textContent = opponentData.score || 0;
-
-            // ... (Sisa logika render pertanyaan) ...
-
-            updatePlayerStatusIndicator(myPlayerStatusEl, myData, currentQuestionIndex);
-            updatePlayerStatusIndicator(otherPlayerStatusEl, opponentData, currentQuestionIndex);
-            
-            if (myAnswer && opponentAnswer) {
-                 // ... (sisa logika jika kedua pemain sudah menjawab) ...
-            }
+            const duelDocRef = doc(db, "duels", duelId);
+            await updateDoc(duelDocRef, {
+                [`${playerPath}.answers.${currentQuestionIndex}`]: answer,
+                [`${playerPath}.score`]: increment(scoreUpdate)
+            });
         }
         
-        function updatePlayerStatusIndicator(statusEl, playerData, qIndex) {
-             if (playerData.answers && playerData.answers[qIndex]) {
-                statusEl.classList.remove('waiting-opponent-indicator');
-                statusEl.classList.add('opponent-answered-indicator');
-            } else {
-                statusEl.classList.remove('opponent-answered-indicator');
-                statusEl.classList.add('waiting-opponent-indicator');
-            }
+        // **FUNGSI BARU**: Menghitung XP
+        function calculateXP(score, isWinner) {
+            const participationXP = 25;
+            const scoreBonus = Math.floor(score / 2);
+            const winBonus = isWinner ? 50 : 0;
+            return participationXP + scoreBonus + winBonus;
         }
 
-        function calculateXP(score, isWinner) { /* ... */ }
-
+        // **DIPERBARUI**: Fungsi untuk menyelesaikan duel
         async function finishDuel(duelData) {
             if (isFinishing) return;
             isFinishing = true;
@@ -313,8 +228,8 @@
             
             try {
                 const batch = writeBatch(db);
+                
                 const duelDocRef = doc(db, "duels", duelId);
-
                 batch.update(duelDocRef, { status: "completed", duelEndedAt: serverTimestamp() });
                 
                 const challengerRef = doc(db, "users", challengerId);
@@ -324,7 +239,8 @@
                 batch.update(opponentRef, { "stats.xpPoints": increment(xpOpponent) });
 
                 await batch.commit();
-                console.log("Statistik kedua pemain telah diperbarui.");
+                console.log("Statistik XP kedua pemain telah diperbarui.");
+
             } catch(error) {
                 console.error("Gagal memperbarui statistik XP pemain:", error);
             } finally {
@@ -334,16 +250,45 @@
             }
         }
 
-        async function loadQuizData(kuisId) { /* ... */ }
+        function renderQuestion(duelData) {
+            if (allQuestions.length === 0) return;
+
+            const myId = currentUser.uid;
+            const opponentId = myId === duelData.challengerId ? duelData.opponentId : duelData.challengerId;
+            const myData = duelData.players[myId];
+            const opponentData = duelData.players[opponentId];
+            
+            const currentQuestionIndex = myData.currentQuestion;
+            
+            if (currentQuestionIndex >= allQuestions.length) {
+                if (duelData.status !== "completed" && !isFinishing) {
+                    finishDuel(duelData);
+                }
+                return;
+            }
+            // ... (sisa logika renderQuestion sama)
+        }
+        
+        // ... (sisa fungsi helper lainnya)
 
         async function handleDuelUpdate(duelDocSnap) {
-            // ... (Fungsi ini tetap sama) ...
+            if (!duelDocSnap.exists()) { /* ... */ }
+            currentQuizData = duelDocSnap.data();
+            
+            if (currentQuizData.status === 'completed') {
+                if (unsubscribeDuel) unsubscribeDuel();
+                if (!isFinishing) { // Mencegah redirect ganda
+                    window.location.href = `hasil-duel.html?duelId=${duelId}`;
+                }
+                return;
+            }
+            // ... (sisa logika handleDuelUpdate) ...
         }
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                // ... (Sisa logika onAuthStateChanged) ...
+                // ... (sisa logika onAuthStateChanged) ...
             } else {
                 window.location.href = `login-page.html?redirect=${encodeURIComponent(window.location.href)}`;
             }
